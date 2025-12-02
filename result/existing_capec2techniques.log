@@ -1,0 +1,107 @@
+
+======================================================================
+🚀 Run started at: 2025-12-02 13:43:44
+📂 CAPEC path: ./source/capec_db.json
+📂 ATT&CK path: ./source/attack_db.json
+📤 Output path: ./result/existing_capec2techniques.json
+📄 Log file: ./result/existing_capec2techniques.log
+🔇 Quiet mode: ON
+======================================================================
+
+[⚠️ MISMATCH] CAPEC-1
+    Original Techniques : ['1574.010']
+    TF-IDF recs         : ['T1222.001', 'T1528'] (scores: [0.172, 0.123])
+[⚠️ MISMATCH] CAPEC-11
+    Original Techniques : ['1036.006']
+    TF-IDF recs         : ['T1051', 'T1505.003'] (scores: [0.317, 0.242])
+[⚠️ MISMATCH] CAPEC-112
+    Original Techniques : ['1110']
+    TF-IDF recs         : ['T1555.006'] (scores: [0.206])
+[⚠️ MISMATCH] CAPEC-114
+    Original Techniques : ['1548']
+    TF-IDF recs         : ['T1550', 'T1556.001'] (scores: [0.26, 0.201])
+[⚠️ MISMATCH] CAPEC-115
+    Original Techniques : ['1548']
+    TF-IDF recs         : ['T1550', 'T1556'] (scores: [0.241, 0.189])
+[⚠️ MISMATCH] CAPEC-122
+    Original Techniques : ['1548']
+    TF-IDF recs         : ['T1548.005', 'T1550.001'] (scores: [0.159, 0.152])
+[⚠️ MISMATCH] CAPEC-127
+    Original Techniques : ['1083']
+    TF-IDF recs         : ['T1564.013', 'T1080'] (scores: [0.191, 0.183])
+[⚠️ MISMATCH] CAPEC-130
+    Original Techniques : ['1499.003']
+    TF-IDF recs         : ['T1499.002', 'T1564.009'] (scores: [0.171, 0.144])
+[⚠️ MISMATCH] CAPEC-131
+    Original Techniques : ['1499']
+    TF-IDF recs         : ['T1564.009'] (scores: [0.287])
+[⚠️ MISMATCH] CAPEC-132
+    Original Techniques : ['1547.009']
+    TF-IDF recs         : ['T1567.004', 'T1564.005'] (scores: [0.164, 0.159])
+[⚠️ MISMATCH] CAPEC-142
+    Original Techniques : ['1584.002']
+    TF-IDF recs         : ['T1568.001', 'T1557.002'] (scores: [0.263, 0.233])
+[⚠️ MISMATCH] CAPEC-148
+    Original Techniques : ['1491']
+    TF-IDF recs         : ['T1051', 'T1659'] (scores: [0.233, 0.211])
+[⚠️ MISMATCH] CAPEC-150
+    Original Techniques : ['1003', '1119', '1213', '1530', '1555', '1602']
+    TF-IDF recs         : ['T1564.009', 'T1036.009'] (scores: [0.179, 0.163])
+[⚠️ MISMATCH] CAPEC-159
+    Original Techniques : ['1574.008']
+    TF-IDF recs         : ['T1560.002'] (scores: [0.287])
+[⚠️ MISMATCH] CAPEC-163
+    Original Techniques : ['1534', '1566.001', '1566.002', '1566.003', '1598.001', '1598.002', '1598.003']
+    TF-IDF recs         : ['T1598', 'T1566'] (scores: [0.206, 0.166])
+[⚠️ MISMATCH] CAPEC-165
+    Original Techniques : ['1036.003']
+    TF-IDF recs         : ['T1036.008', 'T1564.005'] (scores: [0.153, 0.153])
+[⚠️ MISMATCH] CAPEC-17
+    Original Techniques : ['1574.005', '1574.010']
+    TF-IDF recs         : ['T1584.004', 'T1505.003'] (scores: [0.139, 0.119])
+[⚠️ MISMATCH] CAPEC-177
+    Original Techniques : ['1036']
+    TF-IDF recs         : ['T1036.008', 'T1564.005'] (scores: [0.234, 0.198])
+[⚠️ MISMATCH] CAPEC-180
+    Original Techniques : ['1574.010']
+    TF-IDF recs         : ['T1222.001', 'T1006'] (scores: [0.185, 0.167])
+[⚠️ MISMATCH] CAPEC-186
+    Original Techniques : ['1195.002']
+    TF-IDF recs         : ['T1195', 'T1665'] (scores: [0.132, 0.114])
+[⚠️ MISMATCH] CAPEC-187
+    Original Techniques : ['1072']
+    TF-IDF recs         : ['T1583.002', 'T1071.004'] (scores: [0.173, 0.154])
+[⚠️ MISMATCH] CAPEC-191
+    Original Techniques : ['1552.001']
+    TF-IDF recs         : ['T1480.002', 'T1201'] (scores: [0.127, 0.117])
+[⚠️ MISMATCH] CAPEC-196
+    Original Techniques : ['1134.002', '1134.003', '1606']
+    TF-IDF recs         : ['T1563', 'T1506'] (scores: [0.236, 0.186])
+[⚠️ MISMATCH] CAPEC-2
+    Original Techniques : ['1531']
+    TF-IDF recs         : ['T1036.010', 'T1563.002'] (scores: [0.097, 0.094])
+[⚠️ MISMATCH] CAPEC-204
+    Original Techniques : ['1005']
+    TF-IDF recs         : ['T1114', 'T1557.002'] (scores: [0.144, 0.141])
+[⚠️ MISMATCH] CAPEC-21
+    Original Techniques : ['1134', '1528', '1539']
+    TF-IDF recs         : ['T1557.003', 'T1204.001'] (scores: [0.11, 0.103])
+[⚠️ MISMATCH] CAPEC-227
+    Original Techniques : ['1499']
+    TF-IDF recs         : ['T1564.009'] (scores: [0.278])
+[⚠️ MISMATCH] CAPEC-233
+    Original Techniques : ['1548']
+    TF-IDF recs         : ['T1588.005', 'T1068'] (scores: [0.166, 0.131])
+[⚠️ MISMATCH] CAPEC-251
+    Original Techniques : ['1055']
+    TF-IDF recs         : ['T1005'] (scores: [0.162])
+[⚠️ MISMATCH] CAPEC-267
+    Original Techniques : ['1027']
+    TF-IDF recs         : ['T1132.002', 'T1132.001'] (scores: [0.383, 0.377])
+    ... (more mismatches, suppressed)
+
+📊 Consistency Summary:
+  Total CAPECs with Techniques: 177
+  Consistent (≥1 overlap): 73 (41.2%)
+  Inconsistent (no overlap): 104 (58.8%)
+
