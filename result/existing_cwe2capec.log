@@ -1,0 +1,107 @@
+
+======================================================================
+🚀 Run started at: 2025-12-02 13:42:10
+📂 CWE path: ./source/cwe_db.json
+📂 CAPEC path: ./source/capec_db.json
+📤 Output path: ./result/existing_cwe2capec.json
+📄 Log file: ./result/existing_cwe2capec.log
+🔇 Quiet mode: ON
+======================================================================
+
+[⚠️ MISMATCH] CWE-36
+    Original CAPECs : ['597']
+    TF-IDF recs     : ['126', '127', '139'] (scores: [0.36, 0.328, 0.284])
+[⚠️ MISMATCH] CWE-41
+    Original CAPECs : ['3']
+    TF-IDF recs     : ['126'] (scores: [0.461])
+[⚠️ MISMATCH] CWE-73
+    Original CAPECs : ['13', '267', '64', '72', '76', '78', '79', '80']
+    TF-IDF recs     : ['126', '177', '38'] (scores: [0.325, 0.292, 0.267])
+[⚠️ MISMATCH] CWE-75
+    Original CAPECs : ['81', '93']
+    TF-IDF recs     : ['43', '83', '24'] (scores: [0.197, 0.158, 0.149])
+[⚠️ MISMATCH] CWE-80
+    Original CAPECs : ['18', '193', '32', '86']
+    TF-IDF recs     : ['588', '500', '143'] (scores: [0.218, 0.21, 0.203])
+[⚠️ MISMATCH] CWE-93
+    Original CAPECs : ['15', '81']
+    TF-IDF recs     : ['134', '443', '108'] (scores: [0.163, 0.122, 0.111])
+[⚠️ MISMATCH] CWE-95
+    Original CAPECs : ['35']
+    TF-IDF recs     : ['43', '175', '242'] (scores: [0.211, 0.188, 0.183])
+[⚠️ MISMATCH] CWE-97
+    Original CAPECs : ['101', '35']
+    TF-IDF recs     : ['500', '250', '179'] (scores: [0.286, 0.245, 0.215])
+[⚠️ MISMATCH] CWE-112
+    Original CAPECs : ['230', '231']
+    TF-IDF recs     : ['146'] (scores: [0.459])
+[⚠️ MISMATCH] CWE-114
+    Original CAPECs : ['108', '640']
+    TF-IDF recs     : ['248', '88', '15'] (scores: [0.354, 0.316, 0.255])
+[⚠️ MISMATCH] CWE-116
+    Original CAPECs : ['104', '73', '81', '85']
+    TF-IDF recs     : ['200', '120', '277'] (scores: [0.175, 0.145, 0.141])
+[⚠️ MISMATCH] CWE-118
+    Original CAPECs : ['10', '14', '24', '45', '46', '47', '8', '9']
+    TF-IDF recs     : ['131', '227', '240'] (scores: [0.233, 0.223, 0.223])
+[⚠️ MISMATCH] CWE-120
+    Original CAPECs : ['10', '100', '14', '24', '42', '44', '45', '46', '47', '67', '8', '9', '92']
+    TF-IDF recs     : ['123'] (scores: [0.623])
+[⚠️ MISMATCH] CWE-122
+    Original CAPECs : ['92']
+    TF-IDF recs     : ['123', '100', '10'] (scores: [0.517, 0.471, 0.46])
+[⚠️ MISMATCH] CWE-125
+    Original CAPECs : ['540']
+    TF-IDF recs     : ['123', '100'] (scores: [0.304, 0.294])
+[⚠️ MISMATCH] CWE-129
+    Original CAPECs : ['100']
+    TF-IDF recs     : ['256', '493'] (scores: [0.418, 0.401])
+[⚠️ MISMATCH] CWE-130
+    Original CAPECs : ['47']
+    TF-IDF recs     : ['331', '256', '43'] (scores: [0.249, 0.189, 0.181])
+[⚠️ MISMATCH] CWE-138
+    Original CAPECs : ['105', '15', '34']
+    TF-IDF recs     : ['18', '43', '649'] (scores: [0.209, 0.197, 0.183])
+[⚠️ MISMATCH] CWE-147
+    Original CAPECs : ['460']
+    TF-IDF recs     : ['43', '53', '52'] (scores: [0.271, 0.245, 0.236])
+[⚠️ MISMATCH] CWE-149
+    Original CAPECs : ['468']
+    TF-IDF recs     : ['536', '677', '443'] (scores: [0.155, 0.154, 0.141])
+[⚠️ MISMATCH] CWE-150
+    Original CAPECs : ['134', '41', '81', '93']
+    TF-IDF recs     : ['43', '516', '530'] (scores: [0.167, 0.155, 0.134])
+[⚠️ MISMATCH] CWE-162
+    Original CAPECs : ['635']
+    TF-IDF recs     : ['649', '18', '43'] (scores: [0.189, 0.141, 0.141])
+[⚠️ MISMATCH] CWE-180
+    Original CAPECs : ['267', '3', '71', '78', '79', '80']
+    TF-IDF recs     : ['443', '520', '43'] (scores: [0.219, 0.154, 0.146])
+[⚠️ MISMATCH] CWE-181
+    Original CAPECs : ['120', '267', '3', '43', '78', '79', '80']
+    TF-IDF recs     : ['443', '247', '520'] (scores: [0.207, 0.148, 0.146])
+[⚠️ MISMATCH] CWE-183
+    Original CAPECs : ['120', '3', '43', '71']
+    TF-IDF recs     : ['76', '200', '443'] (scores: [0.142, 0.108, 0.085])
+[⚠️ MISMATCH] CWE-184
+    Original CAPECs : ['120', '15', '182', '3', '43', '6', '71', '73', '85']
+    TF-IDF recs     : ['76', '546', '665'] (scores: [0.113, 0.111, 0.092])
+[⚠️ MISMATCH] CWE-185
+    Original CAPECs : ['15', '6', '79']
+    TF-IDF recs     : ['492'] (scores: [0.29])
+[⚠️ MISMATCH] CWE-196
+    Original CAPECs : ['92']
+    TF-IDF recs     : ['477'] (scores: [0.664])
+[⚠️ MISMATCH] CWE-200
+    Original CAPECs : ['116', '13', '169', '22', '224', '285', '287', '290', '291', '292', '293', '294', '295', '296', '297', '298', '299', '300', '301', '302', '303', '304', '305', '306', '307', '308', '309', '310', '312', '313', '317', '318', '319', '320', '321', '322', '323', '324', '325', '326', '327', '328', '329', '330', '472', '497', '508', '573', '574', '575', '576', '577', '59', '60', '616', '643', '646', '651', '79']
+    TF-IDF recs     : ['639', '204', '443'] (scores: [0.261, 0.245, 0.239])
+[⚠️ MISMATCH] CWE-201
+    Original CAPECs : ['12', '217', '612', '613', '618', '619', '621', '622', '623']
+    TF-IDF recs     : ['204', '200', '155'] (scores: [0.249, 0.238, 0.214])
+    ... (more mismatches, suppressed)
+
+📊 Consistency Summary:
+  Total CWEs with CAPEC: 336
+  Consistent (≥1 overlap): 140 (41.7%)
+  Inconsistent (no overlap): 196 (58.3%)
+
