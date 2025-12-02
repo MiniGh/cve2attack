@@ -12,6 +12,9 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from collections import defaultdict
 from typing import List,Tuple,Set
+from datetime import datetime
+import sys
+import logging
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -143,16 +146,20 @@ class TfidfCveCweMapper:
 # 新增：评估 & 统计模块
 # -------------------------------
 class CweConsistencyEvaluator:
-    def __init__(self):
+    def __init__(self,logger: logging.Logger):
+        self.logger = logger
         self.total = 0
         self.consistent = 0
         self.inconsistent = 0
         self.inconsistent_samples: List[dict] = []
+        self.max_warnings_per_year = 30
+        self.year_mismatch_count = defaultdict(int)  # e.g., {"CVE-2022": 5}
 
     def evaluate_and_log(self,
                          cve_id: str,
                          original_cwes: List[str],
-                         recommendations: List[dict]) -> bool:
+                         recommendations: List[dict],
+                         year_key:str) -> bool:
         """
         Returns: True if consistent (any overlap), False otherwise
         """
@@ -165,20 +172,18 @@ class CweConsistencyEvaluator:
             return True
         else:
             self.inconsistent += 1
-            sample = {
-                "cve_id": cve_id,
-                "original_cwes": sorted(orig_set),
-                "tfidf_recommendations": [
-                    {"cwe_id": r["cwe_id"], "score": r["score"]} for r in recommendations
-                ]
-            }
-            self.inconsistent_samples.append(sample)
+            self.year_mismatch_count[year_key] += 1
 
-            # 实时输出（可选，避免刷屏可注释）
-            print(f"[⚠️ MISMATCH] {cve_id}")
-            print(f"    Original CWEs : {sorted(orig_set)}")
-            print(f"    TF-IDF recs   : {[r['cwe_id'] for r in recommendations]} "
-                  f"(scores: {[round(r['score'],3) for r in recommendations]})")
+            # 只输出该年前30个不一致样本的详情
+            if self.year_mismatch_count[year_key] <= self.max_warnings_per_year:
+                self.logger.warning(f"[⚠️ MISMATCH] {cve_id}")
+                self.logger.warning(f"    Original CWEs : {sorted(orig_set)}")
+                rec_ids = [r['cwe_id'] for r in recommendations]
+                rec_scores = [round(r['score'], 3) for r in recommendations]
+                self.logger.warning(f"    TF-IDF recs   : {rec_ids} (scores: {rec_scores})")
+            elif self.year_mismatch_count[year_key] == self.max_warnings_per_year + 1:
+                self.logger.warning(f"    ... (more mismatches in {year_key}, suppressed)")
+
             return False
 
     def summary(self) -> str:
@@ -189,13 +194,13 @@ class CweConsistencyEvaluator:
             f"  Inconsistent (no overlap): {self.inconsistent} ({self.inconsistent/self.total*100:.1f}%)\n"
         )
 
-    def save_inconsistent_to_jsonl(self, filepath: str):
-        """保存所有不一致样本到 JSONL，便于人工分析"""
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, 'w', encoding='utf-8') as f:
-            for sample in self.inconsistent_samples:
-                f.write(json.dumps(sample, ensure_ascii=False) + "\n")
-        print(f"💾 Inconsistent samples saved to: {filepath}")
+#    def save_inconsistent_to_jsonl(self, filepath: str):
+#        """保存所有不一致样本到 JSONL，便于人工分析"""
+#        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+#        with open(filepath, 'w', encoding='utf-8') as f:
+#            for sample in self.inconsistent_samples:
+#                f.write(json.dumps(sample, ensure_ascii=False) + "\n")
+#        self.logger.warning(f"💾 Inconsistent samples saved to: {filepath}")
 
 # -------------------------------
 # 4. Output Writer
@@ -224,7 +229,7 @@ def write_recommendations_to_jsonl(
             recs = mapper.recommend(desc)
 
             #evalutor
-            evaluator.evaluate_and_log(cve_id, info["cwes"], recs)
+            evaluator.evaluate_and_log(cve_id, info["cwes"], recs,year_key)
 
             if recs:
                 line = {
@@ -236,9 +241,36 @@ def write_recommendations_to_jsonl(
                 count += 1
     return count
 
+# -------------------------------
+# 5. 设置日志 
+# -------------------------------
+def setup_logger(log_file: str, quiet:bool=False)-> logging.Logger:
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    
+    logger = logging.getLogger("CVE_CWE_MAPPER")
+    logger.setLevel(logging.INFO)
+
+    # Avoid duplicate handlers if called multiple times
+    if logger.handlers:
+        logger.handlers.clear()
+
+    # File handler (always enabled, append mode)
+    file_handler = logging.FileHandler(log_file, mode='a', encoding='utf-8')
+    formatter = logging.Formatter('%(message)s')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    # Console handler (optional)
+    if not quiet:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+    return logger
+
 
 # -------------------------------
-# 5. Main Orchestration
+# 6. Main Orchestration
 # -------------------------------
 
 def main(
@@ -246,8 +278,23 @@ def main(
     cwe_path: str = "./source/cwe_db.json",
     output_dir: str = "./result/existing_cve2cwe",
     top_k: int = 2,
-    threshold: float = 0.05
+    threshold: float = 0.05,
+    year: Optional[str] = None,
+    log_file: str = "./result/existing_cve2cwe/out.log",
+    quiet: bool = False 
 ):
+    logger=setup_logger(log_file,quiet=quiet)
+
+    # Log run header
+    logger.info(f"\n{'='*70}")
+    logger.info(f"🚀 Run started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"🎯 Target year: {year if year else 'ALL'}")
+    logger.info(f"📂 CVE dir: {cve_dir}")
+    logger.info(f"📤 Output dir: {output_dir}")
+    logger.info(f"📄 Log file: {log_file}")
+    logger.info(f"🔇 Quiet mode: {'ON' if quiet else 'OFF'}")
+    logger.info(f"{'='*70}\n")
+
     print("[✓] Loading CWE database...")
     cwes = load_cwe_db(cwe_path)
 
@@ -260,12 +307,22 @@ def main(
     print("[✓] Loading CVEs by year...")
     cve_by_year = load_cves_by_year(cve_dir)
 
-    #create evaluator
-    evaluator = CweConsistencyEvaluator()
+    # 确定要处理的年份
+    if year:
+        target_year_key = f"CVE-{year}"
+        if target_year_key not in cve_by_year:
+            available = sorted([k.replace("CVE-", "") for k in cve_by_year.keys()])
+            raise ValueError(f"Year '{year}' not found. Available years: {available}")
+        years_to_process = [(target_year_key, cve_by_year[target_year_key])]
+    else:
+        years_to_process = sorted(cve_by_year.items())
 
-    print(f"[✓] Processing {len(cve_by_year)} years...")
+    #create evaluator
+    evaluator = CweConsistencyEvaluator(logger)
     total_written = 0
-    for year_key, cve_list in sorted(cve_by_year.items()):
+    print(f"[✓] Processing {len(years_to_process)} years...")
+
+    for year_key, cve_list in years_to_process:
         n = write_recommendations_to_jsonl(
             output_dir=output_dir,
             year_key=year_key,
@@ -276,8 +333,8 @@ def main(
         print(f"  → {year_key}.jsonl: {n} CVEs recommended")
         total_written += n
 
-    # 打印统计 + 保存不一致样本
-    print(evaluator.summary())
+    # 打印统计
+    logger.info(evaluator.summary())
 
     print(f"\n✅ Done. {total_written} recommendations saved to {output_dir}/")
 
@@ -291,9 +348,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Map CVE → CWE using TF-IDF")
     parser.add_argument("--cve_dir", default="./source/cve", help="Directory of CVE JSONs (by year)")
     parser.add_argument("--cwe_path", default="./source/cwe_db.json", help="Path to cwe_db.json")
-    parser.add_argument("--output_dir", default="./result/cve2cwe", help="Output directory for JSONLs")
+    parser.add_argument("--output_dir", default="./result/existing_cve2cwe", help="Output directory for JSONLs")
+    parser.add_argument("--log_file", default="./result/existing_cve2cwe/out.log", help="Log file path (appended on each run)")
     parser.add_argument("--top_k", type=int, default=2, help="Max CWEs per CVE")
     parser.add_argument("--threshold", type=float, default=0.05, help="Min similarity score")
+    parser.add_argument("--year", type=str, default=None, help="Process only a specific year (e.g., '2023')")
+    parser.add_argument("--quiet", action="store_false", help="Suppress console output (log only to file)")
+
     args = parser.parse_args()
 
     main(
@@ -301,5 +362,8 @@ if __name__ == "__main__":
         cwe_path=args.cwe_path,
         output_dir=args.output_dir,
         top_k=args.top_k,
-        threshold=args.threshold
+        threshold=args.threshold,
+        year=args.year,
+        log_file=args.log_file,
+        quiet=args.quiet
     )
