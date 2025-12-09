@@ -1,0 +1,4286 @@
+{
+  "10": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.007",
+        "score": 0.24276893896342622
+      },
+      {
+        "technique_id": "T1574.006",
+        "score": 0.17113092901685076
+      }
+    ]
+  },
+  "100": {
+    "recommendations": [
+      {
+        "technique_id": "T1535",
+        "score": 0.1287253502900169
+      }
+    ]
+  },
+  "101": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.003",
+        "score": 0.192037124775239
+      },
+      {
+        "technique_id": "T1051",
+        "score": 0.1896552804606469
+      }
+    ]
+  },
+  "102": {
+    "recommendations": [
+      {
+        "technique_id": "T1134.003",
+        "score": 0.27267765936992955
+      },
+      {
+        "technique_id": "T1563",
+        "score": 0.2636354760542423
+      }
+    ]
+  },
+  "103": {
+    "recommendations": [
+      {
+        "technique_id": "T1674",
+        "score": 0.09845736208557979
+      },
+      {
+        "technique_id": "T1105",
+        "score": 0.09571839987891312
+      }
+    ]
+  },
+  "104": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.15177473669086183
+      },
+      {
+        "technique_id": "T1124",
+        "score": 0.1381360178202322
+      }
+    ]
+  },
+  "105": {
+    "recommendations": [
+      {
+        "technique_id": "T1071.001",
+        "score": 0.15257525366235156
+      },
+      {
+        "technique_id": "T1185",
+        "score": 0.1414920857269353
+      }
+    ]
+  },
+  "107": {
+    "recommendations": [
+      {
+        "technique_id": "T1506",
+        "score": 0.3017888975125359
+      },
+      {
+        "technique_id": "T1550.004",
+        "score": 0.2948598910183282
+      }
+    ]
+  },
+  "108": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.010",
+        "score": 0.20119113683730722
+      },
+      {
+        "technique_id": "T1505.001",
+        "score": 0.19466372398109916
+      }
+    ]
+  },
+  "109": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.2393932751573265
+      }
+    ]
+  },
+  "110": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.26538901812212684
+      }
+    ]
+  },
+  "111": {
+    "recommendations": [
+      {
+        "technique_id": "T1546.015",
+        "score": 0.17393336040458113
+      },
+      {
+        "technique_id": "T1122",
+        "score": 0.168310989006215
+      }
+    ]
+  },
+  "113": {
+    "recommendations": [
+      {
+        "technique_id": "T1019",
+        "score": 0.11352641632595278
+      },
+      {
+        "technique_id": "T1542.001",
+        "score": 0.108563019935747
+      }
+    ]
+  },
+  "116": {
+    "recommendations": [
+      {
+        "technique_id": "T1012",
+        "score": 0.12801519386259347
+      },
+      {
+        "technique_id": "T1538",
+        "score": 0.12251005404614869
+      }
+    ]
+  },
+  "117": {
+    "recommendations": [
+      {
+        "technique_id": "T1659",
+        "score": 0.17842045053014446
+      },
+      {
+        "technique_id": "T1040",
+        "score": 0.15527827705503242
+      }
+    ]
+  },
+  "12": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.18999687086600223
+      }
+    ]
+  },
+  "120": {
+    "recommendations": [
+      {
+        "technique_id": "T1132",
+        "score": 0.41335119734192194
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.3838036263417616
+      }
+    ]
+  },
+  "121": {
+    "recommendations": [
+      {
+        "technique_id": "T1195",
+        "score": 0.09255955311299771
+      },
+      {
+        "technique_id": "T1562.008",
+        "score": 0.07777988384835119
+      }
+    ]
+  },
+  "123": {
+    "recommendations": [
+      {
+        "technique_id": "T1056.001",
+        "score": 0.11054604324818917
+      },
+      {
+        "technique_id": "T1055.015",
+        "score": 0.09951519063138435
+      }
+    ]
+  },
+  "124": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.009",
+        "score": 0.27254870590278146
+      },
+      {
+        "technique_id": "T1135",
+        "score": 0.2696057009045117
+      }
+    ]
+  },
+  "126": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.007",
+        "score": 0.25186090448373827
+      },
+      {
+        "technique_id": "T1574.009",
+        "score": 0.20720458138045472
+      }
+    ]
+  },
+  "128": {
+    "recommendations": [
+      {
+        "technique_id": "T1671",
+        "score": 0.07782577012967212
+      },
+      {
+        "technique_id": "T1574.007",
+        "score": 0.06739813864828756
+      }
+    ]
+  },
+  "129": {
+    "recommendations": [
+      {
+        "technique_id": "T1181",
+        "score": 0.11675235694037385
+      },
+      {
+        "technique_id": "T1055.011",
+        "score": 0.11446577012514728
+      }
+    ]
+  },
+  "133": {
+    "recommendations": [
+      {
+        "technique_id": "T1203",
+        "score": 0.08585597415700746
+      },
+      {
+        "technique_id": "T1027.010",
+        "score": 0.061193582618396795
+      }
+    ]
+  },
+  "134": {
+    "recommendations": [
+      {
+        "technique_id": "T1672",
+        "score": 0.17845578470158263
+      },
+      {
+        "technique_id": "T1564.008",
+        "score": 0.12499311083443114
+      }
+    ]
+  },
+  "135": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.011",
+        "score": 0.19355961883523012
+      },
+      {
+        "technique_id": "T1036.002",
+        "score": 0.191890734816079
+      }
+    ]
+  },
+  "136": {
+    "recommendations": [
+      {
+        "technique_id": "T1012",
+        "score": 0.11708592904309402
+      },
+      {
+        "technique_id": "T1214",
+        "score": 0.10685842264987373
+      }
+    ]
+  },
+  "137": {
+    "recommendations": [
+      {
+        "technique_id": "T1132.002",
+        "score": 0.20037075441085422
+      },
+      {
+        "technique_id": "T1132",
+        "score": 0.19225512786976762
+      }
+    ]
+  },
+  "138": {
+    "recommendations": [
+      {
+        "technique_id": "T1498.002",
+        "score": 0.16931482649111154
+      }
+    ]
+  },
+  "139": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.007",
+        "score": 0.19274242525253732
+      },
+      {
+        "technique_id": "T1034",
+        "score": 0.18550201697959318
+      }
+    ]
+  },
+  "14": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.23244084904234857
+      },
+      {
+        "technique_id": "T1659",
+        "score": 0.18970303021086743
+      }
+    ]
+  },
+  "140": {
+    "recommendations": [
+      {
+        "technique_id": "T1137.003",
+        "score": 0.18928361367412996
+      }
+    ]
+  },
+  "143": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.003",
+        "score": 0.15798664323788114
+      },
+      {
+        "technique_id": "T1608.004",
+        "score": 0.15036822111638803
+      }
+    ]
+  },
+  "144": {
+    "recommendations": [
+      {
+        "technique_id": "T1584.006",
+        "score": 0.2565344381818882
+      },
+      {
+        "technique_id": "T1583.006",
+        "score": 0.20169290541280413
+      }
+    ]
+  },
+  "145": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.12020143104732393
+      },
+      {
+        "technique_id": "T1558.004",
+        "score": 0.10571318743099067
+      }
+    ]
+  },
+  "146": {
+    "recommendations": [
+      {
+        "technique_id": "T1220",
+        "score": 0.11057090095797058
+      },
+      {
+        "technique_id": "T1552.006",
+        "score": 0.09908916665087725
+      }
+    ]
+  },
+  "147": {
+    "recommendations": [
+      {
+        "technique_id": "T1498.001",
+        "score": 0.1418318138193672
+      },
+      {
+        "technique_id": "T1499.003",
+        "score": 0.13177193505653395
+      }
+    ]
+  },
+  "149": {
+    "recommendations": [
+      {
+        "technique_id": "T1595.003",
+        "score": 0.07865480974119778
+      },
+      {
+        "technique_id": "T1036.010",
+        "score": 0.07851669097454135
+      }
+    ]
+  },
+  "15": {
+    "recommendations": [
+      {
+        "technique_id": "T1556.002",
+        "score": 0.13326592097619472
+      },
+      {
+        "technique_id": "T1149",
+        "score": 0.13325918366698228
+      }
+    ]
+  },
+  "151": {
+    "recommendations": [
+      {
+        "technique_id": "T1672",
+        "score": 0.2075838451969011
+      },
+      {
+        "technique_id": "T1484",
+        "score": 0.18746731302602435
+      }
+    ]
+  },
+  "153": {
+    "recommendations": [
+      {
+        "technique_id": "T1056",
+        "score": 0.2119346363699888
+      },
+      {
+        "technique_id": "T1132.002",
+        "score": 0.15436616421435653
+      }
+    ]
+  },
+  "154": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.009",
+        "score": 0.25134203593485555
+      }
+    ]
+  },
+  "155": {
+    "recommendations": [
+      {
+        "technique_id": "T1213",
+        "score": 0.12145203946503709
+      },
+      {
+        "technique_id": "T1114",
+        "score": 0.11614968263844978
+      }
+    ]
+  },
+  "157": {
+    "recommendations": [
+      {
+        "technique_id": "T1557",
+        "score": 0.171803550560852
+      },
+      {
+        "technique_id": "T1659",
+        "score": 0.14489940498768172
+      }
+    ]
+  },
+  "16": {
+    "recommendations": [
+      {
+        "technique_id": "T1201",
+        "score": 0.22269427809507703
+      },
+      {
+        "technique_id": "T1555.005",
+        "score": 0.20245347366094227
+      }
+    ]
+  },
+  "160": {
+    "recommendations": [
+      {
+        "technique_id": "T1059.007",
+        "score": 0.15291855386568853
+      },
+      {
+        "technique_id": "T1064",
+        "score": 0.14477278463492863
+      }
+    ]
+  },
+  "161": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.13684164423434567
+      },
+      {
+        "technique_id": "T1674",
+        "score": 0.09804277253616737
+      }
+    ]
+  },
+  "162": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.1473103315057805
+      },
+      {
+        "technique_id": "T1547.015",
+        "score": 0.11493015196078508
+      }
+    ]
+  },
+  "164": {
+    "recommendations": [
+      {
+        "technique_id": "T1598",
+        "score": 0.2555452069274628
+      },
+      {
+        "technique_id": "T1598.003",
+        "score": 0.21512167048457742
+      }
+    ]
+  },
+  "166": {
+    "recommendations": [
+      {
+        "technique_id": "T1602.002",
+        "score": 0.22687304363105545
+      }
+    ]
+  },
+  "167": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.001",
+        "score": 0.08339884441864807
+      },
+      {
+        "technique_id": "T1204.004",
+        "score": 0.08050488958827347
+      }
+    ]
+  },
+  "168": {
+    "recommendations": [
+      {
+        "technique_id": "T1096",
+        "score": 0.29716543244063054
+      },
+      {
+        "technique_id": "T1564.004",
+        "score": 0.2921860971044211
+      }
+    ]
+  },
+  "170": {
+    "recommendations": [
+      {
+        "technique_id": "T1539",
+        "score": 0.1267107578078387
+      },
+      {
+        "technique_id": "T1499.002",
+        "score": 0.10843125146597865
+      }
+    ]
+  },
+  "173": {
+    "recommendations": [
+      {
+        "technique_id": "T1674",
+        "score": 0.12965398774445805
+      },
+      {
+        "technique_id": "T1204.001",
+        "score": 0.09578069936521509
+      }
+    ]
+  },
+  "174": {
+    "recommendations": [
+      {
+        "technique_id": "T1221",
+        "score": 0.1657888947162482
+      },
+      {
+        "technique_id": "T1027.006",
+        "score": 0.16211816808852683
+      }
+    ]
+  },
+  "175": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.015",
+        "score": 0.2567394282338843
+      },
+      {
+        "technique_id": "T1055.004",
+        "score": 0.20809432547492568
+      }
+    ]
+  },
+  "176": {
+    "recommendations": [
+      {
+        "technique_id": "T1602.002",
+        "score": 0.19170357013891492
+      }
+    ]
+  },
+  "178": {
+    "recommendations": [
+      {
+        "technique_id": "T1203",
+        "score": 0.16738504966420079
+      }
+    ]
+  },
+  "179": {
+    "recommendations": [
+      {
+        "technique_id": "T1051",
+        "score": 0.126626199392256
+      },
+      {
+        "technique_id": "T1137.004",
+        "score": 0.11308072352262266
+      }
+    ]
+  },
+  "18": {
+    "recommendations": [
+      {
+        "technique_id": "T1546.016",
+        "score": 0.09012320770342744
+      },
+      {
+        "technique_id": "T1064",
+        "score": 0.08902470904456355
+      }
+    ]
+  },
+  "181": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.006",
+        "score": 0.13935288682670594
+      },
+      {
+        "technique_id": "T1223",
+        "score": 0.11743156231326494
+      }
+    ]
+  },
+  "182": {
+    "recommendations": [
+      {
+        "technique_id": "T1216.001",
+        "score": 0.08997147981299058
+      },
+      {
+        "technique_id": "T1218.015",
+        "score": 0.0789067866189802
+      }
+    ]
+  },
+  "183": {
+    "recommendations": [
+      {
+        "technique_id": "T1071.003",
+        "score": 0.2483368063225935
+      },
+      {
+        "technique_id": "T1051",
+        "score": 0.18446151307844177
+      }
+    ]
+  },
+  "184": {
+    "recommendations": [
+      {
+        "technique_id": "T1109",
+        "score": 0.19929708057166068
+      },
+      {
+        "technique_id": "T1542.005",
+        "score": 0.1848593528173353
+      }
+    ]
+  },
+  "185": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.015",
+        "score": 0.10729741479587263
+      },
+      {
+        "technique_id": "T1055.012",
+        "score": 0.07854817761198882
+      }
+    ]
+  },
+  "188": {
+    "recommendations": [
+      {
+        "technique_id": "T1024",
+        "score": 0.14087280643705768
+      },
+      {
+        "technique_id": "T1573",
+        "score": 0.14036825094768418
+      }
+    ]
+  },
+  "189": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.001",
+        "score": 0.09122812103975783
+      },
+      {
+        "technique_id": "T1024",
+        "score": 0.0848781780784477
+      }
+    ]
+  },
+  "190": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.007",
+        "score": 0.2023624352794759
+      },
+      {
+        "technique_id": "T1213.003",
+        "score": 0.16398163388774245
+      }
+    ]
+  },
+  "192": {
+    "recommendations": [
+      {
+        "technique_id": "T1094",
+        "score": 0.18752964316751095
+      },
+      {
+        "technique_id": "T1095",
+        "score": 0.1751513883308399
+      }
+    ]
+  },
+  "193": {
+    "recommendations": [
+      {
+        "technique_id": "T1051",
+        "score": 0.191819166890501
+      },
+      {
+        "technique_id": "T1574.014",
+        "score": 0.14074578312106545
+      }
+    ]
+  },
+  "194": {
+    "recommendations": [
+      {
+        "technique_id": "T1672",
+        "score": 0.1894189482211849
+      }
+    ]
+  },
+  "195": {
+    "recommendations": [
+      {
+        "technique_id": "T1672",
+        "score": 0.17589222431994414
+      },
+      {
+        "technique_id": "T1598",
+        "score": 0.12579489421248052
+      }
+    ]
+  },
+  "197": {
+    "recommendations": [
+      {
+        "technique_id": "T1003.007",
+        "score": 0.09929527239669375
+      },
+      {
+        "technique_id": "T1565",
+        "score": 0.09819839617493738
+      }
+    ]
+  },
+  "198": {
+    "recommendations": [
+      {
+        "technique_id": "T1051",
+        "score": 0.20087743235340882
+      },
+      {
+        "technique_id": "T1505.003",
+        "score": 0.15932092070249526
+      }
+    ]
+  },
+  "199": {
+    "recommendations": [
+      {
+        "technique_id": "T1205.002",
+        "score": 0.13530267370811255
+      },
+      {
+        "technique_id": "T1550",
+        "score": 0.12739874222850414
+      }
+    ]
+  },
+  "20": {
+    "recommendations": [
+      {
+        "technique_id": "T1110",
+        "score": 0.24734096946589113
+      },
+      {
+        "technique_id": "T1600.002",
+        "score": 0.20353081133962952
+      }
+    ]
+  },
+  "200": {
+    "recommendations": [
+      {
+        "technique_id": "T1205.002",
+        "score": 0.2340927790910426
+      },
+      {
+        "technique_id": "T1505.004",
+        "score": 0.2157485002970662
+      }
+    ]
+  },
+  "201": {
+    "recommendations": [
+      {
+        "technique_id": "T1565.001",
+        "score": 0.11237506942528698
+      },
+      {
+        "technique_id": "T1074.002",
+        "score": 0.10789153176500868
+      }
+    ]
+  },
+  "202": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.28605991837901673
+      }
+    ]
+  },
+  "207": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.24285865347765861
+      }
+    ]
+  },
+  "208": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.1407032368455639
+      }
+    ]
+  },
+  "209": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.007",
+        "score": 0.1707542079862808
+      },
+      {
+        "technique_id": "T1185",
+        "score": 0.15521631273431835
+      }
+    ]
+  },
+  "212": {
+    "recommendations": [
+      {
+        "technique_id": "T1129",
+        "score": 0.0977167100527802
+      },
+      {
+        "technique_id": "T1039",
+        "score": 0.08735719745565693
+      }
+    ]
+  },
+  "215": {
+    "recommendations": [
+      {
+        "technique_id": "T1070.002",
+        "score": 0.10401532569607881
+      },
+      {
+        "technique_id": "T1499.004",
+        "score": 0.09743355669870381
+      }
+    ]
+  },
+  "216": {
+    "recommendations": [
+      {
+        "technique_id": "T1041",
+        "score": 0.29197584408698674
+      }
+    ]
+  },
+  "217": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.002",
+        "score": 0.28226912503366897
+      },
+      {
+        "technique_id": "T1588.004",
+        "score": 0.2092818123503196
+      }
+    ]
+  },
+  "218": {
+    "recommendations": [
+      {
+        "technique_id": "T1657",
+        "score": 0.13256523264775438
+      },
+      {
+        "technique_id": "T1557.003",
+        "score": 0.13225055629913135
+      }
+    ]
+  },
+  "219": {
+    "recommendations": [
+      {
+        "technique_id": "T1220",
+        "score": 0.14121567346853853
+      },
+      {
+        "technique_id": "T1090.003",
+        "score": 0.10473792053408389
+      }
+    ]
+  },
+  "22": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.26150374816179855
+      }
+    ]
+  },
+  "220": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.24568544827974062
+      }
+    ]
+  },
+  "221": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.004",
+        "score": 0.1655776375209947
+      }
+    ]
+  },
+  "222": {
+    "recommendations": [
+      {
+        "technique_id": "T1105",
+        "score": 0.09242991992238851
+      },
+      {
+        "technique_id": "T1674",
+        "score": 0.08466998395612943
+      }
+    ]
+  },
+  "224": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.012",
+        "score": 0.11773723930703456
+      },
+      {
+        "technique_id": "T1595",
+        "score": 0.08322227045944744
+      }
+    ]
+  },
+  "226": {
+    "recommendations": [
+      {
+        "technique_id": "T1555.004",
+        "score": 0.21150070186865172
+      },
+      {
+        "technique_id": "T1606",
+        "score": 0.18161784445583162
+      }
+    ]
+  },
+  "228": {
+    "recommendations": [
+      {
+        "technique_id": "T1221",
+        "score": 0.13546119707756682
+      },
+      {
+        "technique_id": "T1564.009",
+        "score": 0.10714139826059714
+      }
+    ]
+  },
+  "229": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.004",
+        "score": 0.1479423764881671
+      },
+      {
+        "technique_id": "T1602",
+        "score": 0.1259501436907772
+      }
+    ]
+  },
+  "23": {
+    "recommendations": [
+      {
+        "technique_id": "T1203",
+        "score": 0.22261762877213717
+      },
+      {
+        "technique_id": "T1564.005",
+        "score": 0.17685519358007035
+      }
+    ]
+  },
+  "230": {
+    "recommendations": [
+      {
+        "technique_id": "T1543.003",
+        "score": 0.15147723198316582
+      },
+      {
+        "technique_id": "T1035",
+        "score": 0.1509470572259742
+      }
+    ]
+  },
+  "231": {
+    "recommendations": [
+      {
+        "technique_id": "T1035",
+        "score": 0.14246629233483185
+      },
+      {
+        "technique_id": "T1584.006",
+        "score": 0.13853600467102195
+      }
+    ]
+  },
+  "234": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.014",
+        "score": 0.20171007666868143
+      },
+      {
+        "technique_id": "T1055.003",
+        "score": 0.19315423550331137
+      }
+    ]
+  },
+  "237": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.015",
+        "score": 0.21856584479742833
+      },
+      {
+        "technique_id": "T1614.001",
+        "score": 0.2043611499521904
+      }
+    ]
+  },
+  "24": {
+    "recommendations": [
+      {
+        "technique_id": "T1556.002",
+        "score": 0.18970137647987792
+      },
+      {
+        "technique_id": "T1505.004",
+        "score": 0.17364719277150967
+      }
+    ]
+  },
+  "240": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.009",
+        "score": 0.2816710030563031
+      }
+    ]
+  },
+  "242": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.015",
+        "score": 0.25014325431923534
+      },
+      {
+        "technique_id": "T1216.001",
+        "score": 0.20157207040766517
+      }
+    ]
+  },
+  "243": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.006",
+        "score": 0.19354936273459977
+      }
+    ]
+  },
+  "244": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.006",
+        "score": 0.2152056359909622
+      },
+      {
+        "technique_id": "T1608.005",
+        "score": 0.1905856962868332
+      }
+    ]
+  },
+  "245": {
+    "recommendations": [
+      {
+        "technique_id": "T1001.001",
+        "score": 0.1629515690325679
+      },
+      {
+        "technique_id": "T1051",
+        "score": 0.14338423283984147
+      }
+    ]
+  },
+  "247": {
+    "recommendations": [
+      {
+        "technique_id": "T1001.001",
+        "score": 0.20087199338596815
+      }
+    ]
+  },
+  "248": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.010",
+        "score": 0.12858351214364447
+      },
+      {
+        "technique_id": "T1059.003",
+        "score": 0.09652714610878625
+      }
+    ]
+  },
+  "250": {
+    "recommendations": [
+      {
+        "technique_id": "T1220",
+        "score": 0.13726765255489695
+      },
+      {
+        "technique_id": "T1221",
+        "score": 0.13413259449886616
+      }
+    ]
+  },
+  "252": {
+    "recommendations": [
+      {
+        "technique_id": "T1051",
+        "score": 0.19602469985162374
+      }
+    ]
+  },
+  "253": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.014",
+        "score": 0.12782234282062835
+      },
+      {
+        "technique_id": "T1574.001",
+        "score": 0.12616032691058546
+      }
+    ]
+  },
+  "256": {
+    "recommendations": [
+      {
+        "technique_id": "T1030",
+        "score": 0.10602356858056348
+      },
+      {
+        "technique_id": "T1568.001",
+        "score": 0.07689999153603662
+      }
+    ]
+  },
+  "26": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.004",
+        "score": 0.20252792999105493
+      }
+    ]
+  },
+  "261": {
+    "recommendations": [
+      {
+        "technique_id": "T1593.002",
+        "score": 0.12382938780053734
+      },
+      {
+        "technique_id": "T1557.003",
+        "score": 0.11444043360434748
+      }
+    ]
+  },
+  "263": {
+    "recommendations": [
+      {
+        "technique_id": "T1006",
+        "score": 0.09771358909762537
+      },
+      {
+        "technique_id": "T1036.008",
+        "score": 0.09712055802348507
+      }
+    ]
+  },
+  "27": {
+    "recommendations": [
+      {
+        "technique_id": "T1608.005",
+        "score": 0.17556584630771832
+      },
+      {
+        "technique_id": "T1036.008",
+        "score": 0.1651357910503105
+      }
+    ]
+  },
+  "271": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.009",
+        "score": 0.14016424771926372
+      },
+      {
+        "technique_id": "T1499.003",
+        "score": 0.09931731643287862
+      }
+    ]
+  },
+  "272": {
+    "recommendations": [
+      {
+        "technique_id": "T1572",
+        "score": 0.2275378909875658
+      },
+      {
+        "technique_id": "T1094",
+        "score": 0.22240506329985188
+      }
+    ]
+  },
+  "273": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.004",
+        "score": 0.17192394888693746
+      },
+      {
+        "technique_id": "T1071.001",
+        "score": 0.1695364449548291
+      }
+    ]
+  },
+  "274": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.004",
+        "score": 0.1181212297708076
+      },
+      {
+        "technique_id": "T1499.002",
+        "score": 0.1013844751336099
+      }
+    ]
+  },
+  "275": {
+    "recommendations": [
+      {
+        "technique_id": "T1568.001",
+        "score": 0.3975915511864342
+      },
+      {
+        "technique_id": "T1568.003",
+        "score": 0.3118316202464916
+      }
+    ]
+  },
+  "276": {
+    "recommendations": [
+      {
+        "technique_id": "T1094",
+        "score": 0.2165075740632559
+      },
+      {
+        "technique_id": "T1564.011",
+        "score": 0.15772737138180168
+      }
+    ]
+  },
+  "277": {
+    "recommendations": [
+      {
+        "technique_id": "T1094",
+        "score": 0.2554128067577816
+      }
+    ]
+  },
+  "278": {
+    "recommendations": [
+      {
+        "technique_id": "T1584.006",
+        "score": 0.2221441362949909
+      },
+      {
+        "technique_id": "T1583.006",
+        "score": 0.17637447248534666
+      }
+    ]
+  },
+  "279": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.14895711001700107
+      },
+      {
+        "technique_id": "T1071.001",
+        "score": 0.14744998959759167
+      }
+    ]
+  },
+  "28": {
+    "recommendations": [
+      {
+        "technique_id": "T1056",
+        "score": 0.19933605643196123
+      }
+    ]
+  },
+  "285": {
+    "recommendations": [
+      {
+        "technique_id": "T1095",
+        "score": 0.207227641913531
+      },
+      {
+        "technique_id": "T1018",
+        "score": 0.17123246464892633
+      }
+    ]
+  },
+  "287": {
+    "recommendations": [
+      {
+        "technique_id": "T1043",
+        "score": 0.28754619273352594
+      },
+      {
+        "technique_id": "T1110.004",
+        "score": 0.2792055036889077
+      }
+    ]
+  },
+  "29": {
+    "recommendations": [
+      {
+        "technique_id": "T1124",
+        "score": 0.36503767792652325
+      }
+    ]
+  },
+  "290": {
+    "recommendations": [
+      {
+        "technique_id": "T1590.002",
+        "score": 0.3125670973002036
+      },
+      {
+        "technique_id": "T1596.001",
+        "score": 0.23702225196861212
+      }
+    ]
+  },
+  "291": {
+    "recommendations": [
+      {
+        "technique_id": "T1583.002",
+        "score": 0.3508931858742477
+      },
+      {
+        "technique_id": "T1590.002",
+        "score": 0.28840345683920743
+      }
+    ]
+  },
+  "293": {
+    "recommendations": [
+      {
+        "technique_id": "T1095",
+        "score": 0.16081040203975838
+      }
+    ]
+  },
+  "294": {
+    "recommendations": [
+      {
+        "technique_id": "T1095",
+        "score": 0.18866498352597943
+      }
+    ]
+  },
+  "296": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.20093328487229176
+      },
+      {
+        "technique_id": "T1095",
+        "score": 0.1916164025349695
+      }
+    ]
+  },
+  "297": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.4128754871366958
+      }
+    ]
+  },
+  "298": {
+    "recommendations": [
+      {
+        "technique_id": "T1043",
+        "score": 0.3233214846435838
+      }
+    ]
+  },
+  "299": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.34860090720243836
+      },
+      {
+        "technique_id": "T1205",
+        "score": 0.32088577978685767
+      }
+    ]
+  },
+  "3": {
+    "recommendations": [
+      {
+        "technique_id": "T1001.001",
+        "score": 0.1540452732790902
+      },
+      {
+        "technique_id": "T1056",
+        "score": 0.14909085856863447
+      }
+    ]
+  },
+  "301": {
+    "recommendations": [
+      {
+        "technique_id": "T1043",
+        "score": 0.3932434980157125
+      },
+      {
+        "technique_id": "T1110.004",
+        "score": 0.33823441035639223
+      }
+    ]
+  },
+  "302": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.3232186048532487
+      },
+      {
+        "technique_id": "T1205",
+        "score": 0.2866738224039111
+      }
+    ]
+  },
+  "303": {
+    "recommendations": [
+      {
+        "technique_id": "T1205",
+        "score": 0.34197582834376755
+      },
+      {
+        "technique_id": "T1499.001",
+        "score": 0.281033654390398
+      }
+    ]
+  },
+  "304": {
+    "recommendations": [
+      {
+        "technique_id": "T1205",
+        "score": 0.3176663185559336
+      },
+      {
+        "technique_id": "T1499.001",
+        "score": 0.2610562471999501
+      }
+    ]
+  },
+  "305": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.3558868129856524
+      }
+    ]
+  },
+  "306": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.004",
+        "score": 0.33397188210604045
+      },
+      {
+        "technique_id": "T1043",
+        "score": 0.32429861655345216
+      }
+    ]
+  },
+  "307": {
+    "recommendations": [
+      {
+        "technique_id": "T1043",
+        "score": 0.24613639189013964
+      }
+    ]
+  },
+  "308": {
+    "recommendations": [
+      {
+        "technique_id": "T1043",
+        "score": 0.4200021577421409
+      }
+    ]
+  },
+  "310": {
+    "recommendations": [
+      {
+        "technique_id": "T1592.002",
+        "score": 0.1518840711750959
+      },
+      {
+        "technique_id": "T1210",
+        "score": 0.13626486562094797
+      }
+    ]
+  },
+  "317": {
+    "recommendations": [
+      {
+        "technique_id": "T1556.007",
+        "score": 0.19748407677459537
+      },
+      {
+        "technique_id": "T1568.003",
+        "score": 0.15323474719311517
+      }
+    ]
+  },
+  "318": {
+    "recommendations": [
+      {
+        "technique_id": "T1556.007",
+        "score": 0.1286728024480546
+      },
+      {
+        "technique_id": "T1568.003",
+        "score": 0.12353383544687832
+      }
+    ]
+  },
+  "319": {
+    "recommendations": [
+      {
+        "technique_id": "T1568.003",
+        "score": 0.10163080651417383
+      },
+      {
+        "technique_id": "T1205",
+        "score": 0.09045267041411571
+      }
+    ]
+  },
+  "32": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.012",
+        "score": 0.15230484998413202
+      },
+      {
+        "technique_id": "T1216.001",
+        "score": 0.13188458464885408
+      }
+    ]
+  },
+  "320": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.004",
+        "score": 0.390538040553297
+      },
+      {
+        "technique_id": "T1110.001",
+        "score": 0.3740632163744932
+      }
+    ]
+  },
+  "321": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.001",
+        "score": 0.12122052365453395
+      },
+      {
+        "technique_id": "T1110.004",
+        "score": 0.12064631119580119
+      }
+    ]
+  },
+  "322": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.28581606085122924
+      }
+    ]
+  },
+  "323": {
+    "recommendations": [
+      {
+        "technique_id": "T1497.003",
+        "score": 0.2340624991299765
+      },
+      {
+        "technique_id": "T1124",
+        "score": 0.21573905747515132
+      }
+    ]
+  },
+  "324": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.003",
+        "score": 0.10117494501778454
+      },
+      {
+        "technique_id": "T1110.001",
+        "score": 0.09880674509227874
+      }
+    ]
+  },
+  "325": {
+    "recommendations": [
+      {
+        "technique_id": "T1213.005",
+        "score": 0.12758156927634132
+      },
+      {
+        "technique_id": "T1553.001",
+        "score": 0.09023334258756473
+      }
+    ]
+  },
+  "326": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.004",
+        "score": 0.28195997093002534
+      },
+      {
+        "technique_id": "T1110.001",
+        "score": 0.2552977540659062
+      }
+    ]
+  },
+  "327": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.004",
+        "score": 0.31675681429650465
+      },
+      {
+        "technique_id": "T1110.001",
+        "score": 0.29147399451351297
+      }
+    ]
+  },
+  "328": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.11619182480738331
+      },
+      {
+        "technique_id": "T1027.008",
+        "score": 0.11360948355056227
+      }
+    ]
+  },
+  "329": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.11527037091825613
+      },
+      {
+        "technique_id": "T1571",
+        "score": 0.10771144205873406
+      }
+    ]
+  },
+  "33": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.017",
+        "score": 0.17130636454911824
+      },
+      {
+        "technique_id": "T1505.004",
+        "score": 0.16277695058327596
+      }
+    ]
+  },
+  "330": {
+    "recommendations": [
+      {
+        "technique_id": "T1095",
+        "score": 0.1682882201933809
+      },
+      {
+        "technique_id": "T1571",
+        "score": 0.16064910530188128
+      }
+    ]
+  },
+  "331": {
+    "recommendations": [
+      {
+        "technique_id": "T1568.003",
+        "score": 0.15290513390726326
+      },
+      {
+        "technique_id": "T1090.004",
+        "score": 0.14163898614572035
+      }
+    ]
+  },
+  "332": {
+    "recommendations": [
+      {
+        "technique_id": "T1090.004",
+        "score": 0.11927959591532555
+      },
+      {
+        "technique_id": "T1172",
+        "score": 0.11900407525192636
+      }
+    ]
+  },
+  "34": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.004",
+        "score": 0.16646343520745716
+      },
+      {
+        "technique_id": "T1071.001",
+        "score": 0.1606908393544732
+      }
+    ]
+  },
+  "36": {
+    "recommendations": [
+      {
+        "technique_id": "T1197",
+        "score": 0.49556166407280716
+      }
+    ]
+  },
+  "384": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.18642754724927593
+      },
+      {
+        "technique_id": "T1659",
+        "score": 0.15156373996451256
+      }
+    ]
+  },
+  "385": {
+    "recommendations": [
+      {
+        "technique_id": "T1547.015",
+        "score": 0.12800567373836821
+      },
+      {
+        "technique_id": "T1659",
+        "score": 0.11180910343886928
+      }
+    ]
+  },
+  "386": {
+    "recommendations": [
+      {
+        "technique_id": "T1566.002",
+        "score": 0.1257690121357936
+      },
+      {
+        "technique_id": "T1192",
+        "score": 0.12160055420138896
+      }
+    ]
+  },
+  "387": {
+    "recommendations": [
+      {
+        "technique_id": "T1659",
+        "score": 0.1923115032350069
+      },
+      {
+        "technique_id": "T1051",
+        "score": 0.17102102351355516
+      }
+    ]
+  },
+  "388": {
+    "recommendations": [
+      {
+        "technique_id": "T1659",
+        "score": 0.11318693339985182
+      },
+      {
+        "technique_id": "T1559.003",
+        "score": 0.09427881025354712
+      }
+    ]
+  },
+  "389": {
+    "recommendations": [
+      {
+        "technique_id": "T1659",
+        "score": 0.17581063789345086
+      },
+      {
+        "technique_id": "T1051",
+        "score": 0.14585131646855967
+      }
+    ]
+  },
+  "39": {
+    "recommendations": [
+      {
+        "technique_id": "T1528",
+        "score": 0.216762395117534
+      },
+      {
+        "technique_id": "T1557.003",
+        "score": 0.15263921565936678
+      }
+    ]
+  },
+  "390": {
+    "recommendations": [
+      {
+        "technique_id": "T1052",
+        "score": 0.18662413272561632
+      },
+      {
+        "technique_id": "T1591.001",
+        "score": 0.14782135288937573
+      }
+    ]
+  },
+  "391": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.002",
+        "score": 0.14776154910543454
+      },
+      {
+        "technique_id": "T1052",
+        "score": 0.11688100784885011
+      }
+    ]
+  },
+  "392": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.002",
+        "score": 0.1326998665183328
+      },
+      {
+        "technique_id": "T1552.004",
+        "score": 0.10038262868381907
+      }
+    ]
+  },
+  "393": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.002",
+        "score": 0.14731080608427463
+      }
+    ]
+  },
+  "394": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.002",
+        "score": 0.13465015325892685
+      }
+    ]
+  },
+  "395": {
+    "recommendations": [
+      {
+        "technique_id": "T1547.012",
+        "score": 0.14775221120552756
+      },
+      {
+        "technique_id": "T1071.003",
+        "score": 0.12596793309034016
+      }
+    ]
+  },
+  "397": {
+    "recommendations": [
+      {
+        "technique_id": "T1111",
+        "score": 0.23262077894882177
+      }
+    ]
+  },
+  "398": {
+    "recommendations": [
+      {
+        "technique_id": "T1111",
+        "score": 0.15812138783333293
+      }
+    ]
+  },
+  "399": {
+    "recommendations": [
+      {
+        "technique_id": "T1195",
+        "score": 0.08711381521155671
+      },
+      {
+        "technique_id": "T1495",
+        "score": 0.08024058548962172
+      }
+    ]
+  },
+  "4": {
+    "recommendations": [
+      {
+        "technique_id": "T1568.003",
+        "score": 0.3288599531459497
+      },
+      {
+        "technique_id": "T1557.002",
+        "score": 0.2653744273491407
+      }
+    ]
+  },
+  "40": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.005",
+        "score": 0.17196482536787744
+      }
+    ]
+  },
+  "400": {
+    "recommendations": [
+      {
+        "technique_id": "T1602.002",
+        "score": 0.1544349208383426
+      },
+      {
+        "technique_id": "T1542.005",
+        "score": 0.1513144028708138
+      }
+    ]
+  },
+  "401": {
+    "recommendations": [
+      {
+        "technique_id": "T1195.003",
+        "score": 0.21198764930559044
+      },
+      {
+        "technique_id": "T1200",
+        "score": 0.18855028278684344
+      }
+    ]
+  },
+  "402": {
+    "recommendations": [
+      {
+        "technique_id": "T1555.005",
+        "score": 0.12656322594687827
+      },
+      {
+        "technique_id": "T1052",
+        "score": 0.12345828019279581
+      }
+    ]
+  },
+  "406": {
+    "recommendations": [
+      {
+        "technique_id": "T1547.015",
+        "score": 0.13743851762062592
+      },
+      {
+        "technique_id": "T1162",
+        "score": 0.11173226774320368
+      }
+    ]
+  },
+  "41": {
+    "recommendations": [
+      {
+        "technique_id": "T1672",
+        "score": 0.2376855141116719
+      },
+      {
+        "technique_id": "T1586.002",
+        "score": 0.23583955253676112
+      }
+    ]
+  },
+  "410": {
+    "recommendations": [
+      {
+        "technique_id": "T1082",
+        "score": 0.1611082764013556
+      },
+      {
+        "technique_id": "T1598.001",
+        "score": 0.14098731237452017
+      }
+    ]
+  },
+  "412": {
+    "recommendations": [
+      {
+        "technique_id": "T1111",
+        "score": 0.12673300104757843
+      },
+      {
+        "technique_id": "T1213.004",
+        "score": 0.12385779027873874
+      }
+    ]
+  },
+  "413": {
+    "recommendations": [
+      {
+        "technique_id": "T1052",
+        "score": 0.15991134837191748
+      },
+      {
+        "technique_id": "T1591.001",
+        "score": 0.11708112571913737
+      }
+    ]
+  },
+  "414": {
+    "recommendations": [
+      {
+        "technique_id": "T1656",
+        "score": 0.0941183938736161
+      },
+      {
+        "technique_id": "T1596.004",
+        "score": 0.0822983438275394
+      }
+    ]
+  },
+  "415": {
+    "recommendations": [
+      {
+        "technique_id": "T1598.004",
+        "score": 0.1322211156981823
+      },
+      {
+        "technique_id": "T1656",
+        "score": 0.113965373020668
+      }
+    ]
+  },
+  "416": {
+    "recommendations": [
+      {
+        "technique_id": "T1598",
+        "score": 0.1370891121174812
+      },
+      {
+        "technique_id": "T1194",
+        "score": 0.12990961972101372
+      }
+    ]
+  },
+  "417": {
+    "recommendations": [
+      {
+        "technique_id": "T1194",
+        "score": 0.15498913207227816
+      },
+      {
+        "technique_id": "T1598.001",
+        "score": 0.1524652000271815
+      }
+    ]
+  },
+  "418": {
+    "recommendations": [
+      {
+        "technique_id": "T1598.001",
+        "score": 0.1430914779832769
+      },
+      {
+        "technique_id": "T1598.004",
+        "score": 0.1345100324522857
+      }
+    ]
+  },
+  "42": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.006",
+        "score": 0.09012303990435683
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.08898019175223622
+      }
+    ]
+  },
+  "420": {
+    "recommendations": [
+      {
+        "technique_id": "T1565",
+        "score": 0.13547062558088066
+      }
+    ]
+  },
+  "421": {
+    "recommendations": [
+      {
+        "technique_id": "T1598.004",
+        "score": 0.1259885338798801
+      },
+      {
+        "technique_id": "T1656",
+        "score": 0.12331165728643553
+      }
+    ]
+  },
+  "422": {
+    "recommendations": [
+      {
+        "technique_id": "T1194",
+        "score": 0.10210083078736559
+      },
+      {
+        "technique_id": "T1598.001",
+        "score": 0.09751624104003151
+      }
+    ]
+  },
+  "423": {
+    "recommendations": [
+      {
+        "technique_id": "T1194",
+        "score": 0.08838513871999873
+      },
+      {
+        "technique_id": "T1480.001",
+        "score": 0.08419249897037456
+      }
+    ]
+  },
+  "424": {
+    "recommendations": [
+      {
+        "technique_id": "T1585.001",
+        "score": 0.08942440576796215
+      },
+      {
+        "technique_id": "T1194",
+        "score": 0.08316183389671256
+      }
+    ]
+  },
+  "425": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.001",
+        "score": 0.1723928171407259
+      },
+      {
+        "technique_id": "T1194",
+        "score": 0.13681325106940198
+      }
+    ]
+  },
+  "426": {
+    "recommendations": [
+      {
+        "technique_id": "T1657",
+        "score": 0.15086068621922127
+      },
+      {
+        "technique_id": "T1588.006",
+        "score": 0.1255536760137799
+      }
+    ]
+  },
+  "427": {
+    "recommendations": [
+      {
+        "technique_id": "T1480.001",
+        "score": 0.09184482277318859
+      },
+      {
+        "technique_id": "T1194",
+        "score": 0.0776223925625383
+      }
+    ]
+  },
+  "428": {
+    "recommendations": [
+      {
+        "technique_id": "T1194",
+        "score": 0.16460171169849672
+      },
+      {
+        "technique_id": "T1566.003",
+        "score": 0.15539691668445393
+      }
+    ]
+  },
+  "429": {
+    "recommendations": [
+      {
+        "technique_id": "T1071",
+        "score": 0.0785225672017594
+      },
+      {
+        "technique_id": "T1037",
+        "score": 0.06758966679413107
+      }
+    ]
+  },
+  "43": {
+    "recommendations": [
+      {
+        "technique_id": "T1056",
+        "score": 0.25932726307886
+      }
+    ]
+  },
+  "433": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.015",
+        "score": 0.08685337716155536
+      },
+      {
+        "technique_id": "T1558.004",
+        "score": 0.08566951402524131
+      }
+    ]
+  },
+  "434": {
+    "recommendations": [
+      {
+        "technique_id": "T1565",
+        "score": 0.11910177646471977
+      },
+      {
+        "technique_id": "T1480.001",
+        "score": 0.08438589245811226
+      }
+    ]
+  },
+  "435": {
+    "recommendations": [
+      {
+        "technique_id": "T1194",
+        "score": 0.1451968962283793
+      },
+      {
+        "technique_id": "T1566.003",
+        "score": 0.13707725000680432
+      }
+    ]
+  },
+  "44": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.008",
+        "score": 0.1589225199846193
+      },
+      {
+        "technique_id": "T1554",
+        "score": 0.14199911448252128
+      }
+    ]
+  },
+  "441": {
+    "recommendations": [
+      {
+        "technique_id": "T1195",
+        "score": 0.1321144663581935
+      },
+      {
+        "technique_id": "T1195.003",
+        "score": 0.10259272224683655
+      }
+    ]
+  },
+  "444": {
+    "recommendations": [
+      {
+        "technique_id": "T1587.001",
+        "score": 0.13926056521695765
+      },
+      {
+        "technique_id": "T1213.001",
+        "score": 0.1186069396099457
+      }
+    ]
+  },
+  "447": {
+    "recommendations": [
+      {
+        "technique_id": "T1587.001",
+        "score": 0.12347127221771002
+      },
+      {
+        "technique_id": "T1213.001",
+        "score": 0.09159345480412813
+      }
+    ]
+  },
+  "45": {
+    "recommendations": [
+      {
+        "technique_id": "T1222",
+        "score": 0.1632655659419736
+      },
+      {
+        "technique_id": "T1023",
+        "score": 0.13950783340869544
+      }
+    ]
+  },
+  "452": {
+    "recommendations": [
+      {
+        "technique_id": "T1195.003",
+        "score": 0.3463714253618664
+      }
+    ]
+  },
+  "456": {
+    "recommendations": [
+      {
+        "technique_id": "T1195",
+        "score": 0.1823284038691713
+      }
+    ]
+  },
+  "458": {
+    "recommendations": [
+      {
+        "technique_id": "T1495",
+        "score": 0.18483611623144558
+      },
+      {
+        "technique_id": "T1601.001",
+        "score": 0.1746864372643672
+      }
+    ]
+  },
+  "459": {
+    "recommendations": [
+      {
+        "technique_id": "T1588.004",
+        "score": 0.3576036657778304
+      },
+      {
+        "technique_id": "T1587.003",
+        "score": 0.35665369106642447
+      }
+    ]
+  },
+  "46": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.006",
+        "score": 0.12112588423075799
+      },
+      {
+        "technique_id": "T1602.002",
+        "score": 0.12090397669074902
+      }
+    ]
+  },
+  "460": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.004",
+        "score": 0.09165762642305911
+      },
+      {
+        "technique_id": "T1036.012",
+        "score": 0.09055337370421503
+      }
+    ]
+  },
+  "461": {
+    "recommendations": [
+      {
+        "technique_id": "T1584.006",
+        "score": 0.2712585901656696
+      },
+      {
+        "technique_id": "T1567",
+        "score": 0.23104351418596242
+      }
+    ]
+  },
+  "462": {
+    "recommendations": [
+      {
+        "technique_id": "T1016.001",
+        "score": 0.13394936276568745
+      },
+      {
+        "technique_id": "T1505.004",
+        "score": 0.12858201264530247
+      }
+    ]
+  },
+  "463": {
+    "recommendations": [
+      {
+        "technique_id": "T1027.001",
+        "score": 0.17388905247009892
+      },
+      {
+        "technique_id": "T1009",
+        "score": 0.17388905247009892
+      }
+    ]
+  },
+  "466": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.20878239786455655
+      },
+      {
+        "technique_id": "T1539",
+        "score": 0.16412994683354193
+      }
+    ]
+  },
+  "467": {
+    "recommendations": [
+      {
+        "technique_id": "T1598.003",
+        "score": 0.19582934034010957
+      },
+      {
+        "technique_id": "T1593.001",
+        "score": 0.15833742454803273
+      }
+    ]
+  },
+  "468": {
+    "recommendations": [
+      {
+        "technique_id": "T1482",
+        "score": 0.12241205833792204
+      },
+      {
+        "technique_id": "T1583.001",
+        "score": 0.11190000984100212
+      }
+    ]
+  },
+  "47": {
+    "recommendations": [
+      {
+        "technique_id": "T1030",
+        "score": 0.15142272332521092
+      },
+      {
+        "technique_id": "T1056.001",
+        "score": 0.11921735799869382
+      }
+    ]
+  },
+  "470": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.19473686342352106
+      },
+      {
+        "technique_id": "T1003.002",
+        "score": 0.16831222151985745
+      }
+    ]
+  },
+  "472": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.3982262219443649
+      }
+    ]
+  },
+  "475": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.001",
+        "score": 0.2973753635510791
+      }
+    ]
+  },
+  "476": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.001",
+        "score": 0.139086895140684
+      }
+    ]
+  },
+  "477": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.001",
+        "score": 0.14190265636884009
+      },
+      {
+        "technique_id": "T1218",
+        "score": 0.14096436381624733
+      }
+    ]
+  },
+  "48": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.21527865234661436
+      },
+      {
+        "technique_id": "T1217",
+        "score": 0.17848327447320003
+      }
+    ]
+  },
+  "486": {
+    "recommendations": [
+      {
+        "technique_id": "T1043",
+        "score": 0.29965321745069373
+      }
+    ]
+  },
+  "487": {
+    "recommendations": [
+      {
+        "technique_id": "T1095",
+        "score": 0.20618156776472085
+      },
+      {
+        "technique_id": "T1498.001",
+        "score": 0.15377947524701666
+      }
+    ]
+  },
+  "491": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.004",
+        "score": 0.16553870884878874
+      },
+      {
+        "technique_id": "T1499.003",
+        "score": 0.14238614935525273
+      }
+    ]
+  },
+  "492": {
+    "recommendations": [
+      {
+        "technique_id": "T1056",
+        "score": 0.16677952630293646
+      }
+    ]
+  },
+  "493": {
+    "recommendations": [
+      {
+        "technique_id": "T1102.002",
+        "score": 0.2674788918757175
+      },
+      {
+        "technique_id": "T1584.006",
+        "score": 0.2568405142187342
+      }
+    ]
+  },
+  "494": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.004",
+        "score": 0.23670449831023072
+      },
+      {
+        "technique_id": "T1110.001",
+        "score": 0.21108445531278364
+      }
+    ]
+  },
+  "495": {
+    "recommendations": [
+      {
+        "technique_id": "T1496.002",
+        "score": 0.19072302912972103
+      },
+      {
+        "technique_id": "T1043",
+        "score": 0.1794622769662931
+      }
+    ]
+  },
+  "496": {
+    "recommendations": [
+      {
+        "technique_id": "T1095",
+        "score": 0.21118845825579
+      }
+    ]
+  },
+  "498": {
+    "recommendations": [
+      {
+        "technique_id": "T1542.005",
+        "score": 0.16552993412105715
+      },
+      {
+        "technique_id": "T1601.001",
+        "score": 0.1607000752489749
+      }
+    ]
+  },
+  "499": {
+    "recommendations": [
+      {
+        "technique_id": "T1671",
+        "score": 0.10377539835401003
+      },
+      {
+        "technique_id": "T1528",
+        "score": 0.08372404541880904
+      }
+    ]
+  },
+  "5": {
+    "recommendations": [
+      {
+        "technique_id": "T1098.001",
+        "score": 0.08825223802336322
+      },
+      {
+        "technique_id": "T1529",
+        "score": 0.06862299534992446
+      }
+    ]
+  },
+  "50": {
+    "recommendations": [
+      {
+        "technique_id": "T1555.005",
+        "score": 0.1627358103293477
+      },
+      {
+        "technique_id": "T1201",
+        "score": 0.14203556963568925
+      }
+    ]
+  },
+  "500": {
+    "recommendations": [
+      {
+        "technique_id": "T1539",
+        "score": 0.21972633688541865
+      },
+      {
+        "technique_id": "T1606.001",
+        "score": 0.17319694672781105
+      }
+    ]
+  },
+  "501": {
+    "recommendations": [
+      {
+        "technique_id": "T1653",
+        "score": 0.1341775977957687
+      },
+      {
+        "technique_id": "T1056.002",
+        "score": 0.10226284198324838
+      }
+    ]
+  },
+  "502": {
+    "recommendations": [
+      {
+        "technique_id": "T1565",
+        "score": 0.12609567028530305
+      },
+      {
+        "technique_id": "T1565.003",
+        "score": 0.10926776643316743
+      }
+    ]
+  },
+  "503": {
+    "recommendations": [
+      {
+        "technique_id": "T1137.004",
+        "score": 0.13325845383045967
+      },
+      {
+        "technique_id": "T1505.003",
+        "score": 0.0973130724245194
+      }
+    ]
+  },
+  "505": {
+    "recommendations": [
+      {
+        "technique_id": "T1671",
+        "score": 0.10785045894010992
+      },
+      {
+        "technique_id": "T1079",
+        "score": 0.09246051269242078
+      }
+    ]
+  },
+  "506": {
+    "recommendations": [
+      {
+        "technique_id": "T1113",
+        "score": 0.21871687904605847
+      }
+    ]
+  },
+  "507": {
+    "recommendations": [
+      {
+        "technique_id": "T1052",
+        "score": 0.20893801771526735
+      }
+    ]
+  },
+  "508": {
+    "recommendations": [
+      {
+        "technique_id": "T1114",
+        "score": 0.13929141543032328
+      },
+      {
+        "technique_id": "T1596.004",
+        "score": 0.13495731376895115
+      }
+    ]
+  },
+  "51": {
+    "recommendations": [
+      {
+        "technique_id": "T1584.006",
+        "score": 0.2243494741981309
+      },
+      {
+        "technique_id": "T1058",
+        "score": 0.22010536275640563
+      }
+    ]
+  },
+  "510": {
+    "recommendations": [
+      {
+        "technique_id": "T1671",
+        "score": 0.1819686944125874
+      },
+      {
+        "technique_id": "T1078.004",
+        "score": 0.1596241981436317
+      }
+    ]
+  },
+  "517": {
+    "recommendations": [
+      {
+        "technique_id": "T1535",
+        "score": 0.06088992934379601
+      },
+      {
+        "technique_id": "T1213.001",
+        "score": 0.05646575595544905
+      }
+    ]
+  },
+  "518": {
+    "recommendations": [
+      {
+        "technique_id": "T1587",
+        "score": 0.09916965952917589
+      },
+      {
+        "technique_id": "T1127.001",
+        "score": 0.07410289621192503
+      }
+    ]
+  },
+  "519": {
+    "recommendations": [
+      {
+        "technique_id": "T1213.001",
+        "score": 0.09923596004086022
+      }
+    ]
+  },
+  "52": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.011",
+        "score": 0.10882090426635227
+      },
+      {
+        "technique_id": "T1056",
+        "score": 0.09685602714000321
+      }
+    ]
+  },
+  "521": {
+    "recommendations": [
+      {
+        "technique_id": "T1195.003",
+        "score": 0.1329260841768432
+      },
+      {
+        "technique_id": "T1592.001",
+        "score": 0.11284435544417235
+      }
+    ]
+  },
+  "524": {
+    "recommendations": [
+      {
+        "technique_id": "T1207",
+        "score": 0.17350123697050024
+      },
+      {
+        "technique_id": "T1505.001",
+        "score": 0.12779465061995848
+      }
+    ]
+  },
+  "529": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.003",
+        "score": 0.1199510202369919
+      },
+      {
+        "technique_id": "T1012",
+        "score": 0.10691167445356568
+      }
+    ]
+  },
+  "53": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.011",
+        "score": 0.16164203952970752
+      },
+      {
+        "technique_id": "T1556.002",
+        "score": 0.11867669371999592
+      }
+    ]
+  },
+  "530": {
+    "recommendations": [
+      {
+        "technique_id": "T1122",
+        "score": 0.18084538888116417
+      },
+      {
+        "technique_id": "T1546.015",
+        "score": 0.13089561937365154
+      }
+    ]
+  },
+  "533": {
+    "recommendations": [
+      {
+        "technique_id": "T1204",
+        "score": 0.10046886276699896
+      },
+      {
+        "technique_id": "T1598.003",
+        "score": 0.08811542412085635
+      }
+    ]
+  },
+  "534": {
+    "recommendations": [
+      {
+        "technique_id": "T1195.003",
+        "score": 0.148019505339761
+      },
+      {
+        "technique_id": "T1592.001",
+        "score": 0.13094986525299976
+      }
+    ]
+  },
+  "535": {
+    "recommendations": [
+      {
+        "technique_id": "T1195.003",
+        "score": 0.2670908453961489
+      },
+      {
+        "technique_id": "T1592.001",
+        "score": 0.19626163054061072
+      }
+    ]
+  },
+  "536": {
+    "recommendations": [
+      {
+        "technique_id": "T1602",
+        "score": 0.23239932947907854
+      }
+    ]
+  },
+  "54": {
+    "recommendations": [
+      {
+        "technique_id": "T1593.002",
+        "score": 0.11874706960098576
+      },
+      {
+        "technique_id": "T1538",
+        "score": 0.10281614527198107
+      }
+    ]
+  },
+  "540": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.015",
+        "score": 0.09708425157092611
+      },
+      {
+        "technique_id": "T1056.001",
+        "score": 0.09094724770182895
+      }
+    ]
+  },
+  "544": {
+    "recommendations": [
+      {
+        "technique_id": "T1195",
+        "score": 0.17940612396712513
+      },
+      {
+        "technique_id": "T1195.003",
+        "score": 0.15229442499707668
+      }
+    ]
+  },
+  "546": {
+    "recommendations": [
+      {
+        "technique_id": "T1484",
+        "score": 0.1805238461454908
+      },
+      {
+        "technique_id": "T1537",
+        "score": 0.17474337840131368
+      }
+    ]
+  },
+  "547": {
+    "recommendations": [
+      {
+        "technique_id": "T1052",
+        "score": 0.25292439956903373
+      },
+      {
+        "technique_id": "T1542.005",
+        "score": 0.17995404786532296
+      }
+    ]
+  },
+  "548": {
+    "recommendations": [
+      {
+        "technique_id": "T1586.002",
+        "score": 0.15926550789172841
+      },
+      {
+        "technique_id": "T1672",
+        "score": 0.1521646580155205
+      }
+    ]
+  },
+  "549": {
+    "recommendations": [
+      {
+        "technique_id": "T1014",
+        "score": 0.15198169861685967
+      },
+      {
+        "technique_id": "T1055.015",
+        "score": 0.11585280314790895
+      }
+    ]
+  },
+  "554": {
+    "recommendations": [
+      {
+        "technique_id": "T1600",
+        "score": 0.12002651699693175
+      },
+      {
+        "technique_id": "T1027.016",
+        "score": 0.0908517989828409
+      }
+    ]
+  },
+  "559": {
+    "recommendations": [
+      {
+        "technique_id": "T1207",
+        "score": 0.09745823664143809
+      },
+      {
+        "technique_id": "T1564.011",
+        "score": 0.09284316193887934
+      }
+    ]
+  },
+  "563": {
+    "recommendations": [
+      {
+        "technique_id": "T1051",
+        "score": 0.6747023579422088
+      }
+    ]
+  },
+  "58": {
+    "recommendations": [
+      {
+        "technique_id": "T1567.004",
+        "score": 0.13648581782790264
+      },
+      {
+        "technique_id": "T1499.002",
+        "score": 0.12145540108705483
+      }
+    ]
+  },
+  "582": {
+    "recommendations": [
+      {
+        "technique_id": "T1041",
+        "score": 0.15082126315789005
+      },
+      {
+        "technique_id": "T1016",
+        "score": 0.11335711426101075
+      }
+    ]
+  },
+  "583": {
+    "recommendations": [
+      {
+        "technique_id": "T1200",
+        "score": 0.14932316185019753
+      },
+      {
+        "technique_id": "T1592.001",
+        "score": 0.13523217247067348
+      }
+    ]
+  },
+  "584": {
+    "recommendations": [
+      {
+        "technique_id": "T1090.003",
+        "score": 0.16934278952308585
+      },
+      {
+        "technique_id": "T1599.001",
+        "score": 0.1564502804807519
+      }
+    ]
+  },
+  "585": {
+    "recommendations": [
+      {
+        "technique_id": "T1584.001",
+        "score": 0.20439633144778652
+      },
+      {
+        "technique_id": "T1482",
+        "score": 0.19768676269124474
+      }
+    ]
+  },
+  "586": {
+    "recommendations": [
+      {
+        "technique_id": "T1546.015",
+        "score": 0.11942170857425503
+      },
+      {
+        "technique_id": "T1659",
+        "score": 0.11611463253950333
+      }
+    ]
+  },
+  "587": {
+    "recommendations": [
+      {
+        "technique_id": "T1218.015",
+        "score": 0.16250340731720123
+      },
+      {
+        "technique_id": "T1059.007",
+        "score": 0.1302762405840649
+      }
+    ]
+  },
+  "588": {
+    "recommendations": [
+      {
+        "technique_id": "T1127.003",
+        "score": 0.2271882330944938
+      },
+      {
+        "technique_id": "T1051",
+        "score": 0.19998705550279622
+      }
+    ]
+  },
+  "589": {
+    "recommendations": [
+      {
+        "technique_id": "T1071.004",
+        "score": 0.2991672651333642
+      },
+      {
+        "technique_id": "T1568.003",
+        "score": 0.2866159284113014
+      }
+    ]
+  },
+  "59": {
+    "recommendations": [
+      {
+        "technique_id": "T1563",
+        "score": 0.25700386769003875
+      },
+      {
+        "technique_id": "T1563.002",
+        "score": 0.2356142527387557
+      }
+    ]
+  },
+  "590": {
+    "recommendations": [
+      {
+        "technique_id": "T1568.003",
+        "score": 0.36230991622313724
+      },
+      {
+        "technique_id": "T1557.002",
+        "score": 0.26962796221346313
+      }
+    ]
+  },
+  "591": {
+    "recommendations": [
+      {
+        "technique_id": "T1127.003",
+        "score": 0.21977388935677972
+      }
+    ]
+  },
+  "592": {
+    "recommendations": [
+      {
+        "technique_id": "T1127.003",
+        "score": 0.2211585063636883
+      }
+    ]
+  },
+  "594": {
+    "recommendations": [
+      {
+        "technique_id": "T1498.001",
+        "score": 0.13990987876060615
+      },
+      {
+        "technique_id": "T1040",
+        "score": 0.13215609372005266
+      }
+    ]
+  },
+  "595": {
+    "recommendations": [
+      {
+        "technique_id": "T1011",
+        "score": 0.19525603569850097
+      },
+      {
+        "technique_id": "T1205.002",
+        "score": 0.1421335239029905
+      }
+    ]
+  },
+  "596": {
+    "recommendations": [
+      {
+        "technique_id": "T1110.004",
+        "score": 0.4116000619359324
+      },
+      {
+        "technique_id": "T1110.001",
+        "score": 0.38412342263109983
+      }
+    ]
+  },
+  "597": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.008",
+        "score": 0.13156035929694043
+      },
+      {
+        "technique_id": "T1564.005",
+        "score": 0.12900217665740837
+      }
+    ]
+  },
+  "598": {
+    "recommendations": [
+      {
+        "technique_id": "T1071.004",
+        "score": 0.3118478814211729
+      },
+      {
+        "technique_id": "T1583.002",
+        "score": 0.2880659834999588
+      }
+    ]
+  },
+  "599": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.011",
+        "score": 0.08618082230018002
+      },
+      {
+        "technique_id": "T1595.001",
+        "score": 0.06958975556185103
+      }
+    ]
+  },
+  "6": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.010",
+        "score": 0.14588526541468053
+      },
+      {
+        "technique_id": "T1036.011",
+        "score": 0.11339984510996665
+      }
+    ]
+  },
+  "601": {
+    "recommendations": [
+      {
+        "technique_id": "T1001.003",
+        "score": 0.15062476063566846
+      },
+      {
+        "technique_id": "T1020.001",
+        "score": 0.13477190777950726
+      }
+    ]
+  },
+  "603": {
+    "recommendations": [
+      {
+        "technique_id": "T1489",
+        "score": 0.1329473586355116
+      },
+      {
+        "technique_id": "T1564.009",
+        "score": 0.12426230221046203
+      }
+    ]
+  },
+  "604": {
+    "recommendations": [
+      {
+        "technique_id": "T1016.002",
+        "score": 0.78038114510097
+      },
+      {
+        "technique_id": "T1557.004",
+        "score": 0.6527321808642212
+      }
+    ]
+  },
+  "605": {
+    "recommendations": [
+      {
+        "technique_id": "T1052",
+        "score": 0.10093562409301224
+      },
+      {
+        "technique_id": "T1564.011",
+        "score": 0.08988680059971675
+      }
+    ]
+  },
+  "606": {
+    "recommendations": [
+      {
+        "technique_id": "T1079",
+        "score": 0.23074288852495592
+      },
+      {
+        "technique_id": "T1600.002",
+        "score": 0.2058537798975361
+      }
+    ]
+  },
+  "607": {
+    "recommendations": [
+      {
+        "technique_id": "T1489",
+        "score": 0.1409319122909471
+      }
+    ]
+  },
+  "608": {
+    "recommendations": [
+      {
+        "technique_id": "T1573.001",
+        "score": 0.2406001947586812
+      },
+      {
+        "technique_id": "T1079",
+        "score": 0.20565565309024214
+      }
+    ]
+  },
+  "61": {
+    "recommendations": [
+      {
+        "technique_id": "T1563.002",
+        "score": 0.19365918445167318
+      },
+      {
+        "technique_id": "T1563",
+        "score": 0.1730066099337935
+      }
+    ]
+  },
+  "610": {
+    "recommendations": [
+      {
+        "technique_id": "T1659",
+        "score": 0.14108708092871294
+      },
+      {
+        "technique_id": "T1041",
+        "score": 0.1201074160248142
+      }
+    ]
+  },
+  "611": {
+    "recommendations": [
+      {
+        "technique_id": "T1482",
+        "score": 0.11884858205262061
+      },
+      {
+        "technique_id": "T1584.001",
+        "score": 0.11645889484682222
+      }
+    ]
+  },
+  "612": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.002",
+        "score": 0.27226572322238374
+      }
+    ]
+  },
+  "613": {
+    "recommendations": [
+      {
+        "technique_id": "T1602.002",
+        "score": 0.10514376563147995
+      },
+      {
+        "technique_id": "T1098.005",
+        "score": 0.10310663053599024
+      }
+    ]
+  },
+  "614": {
+    "recommendations": [
+      {
+        "technique_id": "T1496.003",
+        "score": 0.2902331481294885
+      }
+    ]
+  },
+  "615": {
+    "recommendations": [
+      {
+        "technique_id": "T1016.002",
+        "score": 0.7265067766618692
+      },
+      {
+        "technique_id": "T1557.004",
+        "score": 0.6979759375185228
+      }
+    ]
+  },
+  "617": {
+    "recommendations": [
+      {
+        "technique_id": "T1207",
+        "score": 0.17057914903299612
+      }
+    ]
+  },
+  "618": {
+    "recommendations": [
+      {
+        "technique_id": "T1557.003",
+        "score": 0.1393833557315364
+      },
+      {
+        "technique_id": "T1602.002",
+        "score": 0.11304660042868064
+      }
+    ]
+  },
+  "619": {
+    "recommendations": [
+      {
+        "technique_id": "T1205.001",
+        "score": 0.0793727250970053
+      },
+      {
+        "technique_id": "T1557.002",
+        "score": 0.071696562420716
+      }
+    ]
+  },
+  "62": {
+    "recommendations": [
+      {
+        "technique_id": "T1506",
+        "score": 0.38527890530576253
+      },
+      {
+        "technique_id": "T1550.004",
+        "score": 0.38287222402961824
+      }
+    ]
+  },
+  "621": {
+    "recommendations": [
+      {
+        "technique_id": "T1030",
+        "score": 0.17855613102155127
+      }
+    ]
+  },
+  "622": {
+    "recommendations": [
+      {
+        "technique_id": "T1552.004",
+        "score": 0.1440857510994129
+      },
+      {
+        "technique_id": "T1542.005",
+        "score": 0.1391333796906405
+      }
+    ]
+  },
+  "623": {
+    "recommendations": [
+      {
+        "technique_id": "T1495",
+        "score": 0.11265527963970333
+      },
+      {
+        "technique_id": "T1599",
+        "score": 0.10452373085668054
+      }
+    ]
+  },
+  "624": {
+    "recommendations": [
+      {
+        "technique_id": "T1495",
+        "score": 0.14959972643179564
+      },
+      {
+        "technique_id": "T1564.011",
+        "score": 0.10959570701400247
+      }
+    ]
+  },
+  "625": {
+    "recommendations": [
+      {
+        "technique_id": "T1542.005",
+        "score": 0.14297856164850017
+      },
+      {
+        "technique_id": "T1091",
+        "score": 0.13941425697095408
+      }
+    ]
+  },
+  "626": {
+    "recommendations": [
+      {
+        "technique_id": "T1542.005",
+        "score": 0.16560927115717125
+      },
+      {
+        "technique_id": "T1555.005",
+        "score": 0.1549533372855591
+      }
+    ]
+  },
+  "627": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.011",
+        "score": 0.28018299341265135
+      }
+    ]
+  },
+  "628": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.011",
+        "score": 0.2427786340478223
+      }
+    ]
+  },
+  "63": {
+    "recommendations": [
+      {
+        "technique_id": "T1503",
+        "score": 0.23520035468198353
+      },
+      {
+        "technique_id": "T1555.003",
+        "score": 0.22760907689970875
+      }
+    ]
+  },
+  "630": {
+    "recommendations": [
+      {
+        "technique_id": "T1583.001",
+        "score": 0.18722433197305952
+      },
+      {
+        "technique_id": "T1482",
+        "score": 0.15233782127933687
+      }
+    ]
+  },
+  "631": {
+    "recommendations": [
+      {
+        "technique_id": "T1482",
+        "score": 0.2101404322092271
+      },
+      {
+        "technique_id": "T1136.002",
+        "score": 0.18878949545582727
+      }
+    ]
+  },
+  "632": {
+    "recommendations": [
+      {
+        "technique_id": "T1583.001",
+        "score": 0.22145119171216854
+      }
+    ]
+  },
+  "64": {
+    "recommendations": [
+      {
+        "technique_id": "T1132",
+        "score": 0.33850181924298384
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.32435897539742276
+      }
+    ]
+  },
+  "653": {
+    "recommendations": [
+      {
+        "technique_id": "T1556.004",
+        "score": 0.15452314257801664
+      },
+      {
+        "technique_id": "T1555",
+        "score": 0.15261608586659428
+      }
+    ]
+  },
+  "656": {
+    "recommendations": [
+      {
+        "technique_id": "T1598.004",
+        "score": 0.345978234877526
+      },
+      {
+        "technique_id": "T1566.004",
+        "score": 0.26534892469037474
+      }
+    ]
+  },
+  "66": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.38191253099673567
+      }
+    ]
+  },
+  "661": {
+    "recommendations": [
+      {
+        "technique_id": "T1091",
+        "score": 0.12745330098828764
+      },
+      {
+        "technique_id": "T1149",
+        "score": 0.12305379800325467
+      }
+    ]
+  },
+  "663": {
+    "recommendations": [
+      {
+        "technique_id": "T1041",
+        "score": 0.15169387235332166
+      },
+      {
+        "technique_id": "T1588.005",
+        "score": 0.14424885589420117
+      }
+    ]
+  },
+  "664": {
+    "recommendations": [
+      {
+        "technique_id": "T1522",
+        "score": 0.10093136084858131
+      },
+      {
+        "technique_id": "T1552.005",
+        "score": 0.09672351970719974
+      }
+    ]
+  },
+  "667": {
+    "recommendations": [
+      {
+        "technique_id": "T1011.001",
+        "score": 0.36717509724939973
+      }
+    ]
+  },
+  "67": {
+    "recommendations": [
+      {
+        "technique_id": "T1036.011",
+        "score": 0.15342229131301158
+      },
+      {
+        "technique_id": "T1036.012",
+        "score": 0.14075617120684883
+      }
+    ]
+  },
+  "676": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.1723308431072545
+      },
+      {
+        "technique_id": "T1055.004",
+        "score": 0.15362646905008567
+      }
+    ]
+  },
+  "679": {
+    "recommendations": [
+      {
+        "technique_id": "T1055.009",
+        "score": 0.14219243777003449
+      },
+      {
+        "technique_id": "T1055.015",
+        "score": 0.1292732692770205
+      }
+    ]
+  },
+  "680": {
+    "recommendations": [
+      {
+        "technique_id": "T1568.001",
+        "score": 0.1420435927634021
+      },
+      {
+        "technique_id": "T1197",
+        "score": 0.09970724723307202
+      }
+    ]
+  },
+  "681": {
+    "recommendations": [
+      {
+        "technique_id": "T1211",
+        "score": 0.10861157722337152
+      },
+      {
+        "technique_id": "T1562.011",
+        "score": 0.10428784641770467
+      }
+    ]
+  },
+  "682": {
+    "recommendations": [
+      {
+        "technique_id": "T1495",
+        "score": 0.3504932233759653
+      },
+      {
+        "technique_id": "T1098.005",
+        "score": 0.2540255224858646
+      }
+    ]
+  },
+  "69": {
+    "recommendations": [
+      {
+        "technique_id": "T1150",
+        "score": 0.20118319368674717
+      },
+      {
+        "technique_id": "T1547",
+        "score": 0.1620170172243656
+      }
+    ]
+  },
+  "690": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.009",
+        "score": 0.21973388631680316
+      },
+      {
+        "technique_id": "T1552.005",
+        "score": 0.16856657048952178
+      }
+    ]
+  },
+  "692": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.007",
+        "score": 0.18826938405184632
+      },
+      {
+        "technique_id": "T1567.001",
+        "score": 0.16798389165274646
+      }
+    ]
+  },
+  "693": {
+    "recommendations": [
+      {
+        "technique_id": "T1567.001",
+        "score": 0.23085741383422215
+      },
+      {
+        "technique_id": "T1213.003",
+        "score": 0.16530188193923182
+      }
+    ]
+  },
+  "696": {
+    "recommendations": [
+      {
+        "technique_id": "T1574",
+        "score": 0.12846544913195318
+      },
+      {
+        "technique_id": "T1574.013",
+        "score": 0.12036923849413991
+      }
+    ]
+  },
+  "699": {
+    "recommendations": [
+      {
+        "technique_id": "T1562.001",
+        "score": 0.1200523220203707
+      },
+      {
+        "technique_id": "T1571",
+        "score": 0.11084030232481916
+      }
+    ]
+  },
+  "7": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.3682585672249484
+      }
+    ]
+  },
+  "701": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.4029062159414696
+      }
+    ]
+  },
+  "702": {
+    "recommendations": [
+      {
+        "technique_id": "T1622",
+        "score": 0.12954021956827957
+      },
+      {
+        "technique_id": "T1578",
+        "score": 0.11209850440025225
+      }
+    ]
+  },
+  "71": {
+    "recommendations": [
+      {
+        "technique_id": "T1132.001",
+        "score": 0.15030290680228717
+      },
+      {
+        "technique_id": "T1132",
+        "score": 0.14999178662770363
+      }
+    ]
+  },
+  "72": {
+    "recommendations": [
+      {
+        "technique_id": "T1132",
+        "score": 0.31647704657347425
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.30386259618269656
+      }
+    ]
+  },
+  "73": {
+    "recommendations": [
+      {
+        "technique_id": "T1185",
+        "score": 0.2157614891191119
+      },
+      {
+        "technique_id": "T1203",
+        "score": 0.16979619479281324
+      }
+    ]
+  },
+  "74": {
+    "recommendations": [
+      {
+        "technique_id": "T1499.001",
+        "score": 0.11200587327342974
+      },
+      {
+        "technique_id": "T1653",
+        "score": 0.11012191154611772
+      }
+    ]
+  },
+  "75": {
+    "recommendations": [
+      {
+        "technique_id": "T1602.002",
+        "score": 0.12676722983965885
+      },
+      {
+        "technique_id": "T1567.001",
+        "score": 0.11311024708252192
+      }
+    ]
+  },
+  "76": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.005",
+        "score": 0.13839158654711411
+      },
+      {
+        "technique_id": "T1036.008",
+        "score": 0.12629144226163672
+      }
+    ]
+  },
+  "77": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.006",
+        "score": 0.17879901392698963
+      }
+    ]
+  },
+  "78": {
+    "recommendations": [
+      {
+        "technique_id": "T1132",
+        "score": 0.28398893103170325
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.24719006780389768
+      }
+    ]
+  },
+  "79": {
+    "recommendations": [
+      {
+        "technique_id": "T1132",
+        "score": 0.1868511088563959
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.174275443059288
+      }
+    ]
+  },
+  "8": {
+    "recommendations": [
+      {
+        "technique_id": "T1560.002",
+        "score": 0.1841371714398633
+      },
+      {
+        "technique_id": "T1574.006",
+        "score": 0.15858136555336405
+      }
+    ]
+  },
+  "80": {
+    "recommendations": [
+      {
+        "technique_id": "T1132",
+        "score": 0.32280376497181884
+      },
+      {
+        "technique_id": "T1132.001",
+        "score": 0.3157735684806709
+      }
+    ]
+  },
+  "81": {
+    "recommendations": [
+      {
+        "technique_id": "T1051",
+        "score": 0.23514934766012857
+      },
+      {
+        "technique_id": "T1505.003",
+        "score": 0.22366414417200237
+      }
+    ]
+  },
+  "83": {
+    "recommendations": [
+      {
+        "technique_id": "T1221",
+        "score": 0.14353465618693506
+      },
+      {
+        "technique_id": "T1220",
+        "score": 0.11860792541496473
+      }
+    ]
+  },
+  "84": {
+    "recommendations": [
+      {
+        "technique_id": "T1505.001",
+        "score": 0.19397874989198055
+      },
+      {
+        "technique_id": "T1055.001",
+        "score": 0.13712997543856353
+      }
+    ]
+  },
+  "85": {
+    "recommendations": [
+      {
+        "technique_id": "T1203",
+        "score": 0.1107563035640132
+      },
+      {
+        "technique_id": "T1588.006",
+        "score": 0.10157008389664687
+      }
+    ]
+  },
+  "86": {
+    "recommendations": [
+      {
+        "technique_id": "T1606.001",
+        "score": 0.1493962493598791
+      },
+      {
+        "technique_id": "T1071.001",
+        "score": 0.1399674303874927
+      }
+    ]
+  },
+  "87": {
+    "recommendations": [
+      {
+        "technique_id": "T1539",
+        "score": 0.10807430692413673
+      },
+      {
+        "technique_id": "T1189",
+        "score": 0.10370504694739893
+      }
+    ]
+  },
+  "88": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.014",
+        "score": 0.12124655772322067
+      },
+      {
+        "technique_id": "T1027.010",
+        "score": 0.12084232488056366
+      }
+    ]
+  },
+  "89": {
+    "recommendations": [
+      {
+        "technique_id": "T1566.002",
+        "score": 0.10021761581542384
+      },
+      {
+        "technique_id": "T1204.001",
+        "score": 0.09869168026355365
+      }
+    ]
+  },
+  "9": {
+    "recommendations": [
+      {
+        "technique_id": "T1564.010",
+        "score": 0.1564568235945914
+      },
+      {
+        "technique_id": "T1158",
+        "score": 0.12981558525898096
+      }
+    ]
+  },
+  "90": {
+    "recommendations": [
+      {
+        "technique_id": "T1498.002",
+        "score": 0.27392614190562753
+      }
+    ]
+  },
+  "92": {
+    "recommendations": [
+      {
+        "technique_id": "T1574.007",
+        "score": 0.13725556776924935
+      }
+    ]
+  },
+  "93": {
+    "recommendations": [
+      {
+        "technique_id": "T1070.002",
+        "score": 0.23684127405094219
+      }
+    ]
+  },
+  "95": {
+    "recommendations": [
+      {
+        "technique_id": "T1584.006",
+        "score": 0.17816973905794187
+      },
+      {
+        "technique_id": "T1102.002",
+        "score": 0.15620049964550736
+      }
+    ]
+  },
+  "96": {
+    "recommendations": [
+      {
+        "technique_id": "T1560.002",
+        "score": 0.31738570960178325
+      }
+    ]
+  },
+  "97": {
+    "recommendations": [
+      {
+        "technique_id": "T1024",
+        "score": 0.27519458061742846
+      }
+    ]
+  }
+}
