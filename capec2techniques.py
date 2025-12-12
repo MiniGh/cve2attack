@@ -128,10 +128,14 @@ class TfidfCapecTechMapper:
 # 4. Main Orchestration
 # -------------------------------
 
+def round_score(value: float) -> float:
+    return round(value, 3)
+
+
 def main(
     capec_path: str = "./source/capec_db.json",
     attack_path: str = "./source/attack_db.json",
-    output_path: str = "./result/capec2techniques.json",
+    output_path: str = "./result/capec2techniques.jsonl",
     top_k: int = 2,
     threshold: float = 0.05
 ):
@@ -148,27 +152,32 @@ def main(
     mapper = TfidfCapecTechMapper(tech_ids, tech_texts)
 
     print("[✓] Processing CAPECs without existing techniques...")
-    results = {}
     count = 0
-
-    for capec_id, capec_info in capecs.items():
-        # Skip CAPECs that already have techniques
-        if capec_info.get("techniques"):
-            continue
-
-        capec_text = get_capec_text(capec_info)
-        recs = mapper.recommend(capec_text, top_k=top_k, threshold=threshold)
-
-        if recs:
-            results[capec_id] = {
-                "recommendations": recs
-            }
-            count += 1
-
-    # Save results
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
+
+    with open(output_path, 'w', encoding='utf-8') as fout:
+        for capec_id, capec_info in capecs.items():
+            # Skip CAPECs that already have techniques
+            if capec_info.get("techniques"):
+                continue
+
+            capec_text = get_capec_text(capec_info)
+            recs = mapper.recommend(capec_text, top_k=top_k, threshold=threshold)
+
+            if not recs:
+                continue
+
+            recs_normalized = [
+                {"technique_id": rec["technique_id"], "score": round_score(rec["score"])}
+                for rec in recs
+            ]
+
+            if not recs_normalized:
+                continue
+
+            record = {"capec_id": capec_id, "recommendations": recs_normalized}
+            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
+            count += 1
 
     print(f"\n✅ Done. {count} CAPEC→Technique mappings saved to {output_path}")
 

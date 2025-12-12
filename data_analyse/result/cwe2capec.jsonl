@@ -1,0 +1,336 @@
+{"cwe_id": "6", "original_capecs": ["21", "59"]}
+{"cwe_id": "15", "original_capecs": ["13", "146", "176", "203", "270", "271", "579", "69", "76", "77"]}
+{"cwe_id": "20", "original_capecs": ["10", "101", "104", "108", "109", "110", "120", "13", "135", "136", "14", "153", "182", "209", "22", "23", "230", "231", "24", "250", "261", "267", "28", "3", "31", "42", "43", "45", "46", "47", "473", "52", "53", "588", "63", "64", "664", "67", "7", "71", "72", "73", "78", "79", "8", "80", "81", "83", "85", "88", "9"]}
+{"cwe_id": "22", "original_capecs": ["126", "64", "76", "78", "79"]}
+{"cwe_id": "23", "original_capecs": ["139", "76"]}
+{"cwe_id": "36", "original_capecs": ["597"]}
+{"cwe_id": "41", "original_capecs": ["3"]}
+{"cwe_id": "46", "original_capecs": ["649"]}
+{"cwe_id": "59", "original_capecs": ["132", "17", "35", "76"]}
+{"cwe_id": "61", "original_capecs": ["27"]}
+{"cwe_id": "69", "original_capecs": ["168"]}
+{"cwe_id": "73", "original_capecs": ["13", "267", "64", "72", "76", "78", "79", "80"]}
+{"cwe_id": "74", "original_capecs": ["10", "101", "105", "108", "120", "13", "135", "14", "24", "250", "267", "273", "28", "3", "34", "42", "43", "45", "46", "47", "51", "52", "53", "6", "64", "67", "7", "71", "72", "76", "78", "79", "8", "80", "83", "84", "9"]}
+{"cwe_id": "75", "original_capecs": ["81", "93"]}
+{"cwe_id": "77", "original_capecs": ["136", "15", "183", "248", "40", "43", "75", "76"]}
+{"cwe_id": "78", "original_capecs": ["108", "15", "43", "6", "88"]}
+{"cwe_id": "79", "original_capecs": ["209", "588", "591", "592", "63", "85"]}
+{"cwe_id": "80", "original_capecs": ["18", "193", "32", "86"]}
+{"cwe_id": "81", "original_capecs": ["198"]}
+{"cwe_id": "83", "original_capecs": ["243", "244", "588"]}
+{"cwe_id": "85", "original_capecs": ["245"]}
+{"cwe_id": "86", "original_capecs": ["247", "73", "85"]}
+{"cwe_id": "87", "original_capecs": ["199"]}
+{"cwe_id": "88", "original_capecs": ["137", "174", "41", "460", "88"]}
+{"cwe_id": "89", "original_capecs": ["108", "109", "110", "470", "66", "7"]}
+{"cwe_id": "90", "original_capecs": ["136"]}
+{"cwe_id": "91", "original_capecs": ["250", "83"]}
+{"cwe_id": "93", "original_capecs": ["15", "81"]}
+{"cwe_id": "94", "original_capecs": ["242", "35", "77"]}
+{"cwe_id": "95", "original_capecs": ["35"]}
+{"cwe_id": "96", "original_capecs": ["35", "73", "77", "81", "85"]}
+{"cwe_id": "97", "original_capecs": ["101", "35"]}
+{"cwe_id": "98", "original_capecs": ["193"]}
+{"cwe_id": "99", "original_capecs": ["10", "240", "75"]}
+{"cwe_id": "112", "original_capecs": ["230", "231"]}
+{"cwe_id": "113", "original_capecs": ["105", "31", "34", "85"]}
+{"cwe_id": "114", "original_capecs": ["108", "640"]}
+{"cwe_id": "116", "original_capecs": ["104", "73", "81", "85"]}
+{"cwe_id": "117", "original_capecs": ["268", "81", "93"]}
+{"cwe_id": "118", "original_capecs": ["10", "14", "24", "45", "46", "47", "8", "9"]}
+{"cwe_id": "119", "original_capecs": ["10", "100", "123", "14", "24", "42", "44", "45", "46", "47", "8", "9"]}
+{"cwe_id": "120", "original_capecs": ["10", "100", "14", "24", "42", "44", "45", "46", "47", "67", "8", "9", "92"]}
+{"cwe_id": "122", "original_capecs": ["92"]}
+{"cwe_id": "125", "original_capecs": ["540"]}
+{"cwe_id": "128", "original_capecs": ["92"]}
+{"cwe_id": "129", "original_capecs": ["100"]}
+{"cwe_id": "130", "original_capecs": ["47"]}
+{"cwe_id": "131", "original_capecs": ["100", "47"]}
+{"cwe_id": "134", "original_capecs": ["135", "67"]}
+{"cwe_id": "138", "original_capecs": ["105", "15", "34"]}
+{"cwe_id": "140", "original_capecs": ["15"]}
+{"cwe_id": "146", "original_capecs": ["15", "6"]}
+{"cwe_id": "147", "original_capecs": ["460"]}
+{"cwe_id": "149", "original_capecs": ["468"]}
+{"cwe_id": "150", "original_capecs": ["134", "41", "81", "93"]}
+{"cwe_id": "154", "original_capecs": ["15"]}
+{"cwe_id": "157", "original_capecs": ["15"]}
+{"cwe_id": "158", "original_capecs": ["52", "53"]}
+{"cwe_id": "162", "original_capecs": ["635"]}
+{"cwe_id": "172", "original_capecs": ["120", "267", "3", "52", "53", "64", "71", "72", "78", "80"]}
+{"cwe_id": "173", "original_capecs": ["120", "267", "3", "4", "52", "53", "64", "71", "72", "78", "79", "80"]}
+{"cwe_id": "176", "original_capecs": ["71"]}
+{"cwe_id": "177", "original_capecs": ["120", "468", "64", "72"]}
+{"cwe_id": "179", "original_capecs": ["3", "43", "71"]}
+{"cwe_id": "180", "original_capecs": ["267", "3", "71", "78", "79", "80"]}
+{"cwe_id": "181", "original_capecs": ["120", "267", "3", "43", "78", "79", "80"]}
+{"cwe_id": "183", "original_capecs": ["120", "3", "43", "71"]}
+{"cwe_id": "184", "original_capecs": ["120", "15", "182", "3", "43", "6", "71", "73", "85"]}
+{"cwe_id": "185", "original_capecs": ["15", "6", "79"]}
+{"cwe_id": "190", "original_capecs": ["92"]}
+{"cwe_id": "196", "original_capecs": ["92"]}
+{"cwe_id": "200", "original_capecs": ["116", "13", "169", "22", "224", "285", "287", "290", "291", "292", "293", "294", "295", "296", "297", "298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "310", "312", "313", "317", "318", "319", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "330", "472", "497", "508", "573", "574", "575", "576", "577", "59", "60", "616", "643", "646", "651", "79"]}
+{"cwe_id": "201", "original_capecs": ["12", "217", "612", "613", "618", "619", "621", "622", "623"]}
+{"cwe_id": "203", "original_capecs": ["189"]}
+{"cwe_id": "204", "original_capecs": ["331", "332", "541", "580"]}
+{"cwe_id": "205", "original_capecs": ["541", "580"]}
+{"cwe_id": "208", "original_capecs": ["462", "541", "580"]}
+{"cwe_id": "209", "original_capecs": ["215", "463", "54", "7"]}
+{"cwe_id": "212", "original_capecs": ["168"]}
+{"cwe_id": "221", "original_capecs": ["81"]}
+{"cwe_id": "226", "original_capecs": ["37"]}
+{"cwe_id": "233", "original_capecs": ["39"]}
+{"cwe_id": "235", "original_capecs": ["460"]}
+{"cwe_id": "241", "original_capecs": ["48"]}
+{"cwe_id": "250", "original_capecs": ["104", "470", "69"]}
+{"cwe_id": "257", "original_capecs": ["49"]}
+{"cwe_id": "261", "original_capecs": ["55"]}
+{"cwe_id": "262", "original_capecs": ["16", "49", "509", "55", "555", "560", "561", "565", "600", "652", "653", "70"]}
+{"cwe_id": "263", "original_capecs": ["16", "49", "509", "55", "555", "560", "561", "565", "600", "652", "653", "70"]}
+{"cwe_id": "267", "original_capecs": ["58", "634", "637", "643", "648"]}
+{"cwe_id": "269", "original_capecs": ["122", "233", "58"]}
+{"cwe_id": "270", "original_capecs": ["17", "30", "35"]}
+{"cwe_id": "272", "original_capecs": ["17", "35", "76"]}
+{"cwe_id": "276", "original_capecs": ["1", "127", "81"]}
+{"cwe_id": "279", "original_capecs": ["81"]}
+{"cwe_id": "282", "original_capecs": ["17", "35"]}
+{"cwe_id": "284", "original_capecs": ["19", "441", "478", "479", "502", "503", "536", "546", "550", "551", "552", "556", "558", "562", "563", "564", "578"]}
+{"cwe_id": "285", "original_capecs": ["1", "104", "127", "13", "17", "39", "402", "45", "5", "51", "59", "60", "647", "668", "76", "77", "87"]}
+{"cwe_id": "287", "original_capecs": ["114", "115", "151", "194", "22", "57", "593", "633", "650", "94"]}
+{"cwe_id": "288", "original_capecs": ["127", "665"]}
+{"cwe_id": "290", "original_capecs": ["21", "22", "459", "461", "473", "476", "59", "60", "667", "94"]}
+{"cwe_id": "291", "original_capecs": ["4"]}
+{"cwe_id": "294", "original_capecs": ["102", "509", "555", "561", "60", "644", "645", "652", "701", "94"]}
+{"cwe_id": "295", "original_capecs": ["459", "475"]}
+{"cwe_id": "300", "original_capecs": ["466", "57", "589", "590", "612", "613", "615", "662", "94"]}
+{"cwe_id": "301", "original_capecs": ["90"]}
+{"cwe_id": "302", "original_capecs": ["10", "13", "21", "274", "31", "39", "45", "77"]}
+{"cwe_id": "303", "original_capecs": ["90"]}
+{"cwe_id": "306", "original_capecs": ["12", "166", "216", "36", "62"]}
+{"cwe_id": "307", "original_capecs": ["16", "49", "560", "565", "600", "652", "653"]}
+{"cwe_id": "308", "original_capecs": ["16", "49", "509", "55", "555", "560", "561", "565", "600", "644", "645", "652", "653", "70"]}
+{"cwe_id": "309", "original_capecs": ["16", "49", "509", "55", "555", "560", "561", "565", "600", "652", "653", "70"]}
+{"cwe_id": "311", "original_capecs": ["157", "158", "204", "31", "37", "383", "384", "385", "386", "387", "388", "477", "609", "65"]}
+{"cwe_id": "312", "original_capecs": ["37"]}
+{"cwe_id": "314", "original_capecs": ["37"]}
+{"cwe_id": "315", "original_capecs": ["31", "37", "39", "74"]}
+{"cwe_id": "318", "original_capecs": ["37", "65"]}
+{"cwe_id": "319", "original_capecs": ["102", "117", "383", "477", "65"]}
+{"cwe_id": "325", "original_capecs": ["68"]}
+{"cwe_id": "326", "original_capecs": ["112", "192", "20"]}
+{"cwe_id": "327", "original_capecs": ["20", "459", "473", "475", "608", "614", "97"]}
+{"cwe_id": "328", "original_capecs": ["461", "68"]}
+{"cwe_id": "330", "original_capecs": ["112", "485", "59"]}
+{"cwe_id": "331", "original_capecs": ["59"]}
+{"cwe_id": "345", "original_capecs": ["111", "141", "142", "148", "218", "384", "385", "386", "387", "388", "665", "701"]}
+{"cwe_id": "346", "original_capecs": ["111", "141", "142", "160", "21", "384", "385", "386", "387", "388", "510", "59", "60", "75", "76", "89"]}
+{"cwe_id": "347", "original_capecs": ["463", "475"]}
+{"cwe_id": "348", "original_capecs": ["141", "142", "73", "76", "85"]}
+{"cwe_id": "349", "original_capecs": ["141", "142", "75"]}
+{"cwe_id": "350", "original_capecs": ["142", "275", "73", "89"]}
+{"cwe_id": "352", "original_capecs": ["111", "462", "467", "62"]}
+{"cwe_id": "353", "original_capecs": ["13", "14", "389", "39", "665", "74", "75"]}
+{"cwe_id": "354", "original_capecs": ["145", "463", "75"]}
+{"cwe_id": "359", "original_capecs": ["464", "467", "498", "508"]}
+{"cwe_id": "362", "original_capecs": ["26", "29"]}
+{"cwe_id": "363", "original_capecs": ["26"]}
+{"cwe_id": "366", "original_capecs": ["26", "29"]}
+{"cwe_id": "367", "original_capecs": ["27", "29"]}
+{"cwe_id": "368", "original_capecs": ["26", "29"]}
+{"cwe_id": "370", "original_capecs": ["26", "29"]}
+{"cwe_id": "372", "original_capecs": ["140", "74"]}
+{"cwe_id": "377", "original_capecs": ["149", "155"]}
+{"cwe_id": "384", "original_capecs": ["196", "21", "31", "39", "59", "60", "61"]}
+{"cwe_id": "385", "original_capecs": ["462"]}
+{"cwe_id": "400", "original_capecs": ["147", "227", "492"]}
+{"cwe_id": "404", "original_capecs": ["125", "130", "131", "494", "495", "496", "666"]}
+{"cwe_id": "412", "original_capecs": ["25"]}
+{"cwe_id": "419", "original_capecs": ["383"]}
+{"cwe_id": "424", "original_capecs": ["127", "554"]}
+{"cwe_id": "425", "original_capecs": ["127", "143", "144", "668", "87"]}
+{"cwe_id": "426", "original_capecs": ["38"]}
+{"cwe_id": "427", "original_capecs": ["38", "471"]}
+{"cwe_id": "430", "original_capecs": ["11"]}
+{"cwe_id": "434", "original_capecs": ["1"]}
+{"cwe_id": "436", "original_capecs": ["105", "273", "34"]}
+{"cwe_id": "441", "original_capecs": ["219", "465"]}
+{"cwe_id": "444", "original_capecs": ["273", "33"]}
+{"cwe_id": "451", "original_capecs": ["154", "163", "164", "173", "98"]}
+{"cwe_id": "470", "original_capecs": ["138"]}
+{"cwe_id": "471", "original_capecs": ["384", "385", "386", "387", "388"]}
+{"cwe_id": "472", "original_capecs": ["146", "226", "31", "39"]}
+{"cwe_id": "473", "original_capecs": ["77"]}
+{"cwe_id": "488", "original_capecs": ["59", "60"]}
+{"cwe_id": "489", "original_capecs": ["121", "661"]}
+{"cwe_id": "494", "original_capecs": ["184", "185", "186", "187", "533", "538", "657", "662", "691", "692", "693", "695"]}
+{"cwe_id": "497", "original_capecs": ["170", "694"]}
+{"cwe_id": "502", "original_capecs": ["586"]}
+{"cwe_id": "506", "original_capecs": ["442", "448", "636"]}
+{"cwe_id": "507", "original_capecs": ["698"]}
+{"cwe_id": "514", "original_capecs": ["463"]}
+{"cwe_id": "521", "original_capecs": ["112", "16", "49", "509", "55", "555", "561", "565", "70"]}
+{"cwe_id": "522", "original_capecs": ["102", "474", "50", "509", "551", "555", "560", "561", "600", "644", "645", "652", "653"]}
+{"cwe_id": "523", "original_capecs": ["102"]}
+{"cwe_id": "524", "original_capecs": ["204"]}
+{"cwe_id": "525", "original_capecs": ["37"]}
+{"cwe_id": "532", "original_capecs": ["215"]}
+{"cwe_id": "538", "original_capecs": ["95"]}
+{"cwe_id": "539", "original_capecs": ["21", "31", "39", "59", "60"]}
+{"cwe_id": "552", "original_capecs": ["150", "639"]}
+{"cwe_id": "553", "original_capecs": ["650"]}
+{"cwe_id": "564", "original_capecs": ["109"]}
+{"cwe_id": "565", "original_capecs": ["226", "31", "39"]}
+{"cwe_id": "567", "original_capecs": ["25"]}
+{"cwe_id": "589", "original_capecs": ["96"]}
+{"cwe_id": "593", "original_capecs": ["94"]}
+{"cwe_id": "601", "original_capecs": ["178"]}
+{"cwe_id": "602", "original_capecs": ["162", "202", "207", "208", "21", "31", "383", "384", "385", "386", "387", "388"]}
+{"cwe_id": "610", "original_capecs": ["219"]}
+{"cwe_id": "611", "original_capecs": ["221"]}
+{"cwe_id": "614", "original_capecs": ["102"]}
+{"cwe_id": "638", "original_capecs": ["104"]}
+{"cwe_id": "640", "original_capecs": ["50"]}
+{"cwe_id": "642", "original_capecs": ["21", "31"]}
+{"cwe_id": "645", "original_capecs": ["2"]}
+{"cwe_id": "646", "original_capecs": ["209"]}
+{"cwe_id": "648", "original_capecs": ["107", "234"]}
+{"cwe_id": "649", "original_capecs": ["463"]}
+{"cwe_id": "654", "original_capecs": ["16", "274", "49", "55", "560", "565", "600", "652", "653", "70"]}
+{"cwe_id": "662", "original_capecs": ["25", "26", "27", "29"]}
+{"cwe_id": "663", "original_capecs": ["29"]}
+{"cwe_id": "664", "original_capecs": ["196", "21", "60", "61", "62"]}
+{"cwe_id": "665", "original_capecs": ["26", "29"]}
+{"cwe_id": "667", "original_capecs": ["25", "26", "27"]}
+{"cwe_id": "674", "original_capecs": ["230", "231"]}
+{"cwe_id": "680", "original_capecs": ["10", "100", "14", "24", "45", "46", "47", "67", "8", "9", "92"]}
+{"cwe_id": "682", "original_capecs": ["128", "129"]}
+{"cwe_id": "689", "original_capecs": ["26", "27"]}
+{"cwe_id": "691", "original_capecs": ["29"]}
+{"cwe_id": "692", "original_capecs": ["120", "267", "71", "80", "85"]}
+{"cwe_id": "693", "original_capecs": ["1", "107", "127", "17", "20", "22", "237", "36", "477", "480", "51", "57", "59", "65", "668", "74", "87"]}
+{"cwe_id": "695", "original_capecs": ["36"]}
+{"cwe_id": "696", "original_capecs": ["463"]}
+{"cwe_id": "697", "original_capecs": ["10", "120", "14", "15", "182", "24", "267", "3", "41", "43", "44", "45", "46", "47", "52", "53", "6", "64", "67", "7", "71", "73", "78", "79", "8", "80", "88", "9", "92"]}
+{"cwe_id": "706", "original_capecs": ["159", "177", "48", "641"]}
+{"cwe_id": "707", "original_capecs": ["250", "276", "277", "278", "279", "3", "43", "468", "52", "53", "64", "7", "78", "79", "83", "84"]}
+{"cwe_id": "732", "original_capecs": ["1", "122", "127", "17", "180", "206", "234", "60", "61", "62", "642"]}
+{"cwe_id": "733", "original_capecs": ["10", "24", "46", "8", "9"]}
+{"cwe_id": "749", "original_capecs": ["500"]}
+{"cwe_id": "757", "original_capecs": ["220", "606", "620"]}
+{"cwe_id": "770", "original_capecs": ["125", "130", "147", "197", "229", "230", "231", "469", "482", "486", "487", "488", "489", "490", "491", "493", "494", "495", "496", "528"]}
+{"cwe_id": "772", "original_capecs": ["469"]}
+{"cwe_id": "776", "original_capecs": ["197"]}
+{"cwe_id": "798", "original_capecs": ["191", "70"]}
+{"cwe_id": "805", "original_capecs": ["100", "256"]}
+{"cwe_id": "822", "original_capecs": ["129"]}
+{"cwe_id": "823", "original_capecs": ["129"]}
+{"cwe_id": "829", "original_capecs": ["175", "201", "228", "251", "252", "253", "263", "538", "549", "640", "660", "695", "698"]}
+{"cwe_id": "833", "original_capecs": ["25"]}
+{"cwe_id": "836", "original_capecs": ["644", "652"]}
+{"cwe_id": "838", "original_capecs": ["468"]}
+{"cwe_id": "862", "original_capecs": ["665"]}
+{"cwe_id": "912", "original_capecs": ["133", "190"]}
+{"cwe_id": "916", "original_capecs": ["55"]}
+{"cwe_id": "918", "original_capecs": ["664"]}
+{"cwe_id": "923", "original_capecs": ["161", "481", "501", "697"]}
+{"cwe_id": "925", "original_capecs": ["499"]}
+{"cwe_id": "940", "original_capecs": ["500", "594", "595", "596"]}
+{"cwe_id": "943", "original_capecs": ["676"]}
+{"cwe_id": "1007", "original_capecs": ["632"]}
+{"cwe_id": "1021", "original_capecs": ["103", "181", "222", "504", "506", "587", "654"]}
+{"cwe_id": "1037", "original_capecs": ["663"]}
+{"cwe_id": "1188", "original_capecs": ["665"]}
+{"cwe_id": "1189", "original_capecs": ["124"]}
+{"cwe_id": "1190", "original_capecs": ["180"]}
+{"cwe_id": "1191", "original_capecs": ["1", "180"]}
+{"cwe_id": "1192", "original_capecs": ["113"]}
+{"cwe_id": "1193", "original_capecs": ["1", "180"]}
+{"cwe_id": "1204", "original_capecs": ["20", "97"]}
+{"cwe_id": "1209", "original_capecs": ["121"]}
+{"cwe_id": "1220", "original_capecs": ["1", "180"]}
+{"cwe_id": "1221", "original_capecs": ["166"]}
+{"cwe_id": "1222", "original_capecs": ["679"]}
+{"cwe_id": "1223", "original_capecs": ["26"]}
+{"cwe_id": "1224", "original_capecs": ["680"]}
+{"cwe_id": "1231", "original_capecs": ["680"]}
+{"cwe_id": "1232", "original_capecs": ["166"]}
+{"cwe_id": "1233", "original_capecs": ["176", "680"]}
+{"cwe_id": "1234", "original_capecs": ["176"]}
+{"cwe_id": "1239", "original_capecs": ["150", "204", "37", "545"]}
+{"cwe_id": "1240", "original_capecs": ["97"]}
+{"cwe_id": "1241", "original_capecs": ["97"]}
+{"cwe_id": "1242", "original_capecs": ["212", "36"]}
+{"cwe_id": "1243", "original_capecs": ["116", "545"]}
+{"cwe_id": "1244", "original_capecs": ["114"]}
+{"cwe_id": "1245", "original_capecs": ["74"]}
+{"cwe_id": "1246", "original_capecs": ["212"]}
+{"cwe_id": "1247", "original_capecs": ["624", "625"]}
+{"cwe_id": "1248", "original_capecs": ["624", "625"]}
+{"cwe_id": "1252", "original_capecs": ["679"]}
+{"cwe_id": "1253", "original_capecs": ["74"]}
+{"cwe_id": "1254", "original_capecs": ["26"]}
+{"cwe_id": "1255", "original_capecs": ["189"]}
+{"cwe_id": "1256", "original_capecs": ["624", "625"]}
+{"cwe_id": "1257", "original_capecs": ["456", "679"]}
+{"cwe_id": "1258", "original_capecs": ["150", "204", "37", "545"]}
+{"cwe_id": "1259", "original_capecs": ["121", "681"]}
+{"cwe_id": "1260", "original_capecs": ["456", "679"]}
+{"cwe_id": "1262", "original_capecs": ["680"]}
+{"cwe_id": "1263", "original_capecs": ["401"]}
+{"cwe_id": "1264", "original_capecs": ["233", "663"]}
+{"cwe_id": "1265", "original_capecs": ["74"]}
+{"cwe_id": "1266", "original_capecs": ["150", "37", "545", "546", "675"]}
+{"cwe_id": "1267", "original_capecs": ["121", "681"]}
+{"cwe_id": "1268", "original_capecs": ["180"]}
+{"cwe_id": "1269", "original_capecs": ["439"]}
+{"cwe_id": "1270", "original_capecs": ["121", "633", "681"]}
+{"cwe_id": "1271", "original_capecs": ["74"]}
+{"cwe_id": "1272", "original_capecs": ["150", "37", "545", "546"]}
+{"cwe_id": "1273", "original_capecs": ["560"]}
+{"cwe_id": "1274", "original_capecs": ["456", "679"]}
+{"cwe_id": "1275", "original_capecs": ["62"]}
+{"cwe_id": "1277", "original_capecs": ["682"]}
+{"cwe_id": "1278", "original_capecs": ["188", "37", "545"]}
+{"cwe_id": "1279", "original_capecs": ["97"]}
+{"cwe_id": "1280", "original_capecs": ["180"]}
+{"cwe_id": "1281", "original_capecs": ["212"]}
+{"cwe_id": "1282", "original_capecs": ["458", "679"]}
+{"cwe_id": "1283", "original_capecs": ["680"]}
+{"cwe_id": "1286", "original_capecs": ["66", "676"]}
+{"cwe_id": "1294", "original_capecs": ["121", "681"]}
+{"cwe_id": "1295", "original_capecs": ["121"]}
+{"cwe_id": "1296", "original_capecs": ["121", "702"]}
+{"cwe_id": "1297", "original_capecs": ["1", "180"]}
+{"cwe_id": "1298", "original_capecs": ["26"]}
+{"cwe_id": "1299", "original_capecs": ["457", "554"]}
+{"cwe_id": "1300", "original_capecs": ["189", "699"]}
+{"cwe_id": "1301", "original_capecs": ["37"]}
+{"cwe_id": "1302", "original_capecs": ["121", "681"]}
+{"cwe_id": "1303", "original_capecs": ["663"]}
+{"cwe_id": "1304", "original_capecs": ["176"]}
+{"cwe_id": "1310", "original_capecs": ["682"]}
+{"cwe_id": "1311", "original_capecs": ["1", "180", "233"]}
+{"cwe_id": "1312", "original_capecs": ["456", "679"]}
+{"cwe_id": "1313", "original_capecs": ["121"]}
+{"cwe_id": "1314", "original_capecs": ["1"]}
+{"cwe_id": "1315", "original_capecs": ["1", "180"]}
+{"cwe_id": "1316", "original_capecs": ["456", "679"]}
+{"cwe_id": "1317", "original_capecs": ["122"]}
+{"cwe_id": "1318", "original_capecs": ["1", "180"]}
+{"cwe_id": "1319", "original_capecs": ["624", "625"]}
+{"cwe_id": "1320", "original_capecs": ["1", "180"]}
+{"cwe_id": "1321", "original_capecs": ["1", "180", "77"]}
+{"cwe_id": "1322", "original_capecs": ["25"]}
+{"cwe_id": "1323", "original_capecs": ["150", "167", "545"]}
+{"cwe_id": "1325", "original_capecs": ["130"]}
+{"cwe_id": "1326", "original_capecs": ["679", "68"]}
+{"cwe_id": "1327", "original_capecs": ["1"]}
+{"cwe_id": "1328", "original_capecs": ["176"]}
+{"cwe_id": "1330", "original_capecs": ["150", "37", "545"]}
+{"cwe_id": "1331", "original_capecs": ["124"]}
+{"cwe_id": "1332", "original_capecs": ["624", "625"]}
+{"cwe_id": "1333", "original_capecs": ["492"]}
+{"cwe_id": "1334", "original_capecs": ["624", "625"]}
+{"cwe_id": "1338", "original_capecs": ["624", "625"]}
+{"cwe_id": "1342", "original_capecs": ["696"]}
+{"cwe_id": "1351", "original_capecs": ["624", "625"]}

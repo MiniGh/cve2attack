@@ -1,0 +1,19 @@
+{"technique_id": "T1036.010", "name": "Masquerade Account Name", "cves": ["CVE-2023-34362"]}
+{"technique_id": "T1170", "name": "Mshta", "cves": ["CVE-2017-0199"]}
+{"technique_id": "T1190", "name": "Exploit Public-Facing Application", "cves": ["CVE-2014-7169", "CVE-2016-6662"]}
+{"technique_id": "T1210", "name": "Exploitation of Remote Services", "cves": ["CVE-2014-7169", "CVE-2016-6662", "CVE-2017-0176"]}
+{"technique_id": "T1218.001", "name": "Compiled HTML File", "cves": ["CVE-2017-8625"]}
+{"technique_id": "T1218.005", "name": "Mshta", "cves": ["CVE-2017-0199"]}
+{"technique_id": "T1218.008", "name": "Odbcconf", "cves": ["CVE-2017-8759"]}
+{"technique_id": "T1223", "name": "Compiled HTML File", "cves": ["CVE-2017-8625"]}
+{"technique_id": "T1480", "name": "Execution Guardrails", "cves": ["CVE-2017-11774"]}
+{"technique_id": "T1497", "name": "Virtualization/Sandbox Evasion", "cves": ["CVE-2015-3113"]}
+{"technique_id": "T1542.003", "name": "Bootkit", "cves": ["CVE-2022-21894"]}
+{"technique_id": "T1546.018", "name": "Python Startup Hooks", "cves": ["CVE-2024-3400"]}
+{"technique_id": "T1555.005", "name": "Password Managers", "cves": ["CVE-2019-3610"]}
+{"technique_id": "T1559.003", "name": "XPC Services", "cves": ["CVE-2021-30724"]}
+{"technique_id": "T1562.010", "name": "Downgrade Attack", "cves": ["CVE-2022-21894"]}
+{"technique_id": "T1562.013", "name": "Disable or Modify Network Device Firewall", "cves": ["CVE-2024-55591"]}
+{"technique_id": "T1611", "name": "Escape to Host", "cves": ["CVE-2022-0185"]}
+{"technique_id": "T1653", "name": "Power Settings", "cves": ["CVE-2023-1389"]}
+{"technique_id": "T1668", "name": "Exclusive Control", "cves": ["CVE-2023-46747"]}

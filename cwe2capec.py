@@ -129,10 +129,14 @@ class TfidfCweCapecMapper:
 # 4. Main Orchestration
 # -------------------------------
 
+def round_score(value: float) -> float:
+    return round(value, 3)
+
+
 def main(
     cwe_path: str = "./source/cwe_db.json",
     capec_path: str = "./source/capec_db.json",
-    output_path: str = "./result/cwe2capec.json",
+    output_path: str = "./result/cwe2capec.jsonl",
     top_k: int = 3,
     threshold: float = 0.05
 ):
@@ -149,27 +153,32 @@ def main(
     mapper = TfidfCweCapecMapper(capec_ids, capec_texts)
 
     print("[✓] Processing CWEs without existing CAPECs...")
-    results = {}
     count = 0
-
-    for cwe_id, cwe_info in cwes.items():
-        # Skip CWEs that already have CAPECs
-        if cwe_info.get("capecs"):
-            continue
-
-        cwe_text = get_cwe_text(cwe_info)
-        recs = mapper.recommend(cwe_text, top_k=top_k, threshold=threshold)
-
-        if recs:
-            results[cwe_id] = {
-                "recommendations": recs
-            }
-            count += 1
-
-    # Save results
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
+
+    with open(output_path, 'w', encoding='utf-8') as fout:
+        for cwe_id, cwe_info in cwes.items():
+            # Skip CWEs that already have CAPECs
+            if cwe_info.get("capecs"):
+                continue
+
+            cwe_text = get_cwe_text(cwe_info)
+            recs = mapper.recommend(cwe_text, top_k=top_k, threshold=threshold)
+
+            if not recs:
+                continue
+
+            recs_normalized = [
+                {"capec_id": rec["capec_id"], "score": round_score(rec["score"])}
+                for rec in recs
+            ]
+
+            if not recs_normalized:
+                continue
+
+            record = {"cwe_id": cwe_id, "recommendations": recs_normalized}
+            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
+            count += 1
 
     print(f"\n✅ Done. {count} CWE→CAPEC mappings saved to {output_path}")
 

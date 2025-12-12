@@ -224,7 +224,7 @@ def setup_logger(log_file: str, quiet: bool = False) -> logging.Logger:
 def main(
     capec_path: str = "./source/capec_db.json",
     attack_path: str = "./source/attack_db.json",
-    output_path: str = "./result/existing_capec2techniques.json",
+    output_path: str = "./result/existing_capec2techniques.jsonl",
     log_file: str = "./result/existing_capec2techniques.log",
     top_k: int = 2,
     threshold: float = 0.05,
@@ -256,25 +256,32 @@ def main(
 
     print("[✓] Processing CAPECs with existing techniques...")
     evaluator = TechniqueConsistencyEvaluator(logger)
-    results = {}
     count = 0
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8') as fout:
+        for capec_id, capec_info in capecs.items():
+            # Only process CAPECs that have existing techniques
+            if not capec_info.get("techniques"):
+                continue
 
-    for capec_id, capec_info in capecs.items():
-        # Only process CAPECs that have existing techniques
-        if not capec_info.get("techniques"):
-            continue
+            capec_text = get_capec_text(capec_info)
+            recs = mapper.recommend(capec_text, top_k=top_k, threshold=threshold)
 
-        capec_text = get_capec_text(capec_info)
-        recs = mapper.recommend(capec_text, top_k=top_k, threshold=threshold)
+            # Evaluate consistency
+            evaluator.evaluate_and_log(capec_id, capec_info["techniques"], recs)
 
-        # Evaluate consistency
-        evaluator.evaluate_and_log(capec_id, capec_info["techniques"], recs)
+            if not recs:
+                continue
 
-        if recs:
-            results[capec_id] = {
+            record = {
+                "capec_id": capec_id,
                 "original_techniques": capec_info["techniques"],
-                "recommendations": recs
+                "recommendations": [
+                    {"technique_id": rec["technique_id"], "score": round(rec["score"], 3)}
+                    for rec in recs
+                ]
             }
+            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
             count += 1
 
     # Log summary

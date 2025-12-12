@@ -216,7 +216,7 @@ def setup_logger(log_file: str, quiet: bool = False) -> logging.Logger:
 def main(
     cwe_path: str = "./source/cwe_db.json",
     capec_path: str = "./source/capec_db.json",
-    output_path: str = "./result/existing_cwe2capec.json",
+    output_path: str = "./result/existing_cwe2capec.jsonl",
     log_file: str = "./result/existing_cwe2capec.log",
     top_k: int = 3,
     threshold: float = 0.05,
@@ -248,34 +248,36 @@ def main(
 
     print("[✓] Processing CWEs with existing CAPECs...")
     evaluator = CapecConsistencyEvaluator(logger)
-    results = {}
     count = 0
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8') as fout:
+        for cwe_id, cwe_info in cwes.items():
+            # Only process CWEs that have existing CAPECs
+            if not cwe_info.get("capecs"):
+                continue
 
-    for cwe_id, cwe_info in cwes.items():
-        # Only process CWEs that have existing CAPECs
-        if not cwe_info.get("capecs"):
-            continue
+            cwe_text = get_cwe_text(cwe_info)
+            recs = mapper.recommend(cwe_text, top_k=top_k, threshold=threshold)
 
-        cwe_text = get_cwe_text(cwe_info)
-        recs = mapper.recommend(cwe_text, top_k=top_k, threshold=threshold)
+            # Evaluate consistency
+            evaluator.evaluate_and_log(cwe_id, cwe_info["capecs"], recs)
 
-        # Evaluate consistency
-        evaluator.evaluate_and_log(cwe_id, cwe_info["capecs"], recs)
+            if not recs:
+                continue
 
-        if recs:
-            results[cwe_id] = {
+            record = {
+                "cwe_id": cwe_id,
                 "original_capecs": cwe_info["capecs"],
-                "recommendations": recs
+                "recommendations": [
+                    {"capec_id": rec["capec_id"], "score": round(rec["score"], 3)}
+                    for rec in recs
+                ]
             }
+            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
             count += 1
 
     # Log summary
     logger.info(evaluator.summary())
-
-    # Save results
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
 
     print(f"\n✅ Done. {count} CWE→CAPEC mappings saved to {output_path}")
 
