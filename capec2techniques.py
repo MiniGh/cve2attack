@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-CAPEC → ATT&CK Techniques Mapping via TF-IDF (For CAPECs without existing techniques)
-"""
+"""TF-IDF based CAPEC → ATT&CK technique mapping (existing or missing mappings)."""
 
-import os
+import argparse
 import json
+import os
+from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -13,193 +13,167 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# -------------------------------
-# 1. Data Loading Modules
-# -------------------------------
-
-def load_capec_db(filepath: str) -> Dict[str, dict]:
-    """Load CAPEC database from JSON file."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-def load_attack_db(filepath: str) -> Dict[str, dict]:
-    """Load ATT&CK database from JSON file."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-# -------------------------------
-# 2. Text Processing & Corpus Building
-# -------------------------------
-
-def build_attack_text_corpus(attacks: Dict[str, dict]) -> Tuple[List[str], List[str]]:
-    """
-    Build corpus for TF-IDF: list of technique IDs and their unified texts.
-    Text = name + description
-    """
-    tech_ids = []
-    texts = []
+def build_attack_corpus(attacks: Dict[str, dict]) -> Tuple[List[str], List[str]]:
+    ids: List[str] = []
+    texts: List[str] = []
     for tech_id, meta in attacks.items():
-        parts = [
-            meta.get("name", ""),
-            meta.get("description", "")
-        ]
-        text = " ".join(p.strip() for p in parts if isinstance(p, str))
+        parts = [meta.get("name", ""), meta.get("description", "")]
+        text = " ".join(p.strip() for p in parts if isinstance(p, str) and p.strip())
         if text:
-            tech_ids.append(tech_id)
+            ids.append(tech_id)
             texts.append(text)
-    return tech_ids, texts
+    return ids, texts
 
 
-def get_capec_text(capec_info: dict) -> str:
-    """Get unified text from CAPEC info."""
-    parts = [
-        capec_info.get("name", ""),
-        capec_info.get("description", ""),
-        capec_info.get("extended_description", "")
-    ]
-    return " ".join(p.strip() for p in parts if isinstance(p, str))
+def get_capec_text(capec: dict) -> str:
+    parts = [capec.get("name", ""), capec.get("description", ""), capec.get("extended_description", "")]
+    return " ".join(p.strip() for p in parts if isinstance(p, str) and p.strip())
 
 
-# -------------------------------
-# 3. TF-IDF Recommender Engine
-# -------------------------------
-
-class TfidfCapecTechMapper:
-    def __init__(self, tech_ids: List[str], tech_texts: List[str]):
-        self.tech_ids = tech_ids
-        self.vectorizer = TfidfVectorizer(
-            stop_words='english',
-            ngram_range=(1, 2),
-            max_df=0.85,
-            min_df=2,
-            token_pattern=r'(?u)\b\w\w+\b',
-            lowercase=True
-        )
-        # Fit ONLY on ATT&CK corpus → domain-aware IDF
-        self.X_tech = self.vectorizer.fit_transform(tech_texts)
-
-    def recommend(self,
-                  capec_text: str,
-                  top_k: int = 2,
-                  threshold: float = 0.05,
-                  decay_ratio: float = 0.7) -> List[Dict[str, float]]:
-        """
-        Recommend top-K techniques for a CAPEC text.
-        Returns: [{"technique_id": "T1234", "score": 0.21}, ...]
-        """
-        if not capec_text.strip():
-            return []
-
-        try:
-            X_capec = self.vectorizer.transform([capec_text])
-        except Exception:
-            return []
-
-        sims = cosine_similarity(X_capec, self.X_tech).flatten()
-        top_indices = np.argsort(sims)[::-1]
-
-        results = []
-        prev_score = None
-
-        for idx in top_indices:
-            score = float(sims[idx])
-            if score < threshold:
-                break
-            tech_id = self.tech_ids[idx]
-
-            if len(results) == 0:
-                results.append({"technique_id": tech_id, "score": score})
-                prev_score = score
-            elif len(results) < top_k:
-                # Stop if score drops too fast
-                if score < prev_score * decay_ratio:
-                    break
-                results.append({"technique_id": tech_id, "score": score})
-                prev_score = score
-            else:
-                break
-
-        return results
+def recommend(text: str, vectorizer: TfidfVectorizer, target_matrix, target_ids: List[str], top_k: int, threshold: float):
+    if not text.strip():
+        return []
+    vec = vectorizer.transform([text])
+    sims = cosine_similarity(vec, target_matrix).flatten()
+    order = np.argsort(sims)[::-1]
+    recs = []
+    for idx in order[: top_k * 2]:
+        score = float(sims[idx])
+        if score < threshold:
+            continue
+        recs.append({"technique_id": target_ids[idx], "score": round(score, 3)})
+        if len(recs) >= top_k:
+            break
+    return recs
 
 
-# -------------------------------
-# 4. Main Orchestration
-# -------------------------------
-
-def round_score(value: float) -> float:
-    return round(value, 3)
-
-
-def main(
-    capec_path: str = "./source/capec_db.json",
-    attack_path: str = "./source/attack_db.json",
-    output_path: str = "./result/capec2techniques.jsonl",
-    top_k: int = 2,
-    threshold: float = 0.05
-):
-    print("[✓] Loading CAPEC database...")
-    capecs = load_capec_db(capec_path)
-
-    print("[✓] Loading ATT&CK database...")
-    attacks = load_attack_db(attack_path)
-
-    print("[✓] Building ATT&CK text corpus...")
-    tech_ids, tech_texts = build_attack_text_corpus(attacks)
-
-    print("[✓] Initializing TF-IDF mapper...")
-    mapper = TfidfCapecTechMapper(tech_ids, tech_texts)
-
-    print("[✓] Processing CAPECs without existing techniques...")
-    count = 0
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-    with open(output_path, 'w', encoding='utf-8') as fout:
-        for capec_id, capec_info in capecs.items():
-            # Skip CAPECs that already have techniques
-            if capec_info.get("techniques"):
-                continue
-
-            capec_text = get_capec_text(capec_info)
-            recs = mapper.recommend(capec_text, top_k=top_k, threshold=threshold)
-
-            if not recs:
-                continue
-
-            recs_normalized = [
-                {"technique_id": rec["technique_id"], "score": round_score(rec["score"])}
-                for rec in recs
-            ]
-
-            if not recs_normalized:
-                continue
-
-            record = {"capec_id": capec_id, "recommendations": recs_normalized}
-            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
-            count += 1
-
-    print(f"\n✅ Done. {count} CAPEC→Technique mappings saved to {output_path}")
+def recall_at_10(truth: List[str], recs: List[dict]) -> float:
+    truth_set = set(str(t).lstrip("T") for t in truth)
+    if not truth_set:
+        return 0.0
+    return 1.0 if any(rec["technique_id"].lstrip("T") in truth_set for rec in recs[:10]) else 0.0
 
 
-# -------------------------------
-# 5. CLI Entry Point
-# -------------------------------
+def mrr(truth: List[str], recs: List[dict]) -> float:
+    truth_set = set(str(t).lstrip("T") for t in truth)
+    if not truth_set:
+        return 0.0
+    for rank, rec in enumerate(recs, start=1):
+        if rec["technique_id"].lstrip("T") in truth_set:
+            return 1.0 / rank
+    return 0.0
 
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Map CAPEC → ATT&CK Techniques using TF-IDF (for CAPECs without existing techniques)")
-    parser.add_argument("--capec_path", default="./source/capec_db.json", help="Path to capec_db.json")
-    parser.add_argument("--attack_path", default="./source/attack_db.json", help="Path to attack_db.json")
-    parser.add_argument("--output_path", default="./result/capec2techniques.json", help="Output file path")
-    parser.add_argument("--top_k", type=int, default=2, help="Max techniques per CAPEC")
-    parser.add_argument("--threshold", type=float, default=0.05, help="Min similarity score")
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="TF-IDF CAPEC→Technique mapping")
+    parser.add_argument("--mode", choices=["existing", "missing"], default="existing", help="existing: evaluate CAPECs with techniques from data_analyse/result; missing: predict for CAPECs without techniques")
+    parser.add_argument("--top_k", type=int, default=20, help="Max recommendations")
+    parser.add_argument("--threshold", type=float, default=0.05, help="Similarity threshold")
     args = parser.parse_args()
 
-    main(
-        capec_path=args.capec_path,
-        attack_path=args.attack_path,
-        output_path=args.output_path,
-        top_k=args.top_k,
-        threshold=args.threshold
-    )
+    root = Path(__file__).resolve().parent
+    capec_path = root / "source" / "capec_db.json"
+    attack_path = root / "source" / "attack_db.json"
+    truth_path = root / "data_analyse" / "result" / "capec2techniques.jsonl"
+    result_path = root / "result" / (("existing_" if args.mode == "existing" else "") + "capec2techniques.jsonl")
+    log_path = root / "result" / (("existing_" if args.mode == "existing" else "") + "capec2techniques.log")
+    os.makedirs(result_path.parent, exist_ok=True)
+
+    def log(msg: str) -> None:
+        print(msg)
+        with open(log_path, "a", encoding="utf-8") as lf:
+            lf.write(msg + "\n")
+
+    # Header
+    sep = "=" * 70
+    log("\n" + sep)
+    log(f"🚀 Run started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    log(f"📂 CAPEC path: {capec_path}")
+    log(f"📂 ATT&CK path: {attack_path}")
+    log(f"📂 Truth path: {truth_path}")
+    log(f"📤 Output path: {result_path}")
+    log(f"📄 Log file: {log_path}")
+    log(f"⚙️  Mode: {args.mode}, top_k: {args.top_k}, threshold: {args.threshold}")
+    log(sep + "\n")
+
+    log(f"[✓] Mode: {args.mode}")
+    log(f"[✓] Loading CAPEC DB: {capec_path}")
+    with capec_path.open("r", encoding="utf-8") as f:
+        capec_db = json.load(f)
+    log(f"[✓] Loading ATT&CK DB: {attack_path}")
+    with attack_path.open("r", encoding="utf-8") as f:
+        attack_db = json.load(f)
+
+    tech_ids, tech_texts = build_attack_corpus(attack_db)
+    log(f"[✓] Technique corpus size: {len(tech_ids)}")
+
+    vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), max_df=0.85, min_df=2, token_pattern=r"(?u)\b\w\w+\b", lowercase=True)
+    tech_matrix = vectorizer.fit_transform(tech_texts)
+    log("[✓] TF-IDF vectorizer fitted on technique corpus")
+
+    # Load truth mappings from data_analyse output (non-empty only)
+    existing_truth: Dict[str, List[str]] = {}
+    if truth_path.is_file():
+        with truth_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                obj = json.loads(line)
+                capec_id = obj.get("capec_id")
+                if not capec_id:
+                    continue
+                truth_list = obj.get("original_techniques") or obj.get("techniques") or []
+                if truth_list:
+                    existing_truth[capec_id] = list(truth_list)
+    log(f"[✓] Loaded {len(existing_truth)} CAPECs with technique mappings from {truth_path}")
+
+    touched_files: set[Path] = set()
+
+    def write_record(path: Path, record: dict):
+        mode = "a"
+        if path not in touched_files:
+            mode = "w"  # truncate on first write per run
+            touched_files.add(path)
+        with path.open(mode, encoding="utf-8") as fout:
+            fout.write(json.dumps(record, ensure_ascii=True) + "\n")
+
+    total = 0
+    written = 0
+    eval_n = 0
+    hit_sum = 0.0
+    mrr_sum = 0.0
+
+    if args.mode == "existing":
+        for capec_id, truth in existing_truth.items():
+            meta = capec_db.get(capec_id, {})
+            text = get_capec_text(meta)
+            total += 1
+            recs = recommend(text, vectorizer, tech_matrix, tech_ids, args.top_k, args.threshold)
+            eval_n += 1
+            hit_sum += recall_at_10(truth, recs)
+            mrr_sum += mrr(truth, recs)
+
+            record = {"capec_id": capec_id, "original_techniques": truth, "recommendations": recs}
+            write_record(result_path, record)
+            written += 1
+
+    else:  # missing
+        existing_ids = set(existing_truth.keys())
+        for capec_id, meta in capec_db.items():
+            if capec_id in existing_ids:
+                continue
+            text = get_capec_text(meta)
+            total += 1
+            recs = recommend(text, vectorizer, tech_matrix, tech_ids, args.top_k, args.threshold)
+            record = {"capec_id": capec_id, "original_techniques": [], "recommendations": recs}
+            write_record(result_path, record)
+            written += 1
+
+    if args.mode == "existing" and eval_n:
+        log(f"[★] Eval Recall@10: {hit_sum/eval_n:.4f} | MRR: {mrr_sum/eval_n:.4f} over {eval_n} CAPECs")
+    log(f"[✓] Done. processed={total}, written={written}, result={result_path}")
+
+
+if __name__ == "__main__":
+    main()

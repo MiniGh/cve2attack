@@ -1,234 +1,195 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-CVE → CWE Mapping via TF-IDF (Modular Design)
-Author: Your Name
-"""
+"""TF-IDF based CVE → CWE mapping (existing or missing mappings)."""
 
-import os
+import argparse
 import json
-import glob
+import os
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-from collections import defaultdict
+from typing import Dict, Iterable, List, Tuple
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# -------------------------------
-# 1. Data Loading Modules
-# -------------------------------
-
-def load_cwe_db(filepath: str) -> Dict[str, dict]:
-    """Load CWE database from JSON file."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-def load_cves_by_year(cve_dir: str) -> Dict[str, List[Tuple[str, dict]]]:
-    """
-    Load all CVEs grouped by year (e.g., 'CVE-2023').
-    Returns: { 'CVE-2023': [('CVE-2023-1234', {...}), ...], ... }
-    """
-    cve_by_year = defaultdict(list)
-    json_paths = sorted(glob.glob(os.path.join(cve_dir, "CVE-*.json")))
-    
-    for path in json_paths:
-        year_key = Path(path).stem  # e.g., "CVE-2023"
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            for cve_id, info in data.items():
-                cve_by_year[year_key].append((cve_id, info))
-        except Exception as e:
-            raise RuntimeError(f"Failed to load {path}: {e}")
-    
-    return dict(cve_by_year)
-
-
-# -------------------------------
-# 2. Text Processing & Corpus Building
-# -------------------------------
-
-def build_cwe_text_corpus(cwes: Dict[str, dict]) -> Tuple[List[str], List[str]]:
-    """
-    Build corpus for TF-IDF: list of CWE IDs and their unified texts.
-    Text = name + description + extended_description
-    """
-    cwe_ids = []
-    texts = []
-    for cwe_id, meta in cwes.items():
-        parts = [
-            meta.get("name", ""),
-            meta.get("description", ""),
-            meta.get("extended_description", "")
-        ]
-        text = " ".join(p.strip() for p in parts if isinstance(p, str))
+def build_cwe_corpus(cwe_db: Dict[str, dict]) -> Tuple[List[str], List[str]]:
+    ids: List[str] = []
+    texts: List[str] = []
+    for cwe_id, meta in cwe_db.items():
+        parts = [meta.get("name", ""), meta.get("description", ""), meta.get("extended_description", "")]
+        text = " ".join(p.strip() for p in parts if isinstance(p, str) and p.strip())
         if text:
-            cwe_ids.append(cwe_id)
+            ids.append(cwe_id)
             texts.append(text)
-    return cwe_ids, texts
+    return ids, texts
 
 
-def preprocess_text(text: str) -> str:
-    """Optional: custom preprocessing (e.g., lower, clean, etc.)"""
-    return text.strip()
+def load_all_cves(cve_dir: Path) -> Dict[str, dict]:
+    merged: Dict[str, dict] = {}
+    for cve_file in sorted(cve_dir.glob("CVE-*.json")):
+        with cve_file.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            merged.update(data)
+    return merged
 
 
-# -------------------------------
-# 3. TF-IDF Recommender Engine
-# -------------------------------
-
-class TfidfCveCweMapper:
-    def __init__(self, cwe_ids: List[str], cwe_texts: List[str]):
-        self.cwe_ids = cwe_ids
-        self.vectorizer = TfidfVectorizer(
-            stop_words='english',
-            ngram_range=(1, 2),
-            max_df=0.85,
-            min_df=2,
-            token_pattern=r'(?u)\b\w\w+\b',
-            lowercase=True
-        )
-        # Fit ONLY on CWE corpus → domain-aware IDF
-        self.X_cwe = self.vectorizer.fit_transform(cwe_texts)
-
-    def recommend(self,
-                   cve_desc: str,
-                   top_k: int = 2,
-                   threshold: float = 0.05,
-                   decay_ratio: float = 0.7) -> List[Dict[str, float]]:
-        """
-        Recommend top-K CWEs for a CVE description.
-        Returns: [{"cwe_id": "123", "score": 0.21}, ...]
-        """
-        if not cve_desc.strip():
-            return []
-
-        try:
-            X_cve = self.vectorizer.transform([cve_desc])
-        except Exception:
-            return []
-
-        sims = cosine_similarity(X_cve, self.X_cwe).flatten()
-        top_indices = np.argsort(sims)[::-1]
-
-        results = []
-        prev_score = None
-
-        for idx in top_indices:
-            score = float(sims[idx])
-            if score < threshold:
-                break
-            cwe_id = self.cwe_ids[idx]
-
-            if len(results) == 0:
-                results.append({"cwe_id": cwe_id, "score": score})
-                prev_score = score
-            elif len(results) < top_k:
-                # Stop if score drops too fast (e.g., 0.21 → 0.06)
-                if score < prev_score * decay_ratio:
-                    break
-                results.append({"cwe_id": cwe_id, "score": score})
-                prev_score = score
-            else:
-                break
-
-        return results
+def year_of_cve(cve_id: str) -> str:
+    try:
+        return cve_id.split("-")[1]
+    except Exception:
+        return "unknown"
 
 
-# -------------------------------
-# 4. Output Writer
-# -------------------------------
-
-def write_recommendations_to_jsonl(
-    output_dir: str,
-    year_key: str,
-    cve_list: List[Tuple[str, dict]],
-    mapper: TfidfCveCweMapper
-) -> int:
-    """
-    Write recommendations for one year to JSONL.
-    Returns: number of CVEs written (with recs)
-    """
-    os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f"{year_key}.jsonl")
-
-    count = 0
-    with open(output_path, 'w', encoding='utf-8') as f:
-        for cve_id, info in cve_list:
-            if info.get("cwes"):  # skip if already has CWE
-                continue
-            desc = preprocess_text(info.get("description", ""))
-            recs = mapper.recommend(desc)
-            if recs:
-                line = {
-                    "cve_id": cve_id,
-                    "recommendations": recs
-                }
-                f.write(json.dumps(line, ensure_ascii=False) + "\n")
-                count += 1
-    return count
+def recommend(text: str, vectorizer: TfidfVectorizer, target_matrix, target_ids: List[str], top_k: int, threshold: float) -> List[Dict[str, float]]:
+    if not text.strip():
+        return []
+    vec = vectorizer.transform([text])
+    sims = cosine_similarity(vec, target_matrix).flatten()
+    order = np.argsort(sims)[::-1]
+    results: List[Dict[str, float]] = []
+    for idx in order[: top_k * 2]:  # grab a bit more then filter by threshold
+        score = float(sims[idx])
+        if score < threshold:
+            continue
+        results.append({"cwe_id": target_ids[idx], "score": round(score, 3)})
+        if len(results) >= top_k:
+            break
+    return results
 
 
-# -------------------------------
-# 5. Main Orchestration
-# -------------------------------
-
-def main(
-    cve_dir: str = "./source/cve",
-    cwe_path: str = "./source/cwe_db.json",
-    output_dir: str = "./result/cve2cwe",
-    top_k: int = 2,
-    threshold: float = 0.05
-):
-    print("[✓] Loading CWE database...")
-    cwes = load_cwe_db(cwe_path)
-
-    print("[✓] Building CWE text corpus...")
-    cwe_ids, cwe_texts = build_cwe_text_corpus(cwes)
-
-    print("[✓] Initializing TF-IDF mapper...")
-    mapper = TfidfCveCweMapper(cwe_ids, cwe_texts)
-
-    print("[✓] Loading CVEs by year...")
-    cve_by_year = load_cves_by_year(cve_dir)
-
-    print(f"[✓] Processing {len(cve_by_year)} years...")
-    total_written = 0
-    for year_key, cve_list in sorted(cve_by_year.items()):
-        n = write_recommendations_to_jsonl(
-            output_dir=output_dir,
-            year_key=year_key,
-            cve_list=cve_list,
-            mapper=mapper
-        )
-        print(f"  → {year_key}.jsonl: {n} CVEs recommended")
-        total_written += n
-
-    print(f"\n✅ Done. {total_written} recommendations saved to {output_dir}/")
+def recall_at_10(truth: List[str], recs: List[Dict[str, float]]) -> float:
+    truth_set = set(str(t) for t in truth)
+    if not truth_set:
+        return 0.0
+    top10 = recs[:10]
+    return 1.0 if any(r["cwe_id"] in truth_set for r in top10) else 0.0
 
 
-# -------------------------------
-# 6. CLI Entry Point
-# -------------------------------
+def mrr(truth: List[str], recs: List[Dict[str, float]]) -> float:
+    truth_set = set(str(t) for t in truth)
+    if not truth_set:
+        return 0.0
+    for rank, rec in enumerate(recs, start=1):
+        if rec["cwe_id"] in truth_set:
+            return 1.0 / rank
+    return 0.0
 
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Map CVE → CWE using TF-IDF")
-    parser.add_argument("--cve_dir", default="./source/cve", help="Directory of CVE JSONs (by year)")
-    parser.add_argument("--cwe_path", default="./source/cwe_db.json", help="Path to cwe_db.json")
-    parser.add_argument("--output_dir", default="./result/cve2cwe", help="Output directory for JSONLs")
-    parser.add_argument("--top_k", type=int, default=2, help="Max CWEs per CVE")
-    parser.add_argument("--threshold", type=float, default=0.05, help="Min similarity score")
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="TF-IDF CVE→CWE mapping")
+    parser.add_argument("--mode", choices=["existing", "missing"], default="existing", help="existing: evaluate CVEs with known CWEs from data_analyse/result; missing: predict for others")
+    parser.add_argument("--top_k", type=int, default=20, help="Max recommendations per item")
+    parser.add_argument("--threshold", type=float, default=0.05, help="Similarity threshold")
     args = parser.parse_args()
 
-    main(
-        cve_dir=args.cve_dir,
-        cwe_path=args.cwe_path,
-        output_dir=args.output_dir,
-        top_k=args.top_k,
-        threshold=args.threshold
-    )
+    root = Path(__file__).resolve().parent
+    cwe_path = root / "source" / "cwe_db.json"
+    cve_dir = root / "source" / "cve"
+    truth_dir = root / "data_analyse" / "result" / "cve2cwe"
+    result_dir = root / "result" / ("existing_cve2cwe" if args.mode == "existing" else "cve2cwe")
+    result_dir.mkdir(parents=True, exist_ok=True)
+    log_path = result_dir / (("existing_" if args.mode == "existing" else "") + "cve2cwe.log")
+
+    def log(msg: str) -> None:
+        print(msg)
+        with open(log_path, "a", encoding="utf-8") as lf:
+            lf.write(msg + "\n")
+
+    # Header
+    sep = "=" * 70
+    log("\n" + sep)
+    log(f"🚀 Run started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    log(f"📂 CVE dir: {cve_dir}")
+    log(f"📂 CWE path: {cwe_path}")
+    log(f"📂 Truth dir: {truth_dir}")
+    log(f"📤 Output dir: {result_dir}")
+    log(f"📄 Log file: {log_path}")
+    log(f"⚙️  Mode: {args.mode}, top_k: {args.top_k}, threshold: {args.threshold}")
+    log(sep + "\n")
+
+    log(f"[✓] Mode: {args.mode}")
+    log(f"[✓] Loading CWE DB from {cwe_path}")
+    with cwe_path.open("r", encoding="utf-8") as f:
+        cwe_db = json.load(f)
+
+    cwe_ids, cwe_texts = build_cwe_corpus(cwe_db)
+    log(f"[✓] Loaded {len(cwe_ids)} CWE documents for corpus")
+
+    vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), max_df=0.85, min_df=2, token_pattern=r"(?u)\b\w\w+\b", lowercase=True)
+    cwe_matrix = vectorizer.fit_transform(cwe_texts)
+    log("[✓] TF-IDF vectorizer fitted on CWE corpus")
+
+    # Load CVE descriptions (cleaned, no cwes) and existing truth mappings
+    all_cves = load_all_cves(cve_dir)
+    existing_truth: Dict[str, List[str]] = {}
+    if truth_dir.is_dir():
+        for jf in sorted(truth_dir.glob("CVE-*.jsonl")):
+            with jf.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    obj = json.loads(line)
+                    cve_id = obj.get("cve_id")
+                    if not cve_id:
+                        continue
+                    truth_list = obj.get("original_cwes") or obj.get("cwes") or []
+                    if truth_list:
+                        existing_truth[cve_id] = list(truth_list)
+    log(f"[✓] Loaded {len(existing_truth)} CVEs with existing CWE mappings from {truth_dir}")
+
+    touched_files: set[Path] = set()
+
+    def write_record(path: Path, record: dict):
+        mode = "a"
+        if path not in touched_files:
+            mode = "w"  # truncate on first write per file for clean reruns
+            touched_files.add(path)
+        with path.open(mode, encoding="utf-8") as fout:
+            fout.write(json.dumps(record, ensure_ascii=True) + "\n")
+
+    total_items = 0
+    written = 0
+    hit_sum = 0.0
+    mrr_sum = 0.0
+    eval_count = 0
+
+    if args.mode == "existing":
+        for cve_id, truth in existing_truth.items():
+            desc = (all_cves.get(cve_id, {}).get("description") or "").strip()
+            total_items += 1
+            recs = recommend(desc, vectorizer, cwe_matrix, cwe_ids, args.top_k, args.threshold)
+            eval_count += 1
+            hit_sum += recall_at_10(truth, recs)
+            mrr_sum += mrr(truth, recs)
+
+            record = {"cve_id": cve_id, "original_cwes": truth, "recommendations": recs}
+            year = year_of_cve(cve_id)
+            out_path = result_dir / f"CVE-{year}.jsonl"
+            write_record(out_path, record)
+            written += 1
+
+    else:  # missing
+        existing_ids = set(existing_truth.keys())
+        for cve_id, meta in all_cves.items():
+            if cve_id in existing_ids:
+                continue
+            desc = (meta.get("description") or "").strip()
+            total_items += 1
+            recs = recommend(desc, vectorizer, cwe_matrix, cwe_ids, args.top_k, args.threshold)
+            record = {"cve_id": cve_id, "original_cwes": [], "recommendations": recs}
+            year = year_of_cve(cve_id)
+            out_path = result_dir / f"CVE-{year}.jsonl"
+            write_record(out_path, record)
+            written += 1
+
+    if args.mode == "existing" and eval_count:
+        recall10 = hit_sum / eval_count
+        mrr_score = mrr_sum / eval_count
+        log(f"[★] Eval Recall@10: {recall10:.4f} | MRR: {mrr_score:.4f} over {eval_count} CVEs")
+    log(f"[✓] Done. processed={total_items}, written={written}, log={log_path}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-CWE → CAPEC Mapping via TF-IDF (For CWEs without existing CAPECs)
-"""
+"""TF-IDF based CWE → CAPEC mapping (existing or missing mappings)."""
 
-import os
+import argparse
 import json
+import os
+from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -13,194 +13,167 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# -------------------------------
-# 1. Data Loading Modules
-# -------------------------------
-
-def load_cwe_db(filepath: str) -> Dict[str, dict]:
-    """Load CWE database from JSON file."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-def load_capec_db(filepath: str) -> Dict[str, dict]:
-    """Load CAPEC database from JSON file."""
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-# -------------------------------
-# 2. Text Processing & Corpus Building
-# -------------------------------
-
-def build_capec_text_corpus(capecs: Dict[str, dict]) -> Tuple[List[str], List[str]]:
-    """
-    Build corpus for TF-IDF: list of CAPEC IDs and their unified texts.
-    Text = name + description + extended_description
-    """
-    capec_ids = []
-    texts = []
+def build_capec_corpus(capecs: Dict[str, dict]) -> Tuple[List[str], List[str]]:
+    ids: List[str] = []
+    texts: List[str] = []
     for capec_id, meta in capecs.items():
-        parts = [
-            meta.get("name", ""),
-            meta.get("description", ""),
-            meta.get("extended_description", "")
-        ]
-        text = " ".join(p.strip() for p in parts if isinstance(p, str))
+        parts = [meta.get("name", ""), meta.get("description", ""), meta.get("extended_description", "")]
+        text = " ".join(p.strip() for p in parts if isinstance(p, str) and p.strip())
         if text:
-            capec_ids.append(capec_id)
+            ids.append(capec_id)
             texts.append(text)
-    return capec_ids, texts
+    return ids, texts
 
 
-def get_cwe_text(cwe_info: dict) -> str:
-    """Get unified text from CWE info."""
-    parts = [
-        cwe_info.get("name", ""),
-        cwe_info.get("description", ""),
-        cwe_info.get("extended_description", "")
-    ]
-    return " ".join(p.strip() for p in parts if isinstance(p, str))
+def get_cwe_text(cwe: dict) -> str:
+    parts = [cwe.get("name", ""), cwe.get("description", ""), cwe.get("extended_description", "")]
+    return " ".join(p.strip() for p in parts if isinstance(p, str) and p.strip())
 
 
-# -------------------------------
-# 3. TF-IDF Recommender Engine
-# -------------------------------
-
-class TfidfCweCapecMapper:
-    def __init__(self, capec_ids: List[str], capec_texts: List[str]):
-        self.capec_ids = capec_ids
-        self.vectorizer = TfidfVectorizer(
-            stop_words='english',
-            ngram_range=(1, 2),
-            max_df=0.85,
-            min_df=2,
-            token_pattern=r'(?u)\b\w\w+\b',
-            lowercase=True
-        )
-        # Fit ONLY on CAPEC corpus → domain-aware IDF
-        self.X_capec = self.vectorizer.fit_transform(capec_texts)
-
-    def recommend(self,
-                  cwe_text: str,
-                  top_k: int = 3,
-                  threshold: float = 0.05,
-                  decay_ratio: float = 0.7) -> List[Dict[str, float]]:
-        """
-        Recommend top-K CAPECs for a CWE text.
-        Returns: [{"capec_id": "123", "score": 0.21}, ...]
-        """
-        if not cwe_text.strip():
-            return []
-
-        try:
-            X_cwe = self.vectorizer.transform([cwe_text])
-        except Exception:
-            return []
-
-        sims = cosine_similarity(X_cwe, self.X_capec).flatten()
-        top_indices = np.argsort(sims)[::-1]
-
-        results = []
-        prev_score = None
-
-        for idx in top_indices:
-            score = float(sims[idx])
-            if score < threshold:
-                break
-            capec_id = self.capec_ids[idx]
-
-            if len(results) == 0:
-                results.append({"capec_id": capec_id, "score": score})
-                prev_score = score
-            elif len(results) < top_k:
-                # Stop if score drops too fast
-                if score < prev_score * decay_ratio:
-                    break
-                results.append({"capec_id": capec_id, "score": score})
-                prev_score = score
-            else:
-                break
-
-        return results
+def recommend(text: str, vectorizer: TfidfVectorizer, target_matrix, target_ids: List[str], top_k: int, threshold: float):
+    if not text.strip():
+        return []
+    vec = vectorizer.transform([text])
+    sims = cosine_similarity(vec, target_matrix).flatten()
+    order = np.argsort(sims)[::-1]
+    recs = []
+    for idx in order[: top_k * 2]:
+        score = float(sims[idx])
+        if score < threshold:
+            continue
+        recs.append({"capec_id": target_ids[idx], "score": round(score, 3)})
+        if len(recs) >= top_k:
+            break
+    return recs
 
 
-# -------------------------------
-# 4. Main Orchestration
-# -------------------------------
-
-def round_score(value: float) -> float:
-    return round(value, 3)
-
-
-def main(
-    cwe_path: str = "./source/cwe_db.json",
-    capec_path: str = "./source/capec_db.json",
-    output_path: str = "./result/cwe2capec.jsonl",
-    top_k: int = 3,
-    threshold: float = 0.05
-):
-    print("[✓] Loading CWE database...")
-    cwes = load_cwe_db(cwe_path)
-
-    print("[✓] Loading CAPEC database...")
-    capecs = load_capec_db(capec_path)
-
-    print("[✓] Building CAPEC text corpus...")
-    capec_ids, capec_texts = build_capec_text_corpus(capecs)
-
-    print("[✓] Initializing TF-IDF mapper...")
-    mapper = TfidfCweCapecMapper(capec_ids, capec_texts)
-
-    print("[✓] Processing CWEs without existing CAPECs...")
-    count = 0
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
-    with open(output_path, 'w', encoding='utf-8') as fout:
-        for cwe_id, cwe_info in cwes.items():
-            # Skip CWEs that already have CAPECs
-            if cwe_info.get("capecs"):
-                continue
-
-            cwe_text = get_cwe_text(cwe_info)
-            recs = mapper.recommend(cwe_text, top_k=top_k, threshold=threshold)
-
-            if not recs:
-                continue
-
-            recs_normalized = [
-                {"capec_id": rec["capec_id"], "score": round_score(rec["score"])}
-                for rec in recs
-            ]
-
-            if not recs_normalized:
-                continue
-
-            record = {"cwe_id": cwe_id, "recommendations": recs_normalized}
-            fout.write(json.dumps(record, ensure_ascii=False) + "\n")
-            count += 1
-
-    print(f"\n✅ Done. {count} CWE→CAPEC mappings saved to {output_path}")
+def recall_at_10(truth: List[str], recs: List[dict]) -> float:
+    truth_set = set(str(t) for t in truth)
+    if not truth_set:
+        return 0.0
+    return 1.0 if any(r["capec_id"] in truth_set for r in recs[:10]) else 0.0
 
 
-# -------------------------------
-# 5. CLI Entry Point
-# -------------------------------
+def mrr(truth: List[str], recs: List[dict]) -> float:
+    truth_set = set(str(t) for t in truth)
+    if not truth_set:
+        return 0.0
+    for rank, rec in enumerate(recs, start=1):
+        if rec["capec_id"] in truth_set:
+            return 1.0 / rank
+    return 0.0
 
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Map CWE → CAPEC using TF-IDF (for CWEs without existing CAPECs)")
-    parser.add_argument("--cwe_path", default="./source/cwe_db.json", help="Path to cwe_db.json")
-    parser.add_argument("--capec_path", default="./source/capec_db.json", help="Path to capec_db.json")
-    parser.add_argument("--output_path", default="./result/cwe2capec.json", help="Output file path")
-    parser.add_argument("--top_k", type=int, default=3, help="Max CAPECs per CWE")
-    parser.add_argument("--threshold", type=float, default=0.05, help="Min similarity score")
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="TF-IDF CWE→CAPEC mapping")
+    parser.add_argument("--mode", choices=["existing", "missing"], default="existing", help="existing: evaluate CWEs with CAPECs from data_analyse/result; missing: predict for CWEs without CAPECs")
+    parser.add_argument("--top_k", type=int, default=20, help="Max recommendations")
+    parser.add_argument("--threshold", type=float, default=0.05, help="Similarity threshold")
     args = parser.parse_args()
 
-    main(
-        cwe_path=args.cwe_path,
-        capec_path=args.capec_path,
-        output_path=args.output_path,
-        top_k=args.top_k,
-        threshold=args.threshold
-    )
+    root = Path(__file__).resolve().parent
+    cwe_path = root / "source" / "cwe_db.json"
+    capec_path = root / "source" / "capec_db.json"
+    truth_path = root / "data_analyse" / "result" / "cwe2capec.jsonl"
+    result_path = root / "result" / (("existing_" if args.mode == "existing" else "") + "cwe2capec.jsonl")
+    log_path = root / "result" / (("existing_" if args.mode == "existing" else "") + "cwe2capec.log")
+    os.makedirs(result_path.parent, exist_ok=True)
+
+    def log(msg: str) -> None:
+        print(msg)
+        with open(log_path, "a", encoding="utf-8") as lf:
+            lf.write(msg + "\n")
+
+    # Header
+    sep = "=" * 70
+    log("\n" + sep)
+    log(f"🚀 Run started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    log(f"📂 CWE path: {cwe_path}")
+    log(f"📂 CAPEC path: {capec_path}")
+    log(f"📂 Truth path: {truth_path}")
+    log(f"📤 Output path: {result_path}")
+    log(f"📄 Log file: {log_path}")
+    log(f"⚙️  Mode: {args.mode}, top_k: {args.top_k}, threshold: {args.threshold}")
+    log(sep + "\n")
+
+    log(f"[✓] Mode: {args.mode}")
+    log(f"[✓] Loading CWE DB: {cwe_path}")
+    with cwe_path.open("r", encoding="utf-8") as f:
+        cwe_db = json.load(f)
+    log(f"[✓] Loading CAPEC DB: {capec_path}")
+    with capec_path.open("r", encoding="utf-8") as f:
+        capec_db = json.load(f)
+
+    capec_ids, capec_texts = build_capec_corpus(capec_db)
+    log(f"[✓] CAPEC corpus size: {len(capec_ids)}")
+
+    vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), max_df=0.85, min_df=2, token_pattern=r"(?u)\b\w\w+\b", lowercase=True)
+    capec_matrix = vectorizer.fit_transform(capec_texts)
+    log("[✓] TF-IDF vectorizer fitted on CAPEC corpus")
+
+    # Load truth mappings from data_analyse output (non-empty only)
+    existing_truth: Dict[str, List[str]] = {}
+    if truth_path.is_file():
+        with truth_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                obj = json.loads(line)
+                cwe_id = obj.get("cwe_id")
+                if not cwe_id:
+                    continue
+                truth_list = obj.get("original_capecs") or obj.get("capecs") or []
+                if truth_list:
+                    existing_truth[cwe_id] = list(truth_list)
+    log(f"[✓] Loaded {len(existing_truth)} CWEs with CAPEC mappings from {truth_path}")
+
+    touched_files: set[Path] = set()
+
+    def write_record(path: Path, record: dict):
+        mode = "a"
+        if path not in touched_files:
+            mode = "w"  # truncate on first write per run
+            touched_files.add(path)
+        with path.open(mode, encoding="utf-8") as fout:
+            fout.write(json.dumps(record, ensure_ascii=True) + "\n")
+
+    total = 0
+    written = 0
+    eval_n = 0
+    hit_sum = 0.0
+    mrr_sum = 0.0
+
+    if args.mode == "existing":
+        for cwe_id, truth in existing_truth.items():
+            meta = cwe_db.get(cwe_id, {})
+            text = get_cwe_text(meta)
+            total += 1
+            recs = recommend(text, vectorizer, capec_matrix, capec_ids, args.top_k, args.threshold)
+            eval_n += 1
+            hit_sum += recall_at_10(truth, recs)
+            mrr_sum += mrr(truth, recs)
+
+            record = {"cwe_id": cwe_id, "original_capecs": truth, "recommendations": recs}
+            write_record(result_path, record)
+            written += 1
+
+    else:  # missing
+        existing_ids = set(existing_truth.keys())
+        for cwe_id, meta in cwe_db.items():
+            if cwe_id in existing_ids:
+                continue
+            text = get_cwe_text(meta)
+            total += 1
+            recs = recommend(text, vectorizer, capec_matrix, capec_ids, args.top_k, args.threshold)
+            record = {"cwe_id": cwe_id, "original_capecs": [], "recommendations": recs}
+            write_record(result_path, record)
+            written += 1
+
+    if args.mode == "existing" and eval_n:
+        log(f"[★] Eval Recall@10: {hit_sum/eval_n:.4f} | MRR: {mrr_sum/eval_n:.4f} over {eval_n} CWEs")
+    log(f"[✓] Done. processed={total}, written={written}, result={result_path}")
+
+
+if __name__ == "__main__":
+    main()

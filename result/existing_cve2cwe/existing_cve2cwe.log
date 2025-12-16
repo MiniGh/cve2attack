@@ -1,0 +1,68 @@
+[✓] Mode: existing
+[✓] Loading CWE DB from /home/ghdemi/Code/cve2attack/source/cwe_db.json
+[✓] Loaded 969 CWE documents for corpus
+[✓] TF-IDF vectorizer fitted on CWE corpus
+[→] Processing CVE-1999.json (1579 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-1999.jsonl
+[→] Processing CVE-2000.json (1242 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2000.jsonl
+[→] Processing CVE-2001.json (1556 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2001.jsonl
+[→] Processing CVE-2002.json (2393 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2002.jsonl
+[→] Processing CVE-2003.json (1555 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2003.jsonl
+[→] Processing CVE-2004.json (2707 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2004.jsonl
+[→] Processing CVE-2005.json (4769 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2005.jsonl
+[→] Processing CVE-2006.json (7143 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2006.jsonl
+[→] Processing CVE-2007.json (6580 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2007.jsonl
+[→] Processing CVE-2008.json (7177 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2008.jsonl
+[→] Processing CVE-2009.json (5052 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2009.jsonl
+[→] Processing CVE-2010.json (5244 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2010.jsonl
+[→] Processing CVE-2011.json (4896 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2011.jsonl
+[→] Processing CVE-2012.json (5938 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2012.jsonl
+[→] Processing CVE-2013.json (6823 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2013.jsonl
+[→] Processing CVE-2014.json (9000 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2014.jsonl
+[→] Processing CVE-2015.json (8768 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2015.jsonl
+[→] Processing CVE-2016.json (10570 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2016.jsonl
+[→] Processing CVE-2017.json (17035 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2017.jsonl
+[→] Processing CVE-2018.json (17505 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2018.jsonl
+[→] Processing CVE-2019.json (17084 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2019.jsonl
+[→] Processing CVE-2020.json (20664 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2020.jsonl
+[→] Processing CVE-2021.json (23123 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2021.jsonl
+[→] Processing CVE-2022.json (27091 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2022.jsonl
+[→] Processing CVE-2023.json (30483 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2023.jsonl
+[→] Processing CVE-2024.json (38783 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2024.jsonl
+[→] Processing CVE-2025.json (34852 CVEs) -> /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/CVE-2025.jsonl
+[★] Eval Recall@10: 0.4911 | MRR: 0.3539 over 247231 CVEs
+[✓] Done. processed=319612, written=247231, log=/home/ghdemi/Code/cve2attack/result/existing_cve2cwe/existing_cve2cwe.log
+
+======================================================================
+🚀 Run started at: 2025-12-12 17:05:35
+📂 CVE dir: /home/ghdemi/Code/cve2attack/source/cve
+📂 CWE path: /home/ghdemi/Code/cve2attack/source/cwe_db.json
+📂 Truth dir: /home/ghdemi/Code/cve2attack/data_analyse/result/existing_cve2cwe
+📤 Output dir: /home/ghdemi/Code/cve2attack/result/existing_cve2cwe
+📄 Log file: /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/existing_cve2cwe.log
+⚙️  Mode: existing, top_k: 20, threshold: 0.05
+======================================================================
+
+[✓] Mode: existing
+[✓] Loading CWE DB from /home/ghdemi/Code/cve2attack/source/cwe_db.json
+[✓] Loaded 969 CWE documents for corpus
+[✓] TF-IDF vectorizer fitted on CWE corpus
+[✓] Loaded 0 CVEs with existing CWE mappings from /home/ghdemi/Code/cve2attack/data_analyse/result/existing_cve2cwe
+[✓] Done. processed=0, written=0, log=/home/ghdemi/Code/cve2attack/result/existing_cve2cwe/existing_cve2cwe.log
+
+======================================================================
+🚀 Run started at: 2025-12-12 20:33:04
+📂 CVE dir: /home/ghdemi/Code/cve2attack/source/cve
+📂 CWE path: /home/ghdemi/Code/cve2attack/source/cwe_db.json
+📂 Truth dir: /home/ghdemi/Code/cve2attack/data_analyse/result/cve2cwe
+📤 Output dir: /home/ghdemi/Code/cve2attack/result/existing_cve2cwe
+📄 Log file: /home/ghdemi/Code/cve2attack/result/existing_cve2cwe/existing_cve2cwe.log
+⚙️  Mode: existing, top_k: 20, threshold: 0.05
+======================================================================
+
+[✓] Mode: existing
+[✓] Loading CWE DB from /home/ghdemi/Code/cve2attack/source/cwe_db.json
+[✓] Loaded 969 CWE documents for corpus
+[✓] TF-IDF vectorizer fitted on CWE corpus
+[✓] Loaded 247231 CVEs with existing CWE mappings from /home/ghdemi/Code/cve2attack/data_analyse/result/cve2cwe
+[★] Eval Recall@10: 0.4911 | MRR: 0.3539 over 247231 CVEs
+[✓] Done. processed=247231, written=247231, log=/home/ghdemi/Code/cve2attack/result/existing_cve2cwe/existing_cve2cwe.log

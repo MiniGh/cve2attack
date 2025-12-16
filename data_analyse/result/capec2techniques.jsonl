@@ -1,177 +1,177 @@
-{"capec_id": "1", "original_techniques": ["1574.010"]}
-{"capec_id": "2", "original_techniques": ["1531"]}
-{"capec_id": "11", "original_techniques": ["1036.006"]}
-{"capec_id": "13", "original_techniques": ["1562.003", "1574.006", "1574.007"]}
-{"capec_id": "17", "original_techniques": ["1574.005", "1574.010"]}
-{"capec_id": "19", "original_techniques": ["1027.009", "1546.004", "1546.016"]}
-{"capec_id": "21", "original_techniques": ["1134", "1528", "1539"]}
-{"capec_id": "25", "original_techniques": ["1499.004"]}
-{"capec_id": "30", "original_techniques": ["1055.003"]}
-{"capec_id": "31", "original_techniques": ["1539"]}
-{"capec_id": "35", "original_techniques": ["1027.006", "1027.009", "1564.009"]}
-{"capec_id": "37", "original_techniques": ["1005", "1552.004"]}
-{"capec_id": "38", "original_techniques": ["1574.007", "1574.009"]}
-{"capec_id": "49", "original_techniques": ["1110.001"]}
-{"capec_id": "55", "original_techniques": ["1110.002"]}
-{"capec_id": "57", "original_techniques": ["1040"]}
-{"capec_id": "60", "original_techniques": ["1134.001", "1550.004"]}
-{"capec_id": "65", "original_techniques": ["1040"]}
-{"capec_id": "68", "original_techniques": ["1553.002"]}
-{"capec_id": "70", "original_techniques": ["1078.001"]}
-{"capec_id": "94", "original_techniques": ["1557"]}
-{"capec_id": "98", "original_techniques": ["1566", "1598"]}
-{"capec_id": "112", "original_techniques": ["1110"]}
-{"capec_id": "114", "original_techniques": ["1548"]}
-{"capec_id": "115", "original_techniques": ["1548"]}
-{"capec_id": "122", "original_techniques": ["1548"]}
-{"capec_id": "125", "original_techniques": ["1498.001", "1499"]}
-{"capec_id": "127", "original_techniques": ["1083"]}
-{"capec_id": "130", "original_techniques": ["1499.003"]}
-{"capec_id": "131", "original_techniques": ["1499"]}
-{"capec_id": "132", "original_techniques": ["1547.009"]}
-{"capec_id": "141", "original_techniques": ["1557.002"]}
-{"capec_id": "142", "original_techniques": ["1584.002"]}
-{"capec_id": "148", "original_techniques": ["1491"]}
-{"capec_id": "150", "original_techniques": ["1003", "1119", "1213", "1530", "1555", "1602"]}
-{"capec_id": "158", "original_techniques": ["1040", "1111"]}
-{"capec_id": "159", "original_techniques": ["1574.008"]}
-{"capec_id": "163", "original_techniques": ["1534", "1566.001", "1566.002", "1566.003", "1598.001", "1598.002", "1598.003"]}
-{"capec_id": "165", "original_techniques": ["1036.003"]}
-{"capec_id": "169", "original_techniques": ["1217", "1592", "1595"]}
-{"capec_id": "177", "original_techniques": ["1036"]}
-{"capec_id": "180", "original_techniques": ["1574.010"]}
-{"capec_id": "186", "original_techniques": ["1195.002"]}
-{"capec_id": "187", "original_techniques": ["1072"]}
-{"capec_id": "191", "original_techniques": ["1552.001"]}
-{"capec_id": "196", "original_techniques": ["1134.002", "1134.003", "1606"]}
-{"capec_id": "203", "original_techniques": ["1112", "1647"]}
-{"capec_id": "204", "original_techniques": ["1005"]}
-{"capec_id": "206", "original_techniques": ["1553.002"]}
-{"capec_id": "227", "original_techniques": ["1499"]}
-{"capec_id": "233", "original_techniques": ["1548"]}
-{"capec_id": "251", "original_techniques": ["1055"]}
-{"capec_id": "267", "original_techniques": ["1027"]}
-{"capec_id": "268", "original_techniques": ["1070", "1562.002", "1562.003", "1562.008"]}
-{"capec_id": "270", "original_techniques": ["1547.001", "1547.014"]}
-{"capec_id": "292", "original_techniques": ["1018"]}
-{"capec_id": "295", "original_techniques": ["1124"]}
-{"capec_id": "300", "original_techniques": ["1046"]}
-{"capec_id": "309", "original_techniques": ["1016", "1049", "1590"]}
-{"capec_id": "312", "original_techniques": ["1082"]}
-{"capec_id": "313", "original_techniques": ["1082"]}
-{"capec_id": "383", "original_techniques": ["1056.004"]}
-{"capec_id": "407", "original_techniques": ["1589"]}
-{"capec_id": "438", "original_techniques": ["1195"]}
-{"capec_id": "439", "original_techniques": ["1195"]}
-{"capec_id": "440", "original_techniques": ["1195.003", "1200"]}
-{"capec_id": "442", "original_techniques": ["1195.001", "1195.002"]}
-{"capec_id": "443", "original_techniques": ["1195.002", "1195.003"]}
-{"capec_id": "445", "original_techniques": ["1195.001"]}
-{"capec_id": "446", "original_techniques": ["1195"]}
-{"capec_id": "448", "original_techniques": ["1027.009"]}
-{"capec_id": "457", "original_techniques": ["1091", "1092"]}
-{"capec_id": "464", "original_techniques": ["1606.001"]}
-{"capec_id": "465", "original_techniques": ["1090.001"]}
-{"capec_id": "469", "original_techniques": ["1499.002"]}
-{"capec_id": "471", "original_techniques": ["1574.001", "1574.004", "1574.008"]}
-{"capec_id": "473", "original_techniques": ["1036.001", "1553.002"]}
-{"capec_id": "474", "original_techniques": ["1552.004"]}
-{"capec_id": "478", "original_techniques": ["1543.003", "1574.011"]}
-{"capec_id": "479", "original_techniques": ["1553.004"]}
-{"capec_id": "480", "original_techniques": ["1611"]}
-{"capec_id": "481", "original_techniques": ["1090.004"]}
-{"capec_id": "482", "original_techniques": ["1498.001", "1499.001", "1499.002"]}
-{"capec_id": "485", "original_techniques": ["1552.004"]}
-{"capec_id": "488", "original_techniques": ["1499.002"]}
-{"capec_id": "489", "original_techniques": ["1499.002"]}
-{"capec_id": "490", "original_techniques": ["1498.002"]}
-{"capec_id": "497", "original_techniques": ["1083"]}
-{"capec_id": "504", "original_techniques": ["1036.004"]}
-{"capec_id": "509", "original_techniques": ["1558.003"]}
-{"capec_id": "511", "original_techniques": ["1195.001"]}
-{"capec_id": "516", "original_techniques": ["1195.003"]}
-{"capec_id": "520", "original_techniques": ["1195.003"]}
-{"capec_id": "522", "original_techniques": ["1195.003"]}
-{"capec_id": "523", "original_techniques": ["1195.002"]}
-{"capec_id": "528", "original_techniques": ["1498.001", "1499.002"]}
-{"capec_id": "531", "original_techniques": ["1195.003"]}
-{"capec_id": "532", "original_techniques": ["1495", "1542.001"]}
-{"capec_id": "537", "original_techniques": ["1195.003"]}
-{"capec_id": "538", "original_techniques": ["1195.001"]}
-{"capec_id": "539", "original_techniques": ["1195.003"]}
-{"capec_id": "541", "original_techniques": ["1592.002"]}
-{"capec_id": "542", "original_techniques": ["1027", "1587.001"]}
-{"capec_id": "543", "original_techniques": ["1036.005"]}
-{"capec_id": "545", "original_techniques": ["1005", "1555.001"]}
-{"capec_id": "550", "original_techniques": ["1543"]}
-{"capec_id": "551", "original_techniques": ["1543"]}
-{"capec_id": "552", "original_techniques": ["1014", "1542.003", "1547.006"]}
-{"capec_id": "555", "original_techniques": ["1021", "1114.002", "1133"]}
-{"capec_id": "556", "original_techniques": ["1546.001"]}
-{"capec_id": "558", "original_techniques": ["1505.005", "1546.008"]}
-{"capec_id": "560", "original_techniques": ["1078"]}
-{"capec_id": "561", "original_techniques": ["1021.002"]}
-{"capec_id": "562", "original_techniques": ["1080"]}
-{"capec_id": "564", "original_techniques": ["1037", "1543.001", "1543.004", "1547"]}
-{"capec_id": "565", "original_techniques": ["1110.003"]}
-{"capec_id": "568", "original_techniques": ["1056.001"]}
-{"capec_id": "569", "original_techniques": ["1056"]}
-{"capec_id": "571", "original_techniques": ["1562.002", "1562.002", "1562.006", "1562.008"]}
-{"capec_id": "572", "original_techniques": ["1027.001"]}
-{"capec_id": "573", "original_techniques": ["1057"]}
-{"capec_id": "574", "original_techniques": ["1007"]}
-{"capec_id": "575", "original_techniques": ["1087"]}
-{"capec_id": "576", "original_techniques": ["1069", "1615"]}
-{"capec_id": "577", "original_techniques": ["1033"]}
-{"capec_id": "578", "original_techniques": ["1556.006", "1562.001", "1562.002", "1562.004", "1562.007", "1562.008", "1562.009"]}
-{"capec_id": "579", "original_techniques": ["1547.004"]}
-{"capec_id": "580", "original_techniques": ["1082"]}
-{"capec_id": "581", "original_techniques": ["1518.001"]}
-{"capec_id": "593", "original_techniques": ["1185", "1550.001", "1563"]}
-{"capec_id": "600", "original_techniques": ["1110.004"]}
-{"capec_id": "609", "original_techniques": ["1111"]}
-{"capec_id": "616", "original_techniques": ["1036.005"]}
-{"capec_id": "620", "original_techniques": ["1600"]}
-{"capec_id": "633", "original_techniques": ["1134"]}
-{"capec_id": "634", "original_techniques": ["1123", "1125"]}
-{"capec_id": "635", "original_techniques": ["1036.007"]}
-{"capec_id": "636", "original_techniques": ["1001.002", "1027.003", "1027.004", "1218.001", "1221"]}
-{"capec_id": "637", "original_techniques": ["1115"]}
-{"capec_id": "638", "original_techniques": ["1542.002"]}
-{"capec_id": "639", "original_techniques": ["1039", "1552.001", "1552.003", "1552.004", "1552.006"]}
-{"capec_id": "640", "original_techniques": ["1505.005", "1574.006", "1574.013", "1620"]}
-{"capec_id": "641", "original_techniques": ["1574.002"]}
-{"capec_id": "642", "original_techniques": ["1505.005", "1554", "1574.005"]}
-{"capec_id": "643", "original_techniques": ["1135"]}
-{"capec_id": "644", "original_techniques": ["1550.002"]}
-{"capec_id": "645", "original_techniques": ["1550.003"]}
-{"capec_id": "646", "original_techniques": ["1120"]}
-{"capec_id": "647", "original_techniques": ["1005", "1012", "1552.002"]}
-{"capec_id": "648", "original_techniques": ["1113", "1513"]}
-{"capec_id": "649", "original_techniques": ["1036.006"]}
-{"capec_id": "650", "original_techniques": ["1505.003"]}
-{"capec_id": "651", "original_techniques": ["1111"]}
-{"capec_id": "652", "original_techniques": ["1558"]}
-{"capec_id": "654", "original_techniques": ["1056", "1548.004"]}
-{"capec_id": "655", "original_techniques": ["1027.001"]}
-{"capec_id": "657", "original_techniques": ["1072"]}
-{"capec_id": "660", "original_techniques": ["1055"]}
-{"capec_id": "662", "original_techniques": ["1185"]}
-{"capec_id": "665", "original_techniques": ["1211", "1542.002", "1556"]}
-{"capec_id": "666", "original_techniques": ["1498.001", "1499.001"]}
-{"capec_id": "668", "original_techniques": ["1565.002"]}
-{"capec_id": "669", "original_techniques": ["1195.002"]}
-{"capec_id": "670", "original_techniques": ["1127", "1195.001"]}
-{"capec_id": "671", "original_techniques": ["1195.003"]}
-{"capec_id": "672", "original_techniques": ["1195.003"]}
-{"capec_id": "673", "original_techniques": ["1195.002"]}
-{"capec_id": "674", "original_techniques": ["1195.003"]}
-{"capec_id": "675", "original_techniques": ["1052"]}
-{"capec_id": "677", "original_techniques": ["1195.003"]}
-{"capec_id": "678", "original_techniques": ["1195.002"]}
-{"capec_id": "691", "original_techniques": ["1195.001", "1195.002"]}
-{"capec_id": "694", "original_techniques": ["1614"]}
-{"capec_id": "695", "original_techniques": ["1195.001"]}
-{"capec_id": "697", "original_techniques": ["1557.003"]}
-{"capec_id": "698", "original_techniques": ["1176", "1505.004"]}
-{"capec_id": "700", "original_techniques": ["1599"]}
+{"capec_id": "1", "techniques": ["1574.010"]}
+{"capec_id": "11", "techniques": ["1036.006"]}
+{"capec_id": "112", "techniques": ["1110"]}
+{"capec_id": "114", "techniques": ["1548"]}
+{"capec_id": "115", "techniques": ["1548"]}
+{"capec_id": "122", "techniques": ["1548"]}
+{"capec_id": "125", "techniques": ["1498.001", "1499"]}
+{"capec_id": "127", "techniques": ["1083"]}
+{"capec_id": "13", "techniques": ["1562.003", "1574.006", "1574.007"]}
+{"capec_id": "130", "techniques": ["1499.003"]}
+{"capec_id": "131", "techniques": ["1499"]}
+{"capec_id": "132", "techniques": ["1547.009"]}
+{"capec_id": "141", "techniques": ["1557.002"]}
+{"capec_id": "142", "techniques": ["1584.002"]}
+{"capec_id": "148", "techniques": ["1491"]}
+{"capec_id": "150", "techniques": ["1003", "1119", "1213", "1530", "1555", "1602"]}
+{"capec_id": "158", "techniques": ["1040", "1111"]}
+{"capec_id": "159", "techniques": ["1574.008"]}
+{"capec_id": "163", "techniques": ["1534", "1566.001", "1566.002", "1566.003", "1598.001", "1598.002", "1598.003"]}
+{"capec_id": "165", "techniques": ["1036.003"]}
+{"capec_id": "169", "techniques": ["1217", "1592", "1595"]}
+{"capec_id": "17", "techniques": ["1574.005", "1574.010"]}
+{"capec_id": "177", "techniques": ["1036"]}
+{"capec_id": "180", "techniques": ["1574.010"]}
+{"capec_id": "186", "techniques": ["1195.002"]}
+{"capec_id": "187", "techniques": ["1072"]}
+{"capec_id": "19", "techniques": ["1027.009", "1546.004", "1546.016"]}
+{"capec_id": "191", "techniques": ["1552.001"]}
+{"capec_id": "196", "techniques": ["1134.002", "1134.003", "1606"]}
+{"capec_id": "2", "techniques": ["1531"]}
+{"capec_id": "203", "techniques": ["1112", "1647"]}
+{"capec_id": "204", "techniques": ["1005"]}
+{"capec_id": "206", "techniques": ["1553.002"]}
+{"capec_id": "21", "techniques": ["1134", "1528", "1539"]}
+{"capec_id": "227", "techniques": ["1499"]}
+{"capec_id": "233", "techniques": ["1548"]}
+{"capec_id": "25", "techniques": ["1499.004"]}
+{"capec_id": "251", "techniques": ["1055"]}
+{"capec_id": "267", "techniques": ["1027"]}
+{"capec_id": "268", "techniques": ["1070", "1562.002", "1562.003", "1562.008"]}
+{"capec_id": "270", "techniques": ["1547.001", "1547.014"]}
+{"capec_id": "292", "techniques": ["1018"]}
+{"capec_id": "295", "techniques": ["1124"]}
+{"capec_id": "30", "techniques": ["1055.003"]}
+{"capec_id": "300", "techniques": ["1046"]}
+{"capec_id": "309", "techniques": ["1016", "1049", "1590"]}
+{"capec_id": "31", "techniques": ["1539"]}
+{"capec_id": "312", "techniques": ["1082"]}
+{"capec_id": "313", "techniques": ["1082"]}
+{"capec_id": "35", "techniques": ["1027.006", "1027.009", "1564.009"]}
+{"capec_id": "37", "techniques": ["1005", "1552.004"]}
+{"capec_id": "38", "techniques": ["1574.007", "1574.009"]}
+{"capec_id": "383", "techniques": ["1056.004"]}
+{"capec_id": "407", "techniques": ["1589"]}
+{"capec_id": "438", "techniques": ["1195"]}
+{"capec_id": "439", "techniques": ["1195"]}
+{"capec_id": "440", "techniques": ["1195.003", "1200"]}
+{"capec_id": "442", "techniques": ["1195.001", "1195.002"]}
+{"capec_id": "443", "techniques": ["1195.002", "1195.003"]}
+{"capec_id": "445", "techniques": ["1195.001"]}
+{"capec_id": "446", "techniques": ["1195"]}
+{"capec_id": "448", "techniques": ["1027.009"]}
+{"capec_id": "457", "techniques": ["1091", "1092"]}
+{"capec_id": "464", "techniques": ["1606.001"]}
+{"capec_id": "465", "techniques": ["1090.001"]}
+{"capec_id": "469", "techniques": ["1499.002"]}
+{"capec_id": "471", "techniques": ["1574.001", "1574.004", "1574.008"]}
+{"capec_id": "473", "techniques": ["1036.001", "1553.002"]}
+{"capec_id": "474", "techniques": ["1552.004"]}
+{"capec_id": "478", "techniques": ["1543.003", "1574.011"]}
+{"capec_id": "479", "techniques": ["1553.004"]}
+{"capec_id": "480", "techniques": ["1611"]}
+{"capec_id": "481", "techniques": ["1090.004"]}
+{"capec_id": "482", "techniques": ["1498.001", "1499.001", "1499.002"]}
+{"capec_id": "485", "techniques": ["1552.004"]}
+{"capec_id": "488", "techniques": ["1499.002"]}
+{"capec_id": "489", "techniques": ["1499.002"]}
+{"capec_id": "49", "techniques": ["1110.001"]}
+{"capec_id": "490", "techniques": ["1498.002"]}
+{"capec_id": "497", "techniques": ["1083"]}
+{"capec_id": "504", "techniques": ["1036.004"]}
+{"capec_id": "509", "techniques": ["1558.003"]}
+{"capec_id": "511", "techniques": ["1195.001"]}
+{"capec_id": "516", "techniques": ["1195.003"]}
+{"capec_id": "520", "techniques": ["1195.003"]}
+{"capec_id": "522", "techniques": ["1195.003"]}
+{"capec_id": "523", "techniques": ["1195.002"]}
+{"capec_id": "528", "techniques": ["1498.001", "1499.002"]}
+{"capec_id": "531", "techniques": ["1195.003"]}
+{"capec_id": "532", "techniques": ["1495", "1542.001"]}
+{"capec_id": "537", "techniques": ["1195.003"]}
+{"capec_id": "538", "techniques": ["1195.001"]}
+{"capec_id": "539", "techniques": ["1195.003"]}
+{"capec_id": "541", "techniques": ["1592.002"]}
+{"capec_id": "542", "techniques": ["1027", "1587.001"]}
+{"capec_id": "543", "techniques": ["1036.005"]}
+{"capec_id": "545", "techniques": ["1005", "1555.001"]}
+{"capec_id": "55", "techniques": ["1110.002"]}
+{"capec_id": "550", "techniques": ["1543"]}
+{"capec_id": "551", "techniques": ["1543"]}
+{"capec_id": "552", "techniques": ["1014", "1542.003", "1547.006"]}
+{"capec_id": "555", "techniques": ["1021", "1114.002", "1133"]}
+{"capec_id": "556", "techniques": ["1546.001"]}
+{"capec_id": "558", "techniques": ["1505.005", "1546.008"]}
+{"capec_id": "560", "techniques": ["1078"]}
+{"capec_id": "561", "techniques": ["1021.002"]}
+{"capec_id": "562", "techniques": ["1080"]}
+{"capec_id": "564", "techniques": ["1037", "1543.001", "1543.004", "1547"]}
+{"capec_id": "565", "techniques": ["1110.003"]}
+{"capec_id": "568", "techniques": ["1056.001"]}
+{"capec_id": "569", "techniques": ["1056"]}
+{"capec_id": "57", "techniques": ["1040"]}
+{"capec_id": "571", "techniques": ["1562.002", "1562.006", "1562.008"]}
+{"capec_id": "572", "techniques": ["1027.001"]}
+{"capec_id": "573", "techniques": ["1057"]}
+{"capec_id": "574", "techniques": ["1007"]}
+{"capec_id": "575", "techniques": ["1087"]}
+{"capec_id": "576", "techniques": ["1069", "1615"]}
+{"capec_id": "577", "techniques": ["1033"]}
+{"capec_id": "578", "techniques": ["1556.006", "1562.001", "1562.002", "1562.004", "1562.007", "1562.008", "1562.009"]}
+{"capec_id": "579", "techniques": ["1547.004"]}
+{"capec_id": "580", "techniques": ["1082"]}
+{"capec_id": "581", "techniques": ["1518.001"]}
+{"capec_id": "593", "techniques": ["1185", "1550.001", "1563"]}
+{"capec_id": "60", "techniques": ["1134.001", "1550.004"]}
+{"capec_id": "600", "techniques": ["1110.004"]}
+{"capec_id": "609", "techniques": ["1111"]}
+{"capec_id": "616", "techniques": ["1036.005"]}
+{"capec_id": "620", "techniques": ["1600"]}
+{"capec_id": "633", "techniques": ["1134"]}
+{"capec_id": "634", "techniques": ["1123", "1125"]}
+{"capec_id": "635", "techniques": ["1036.007"]}
+{"capec_id": "636", "techniques": ["1001.002", "1027.003", "1027.004", "1218.001", "1221"]}
+{"capec_id": "637", "techniques": ["1115"]}
+{"capec_id": "638", "techniques": ["1542.002"]}
+{"capec_id": "639", "techniques": ["1039", "1552.001", "1552.003", "1552.004", "1552.006"]}
+{"capec_id": "640", "techniques": ["1505.005", "1574.006", "1574.013", "1620"]}
+{"capec_id": "641", "techniques": ["1574.002"]}
+{"capec_id": "642", "techniques": ["1505.005", "1554", "1574.005"]}
+{"capec_id": "643", "techniques": ["1135"]}
+{"capec_id": "644", "techniques": ["1550.002"]}
+{"capec_id": "645", "techniques": ["1550.003"]}
+{"capec_id": "646", "techniques": ["1120"]}
+{"capec_id": "647", "techniques": ["1005", "1012", "1552.002"]}
+{"capec_id": "648", "techniques": ["1113", "1513"]}
+{"capec_id": "649", "techniques": ["1036.006"]}
+{"capec_id": "65", "techniques": ["1040"]}
+{"capec_id": "650", "techniques": ["1505.003"]}
+{"capec_id": "651", "techniques": ["1111"]}
+{"capec_id": "652", "techniques": ["1558"]}
+{"capec_id": "654", "techniques": ["1056", "1548.004"]}
+{"capec_id": "655", "techniques": ["1027.001"]}
+{"capec_id": "657", "techniques": ["1072"]}
+{"capec_id": "660", "techniques": ["1055"]}
+{"capec_id": "662", "techniques": ["1185"]}
+{"capec_id": "665", "techniques": ["1211", "1542.002", "1556"]}
+{"capec_id": "666", "techniques": ["1498.001", "1499.001"]}
+{"capec_id": "668", "techniques": ["1565.002"]}
+{"capec_id": "669", "techniques": ["1195.002"]}
+{"capec_id": "670", "techniques": ["1127", "1195.001"]}
+{"capec_id": "671", "techniques": ["1195.003"]}
+{"capec_id": "672", "techniques": ["1195.003"]}
+{"capec_id": "673", "techniques": ["1195.002"]}
+{"capec_id": "674", "techniques": ["1195.003"]}
+{"capec_id": "675", "techniques": ["1052"]}
+{"capec_id": "677", "techniques": ["1195.003"]}
+{"capec_id": "678", "techniques": ["1195.002"]}
+{"capec_id": "68", "techniques": ["1553.002"]}
+{"capec_id": "691", "techniques": ["1195.001", "1195.002"]}
+{"capec_id": "694", "techniques": ["1614"]}
+{"capec_id": "695", "techniques": ["1195.001"]}
+{"capec_id": "697", "techniques": ["1557.003"]}
+{"capec_id": "698", "techniques": ["1176", "1505.004"]}
+{"capec_id": "70", "techniques": ["1078.001"]}
+{"capec_id": "700", "techniques": ["1599"]}
+{"capec_id": "94", "techniques": ["1557"]}
+{"capec_id": "98", "techniques": ["1566", "1598"]}
