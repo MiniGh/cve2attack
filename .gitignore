@@ -1,5 +1,3 @@
 bak/
 .env
 .venv/
-./data_analyse/cwe_down.py
-./data_analyse/capec_down.py

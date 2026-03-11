@@ -8,8 +8,16 @@ Skips CAPECs with no downward references.
 """
 
 import json
+import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
+
+
+def _localname(tag: str) -> str:
+    return tag.split('}')[-1] if '}' in tag else tag
+
+
+_cve_re = re.compile(r"CVE-\d{4}-\d{4,7}", re.IGNORECASE)
 
 
 def parse_capec_down(xml_path: Path):
@@ -18,43 +26,41 @@ def parse_capec_down(xml_path: Path):
 
     results = []
 
-    for ap in root.findall(".//Attack_Pattern"):
+    for ap in root.iter():
+        if _localname(ap.tag) != "Attack_Pattern":
+            continue
         capec_id = ap.get("ID")
         if not capec_id:
             continue
 
-        cwes = []
-        cves = []
+        cwes = set()
+        cves = set()
 
-        # Related_Weaknesses → Related_Weakness/@CWE_ID
-        rw = ap.find("Related_Weaknesses")
-        if rw is not None:
-            for rel in rw.findall("Related_Weakness"):
-                cwe_id = rel.get("CWE_ID")
-                if cwe_id:
-                    cwes.append(cwe_id)
-
-        # Example_Instances → Example_Instance/Reference or /Reference/Text containing CVE-*
-        exs = ap.find("Example_Instances")
-        if exs is not None:
-            for ex in exs.findall("Example_Instance"):
-                # Try various child tags that may hold a CVE ref
-                for tag in ("Reference", "Description", "Title"):
-                    elem = ex.find(tag)
-                    if elem is not None and elem.text:
-                        text = elem.text.strip()
-                        if text.upper().startswith("CVE-"):
-                            cves.append(text.upper())
-
-        cwes = sorted(set(cwes))
-        cves = sorted(set(cves))
+        for child in ap.iter():
+            ln = _localname(child.tag)
+            if ln == "Related_Weaknesses":
+                for rel in child.iter():
+                    if _localname(rel.tag) == "Related_Weakness":
+                        cwe_id = rel.get("CWE_ID")
+                        if cwe_id:
+                            cwes.add(cwe_id)
+            elif ln == "Example_Instances" or ln == "Example_Instance":
+                texts = []
+                if child.text:
+                    texts.append(child.text)
+                for sub in child.iter():
+                    if sub is not child and sub.text:
+                        texts.append(sub.text)
+                joined = " \n ".join(t.strip() for t in texts if t.strip())
+                for m in _cve_re.findall(joined):
+                    cves.add(m.upper())
 
         if cwes or cves:
             obj = {"capec_id": capec_id}
             if cwes:
-                obj["cwes"] = cwes
+                obj["cwes"] = sorted(cwes)
             if cves:
-                obj["cves"] = cves
+                obj["cves"] = sorted(cves)
             results.append(obj)
 
     return results

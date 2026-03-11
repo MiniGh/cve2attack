@@ -6,34 +6,47 @@ Skips CWEs with no CVE examples.
 """
 
 import json
+import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
+
+
+def _localname(tag: str) -> str:
+    return tag.split('}')[-1] if '}' in tag else tag
+
+
+_cve_re = re.compile(r"CVE-\d{4}-\d{4,7}", re.IGNORECASE)
 
 
 def parse_cwe_observed_examples(xml_path: Path):
     tree = ET.parse(xml_path)
     root = tree.getroot()
-    ns = "{http://cwe.mitre.org/cwe-2.0}"  # typical CWE 2.0 namespace
 
     results = []
 
-    for weakness in root.findall(f".//{ns}Weakness"):
+    for weakness in root.iter():
+        if _localname(weakness.tag) != "Weakness":
+            continue
         cwe_id = weakness.get("ID") or weakness.get("External_Reference_ID")
         if not cwe_id:
             continue
 
-        cves = []
-        for obs in weakness.findall(f".//{ns}Observed_Example"):
-            ref = obs.find(f"{ns}Reference")
-            if ref is not None and ref.text:
-                text = ref.text.strip()
-                # Expect CVE-like strings
-                if text.upper().startswith("CVE-"):
-                    cves.append(text.upper())
+        cves = set()
+        for child in weakness.iter():
+            if _localname(child.tag) == "Observed_Example":
+                # Scan all descendant texts for CVE patterns
+                texts = []
+                if child.text:
+                    texts.append(child.text)
+                for sub in child.iter():
+                    if sub is not child and sub.text:
+                        texts.append(sub.text)
+                joined = " \n ".join(t.strip() for t in texts if t.strip())
+                for m in _cve_re.findall(joined):
+                    cves.add(m.upper())
 
-        cves = sorted(set(cves))
         if cves:
-            results.append({"cwe_id": cwe_id, "cves": cves})
+            results.append({"cwe_id": cwe_id, "cves": sorted(cves)})
 
     return results
 
