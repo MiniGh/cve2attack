@@ -23,8 +23,18 @@ except ImportError:  # pragma: no cover
             """No-op method to match tqdm API used by callers."""
             return None
 
-    def tqdm(iterable, **kwargs):
+        def update(self, _n: int = 1) -> None:
+            """No-op progress update for compatibility with tqdm usage."""
+            return None
+
+        def close(self) -> None:
+            """No-op close method for compatibility with tqdm usage."""
+            return None
+
+    def tqdm(iterable=None, **kwargs):
         """Fallback tqdm wrapper when tqdm is not installed."""
+        if iterable is None:
+            iterable = []
         return _TqdmFallback(iterable, **kwargs)
 
 

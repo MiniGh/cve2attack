@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 import logging
 import sys
 from pathlib import Path
@@ -34,6 +35,14 @@ def _normalize_domain(domain: str) -> str:
     if normalized in {"enterprise", "ics", "mobile"}:
         return normalized
     return "enterprise"
+
+
+def _extract_year_from_file(year_file: Path) -> int | None:
+    """Extract numeric year from a file name like CVE-2021.json."""
+    try:
+        return int(year_file.stem.split("-")[1])
+    except (IndexError, ValueError):
+        return None
 
 
 def _load_tactics_by_domain(project_root: Path) -> Dict[str, List[Dict[str, str]]]:
@@ -72,7 +81,6 @@ def _map_single_cve(
 
     domain = _normalize_domain(domain_mapping.get(cve_id, "enterprise"))
     candidate_tactics = tactics_by_domain.get(domain, tactics_by_domain["enterprise"])
-
     prompt = build_tactic_mapping_prompt(description, candidate_tactics)
 
     try:
@@ -89,12 +97,37 @@ def _map_single_cve(
     return tactics
 
 
+def process_cve_wrapper(
+    cve: tuple[str, Dict[str, Any]],
+    domain_mapping: Dict[str, str],
+    tactics_by_domain: Dict[str, List[Dict[str, str]]],
+    client: LLMClient,
+) -> tuple[str, List[str]]:
+    """Run single CVE mapping safely and return fallback empty tactics on failure."""
+    cve_id, record = cve
+    try:
+        tactics = _map_single_cve(
+            cve_id=cve_id,
+            record=record,
+            domain_mapping=domain_mapping,
+            tactics_by_domain=tactics_by_domain,
+            client=client,
+        )
+        return cve_id, tactics
+    except Exception as exc:  # pragma: no cover
+        LOGGER.error("Unhandled CVE processing error for %s: %s", cve_id, exc)
+        return cve_id, []
+
+
 def run_mapping(
     project_root: Path,
     model: str,
     limit: int | None,
     max_retries: int,
     timeout: int,
+    workers: int,
+    start_year: int | None,
+    end_year: int | None,
 ) -> None:
     """Main mapping routine across all yearly CVE files."""
     cve_dir = project_root / "og_data" / "cve"
@@ -119,27 +152,71 @@ def run_mapping(
     )
 
     processed = 0
-    year_files = iter_cve_year_files(cve_dir)
+    all_year_files = iter_cve_year_files(cve_dir)
+    year_files_with_year = []
+    for file_path in all_year_files:
+        year = _extract_year_from_file(file_path)
+        if year is not None:
+            year_files_with_year.append((year, file_path))
+
+    if not year_files_with_year:
+        raise ValueError(f"No valid CVE year files found under: {cve_dir}")
+
+    min_year = min(y for y, _ in year_files_with_year)
+    max_year = max(y for y, _ in year_files_with_year)
+
+    effective_start = start_year if start_year is not None else min_year
+    effective_end = end_year if end_year is not None else max_year
+
+    if effective_start > effective_end:
+        raise ValueError(
+            f"Invalid year range: start_year={effective_start} is greater than end_year={effective_end}"
+        )
+    if effective_start < min_year or effective_start > max_year:
+        raise ValueError(
+            f"start_year={effective_start} is outside available range [{min_year}, {max_year}]"
+        )
+    if effective_end < min_year or effective_end > max_year:
+        raise ValueError(
+            f"end_year={effective_end} is outside available range [{min_year}, {max_year}]"
+        )
+
+    year_files = [
+        file_path for year, file_path in year_files_with_year if effective_start <= year <= effective_end
+    ]
+
+    LOGGER.info("Processing CVE years in range [%s, %s]", effective_start, effective_end)
 
     for year_file in year_files:
         year_results: Dict[str, List[str]] = {}
         records = list(iter_cve_records(year_file))
-        progress = tqdm(records, desc=f"Mapping {year_file.name}", unit="CVE")
+        if limit is not None:
+            remaining = max(limit - processed, 0)
+            records = records[:remaining]
 
-        for cve_id, record in progress:
-            if limit is not None and processed >= limit:
-                break
+        progress = tqdm(total=len(records), desc=f"Mapping {year_file.name}", unit="CVE")
 
-            progress.set_postfix_str(f"current={cve_id}")
-            tactics = _map_single_cve(
-                cve_id=cve_id,
-                record=record,
-                domain_mapping=domain_mapping,
-                tactics_by_domain=tactics_by_domain,
-                client=client,
-            )
-            year_results[cve_id] = tactics
-            processed += 1
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            future_map: Dict[Future[tuple[str, List[str]]], str] = {
+                executor.submit(
+                    process_cve_wrapper,
+                    cve=(cve_id, record),
+                    domain_mapping=domain_mapping,
+                    tactics_by_domain=tactics_by_domain,
+                    client=client,
+                ): cve_id
+                for cve_id, record in records
+            }
+
+            for future in as_completed(future_map):
+                cve_id, tactics = future.result()
+                year_results[cve_id] = tactics
+                processed += 1
+                progress.set_postfix_str(f"current={cve_id}")
+                progress.update(1)
+
+        if hasattr(progress, "close"):
+            progress.close()
 
         output_file = result_dir / year_file.name
         save_json(year_results, output_file)
@@ -154,13 +231,23 @@ def run_mapping(
 def main() -> None:
     """CLI entry for stage 2 mapping."""
     parser = argparse.ArgumentParser(description="Run CVE to ATT&CK tactics mapping with LLM")
-    parser.add_argument("--model", default="qwen3:32b", help="Model name for local LLM API")
-    parser.add_argument("--limit", type=int, default=None, help="Process only first N CVEs")
-    parser.add_argument("--max-retries", type=int, default=3, help="Max retries for LLM request")
-    parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout in seconds")
-    parser.add_argument("--project-root", type=Path, default=PROJECT_ROOT, help="Project root directory")
-    parser.add_argument("--verbose", action="store_true", help="Enable debug logs")
+    parser.add_argument("-m", "--model", default="qwen3:32b", help="Model name for local LLM API")
+    parser.add_argument("-l", "--limit", type=int, default=None, help="Process only first N CVEs")
+    parser.add_argument("-r", "--max-retries", type=int, default=3, help="Max retries for LLM request")
+    parser.add_argument("-t", "--timeout", type=int, default=60, help="HTTP timeout in seconds")
+    parser.add_argument("-w", "--workers", type=int, default=4, help="Thread pool workers for concurrent CVE mapping")
+    parser.add_argument("-s", "--start-year", type=int, default=None, help="Start CVE year, e.g. 2018")
+    parser.add_argument("-e", "--end-year", type=int, default=None, help="End CVE year, e.g. 2022")
+    parser.add_argument("-P", "--project-root", type=Path, default=PROJECT_ROOT, help="Project root directory")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logs")
     args = parser.parse_args()
+
+    if args.start_year is not None and args.start_year < 1999:
+        raise ValueError("--start-year must be >= 1999")
+    if args.end_year is not None and args.end_year < 1999:
+        raise ValueError("--end-year must be >= 1999")
+    if args.start_year is not None and args.end_year is not None and args.start_year > args.end_year:
+        raise ValueError("--start-year cannot be greater than --end-year")
 
     setup_logging(verbose=args.verbose)
     run_mapping(
@@ -169,6 +256,9 @@ def main() -> None:
         limit=args.limit,
         max_retries=args.max_retries,
         timeout=args.timeout,
+        workers=args.workers,
+        start_year=args.start_year,
+        end_year=args.end_year,
     )
 
 
