@@ -128,11 +128,15 @@ def run_mapping(
     workers: int,
     start_year: int | None,
     end_year: int | None,
+    result_dir: Path | None,
 ) -> None:
     """Main mapping routine across all yearly CVE files."""
     cve_dir = project_root / "og_data" / "cve"
     domain_file = project_root / "cve_to_attack_domain" / "result" / "cve_domain_mapping.json"
-    result_dir = project_root / "stage2_cve_tactics" / "result"
+    
+    if result_dir is None:
+        result_dir = project_root / "stage2_cve_tactics" / "result"
+    result_dir.mkdir(parents=True, exist_ok=True)
 
     if not domain_file.exists():
         raise FileNotFoundError(f"Missing domain mapping file: {domain_file}")
@@ -240,6 +244,7 @@ def main() -> None:
     parser.add_argument("-e", "--end-year", type=int, default=None, help="End CVE year, e.g. 2022")
     parser.add_argument("-P", "--project-root", type=Path, default=PROJECT_ROOT, help="Project root directory")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logs")
+    parser.add_argument("-o", "--result-dir", type=Path, default=None, help="Directory to save yearly prediction JSON files")
     args = parser.parse_args()
 
     if args.start_year is not None and args.start_year < 1999:
@@ -259,6 +264,7 @@ def main() -> None:
         workers=args.workers,
         start_year=args.start_year,
         end_year=args.end_year,
+        result_dir=args.result_dir,
     )
 
 

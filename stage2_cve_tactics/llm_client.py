@@ -17,7 +17,7 @@ class LLMClientConfig:
     """Config for local LLM generation endpoint."""
 
     base_url: str = "http://172.23.216.73:11434/api/generate"
-    model: str = "qwen3:32b"
+    model: str = "sec-i1"
     timeout_seconds: int = 60
     max_retries: int = 3
 
