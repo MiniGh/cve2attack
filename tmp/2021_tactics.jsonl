@@ -1,0 +1,442 @@
+{"cve_id": "CVE-2021-1052", "technique_id": ["T1068", "T1499"], "tactics_id": ["TA0004", "TA0040"]}
+{"cve_id": "CVE-2021-1066", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-1227", "technique_id": ["T1068", "T1204"], "tactics_id": ["TA0004", "TA0002"]}
+{"cve_id": "CVE-2021-1237", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-1250", "technique_id": ["T1059", "T1190", "T1212"], "tactics_id": ["TA0002", "TA0001", "TA0006"]}
+{"cve_id": "CVE-2021-1357", "technique_id": ["T1055", "T1505"], "tactics_id": ["TA0004", "TA0005", "TA0003"]}
+{"cve_id": "CVE-2021-1370", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-1376", "technique_id": ["T1059", "T1078"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-1385", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-1439", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-1499", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-1647", "technique_id": ["T1068", "T1566"], "tactics_id": ["TA0004", "TA0001"]}
+{"cve_id": "CVE-2021-1648", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-1659", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-1663", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-1675", "technique_id": ["T1055"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-1679", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-1682", "technique_id": ["T1068", "T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-1685", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-1691", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-1706", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-1708", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-1713", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-1727", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-1731", "technique_id": ["T1211"], "tactics_id": ["TA0005"]}
+{"cve_id": "CVE-2021-1732", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-20020", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-20021", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-20069", "technique_id": ["T1059", "T1133"], "tactics_id": ["TA0002", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2021-20072", "technique_id": ["T1485", "T1565"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20075", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-20078", "technique_id": ["T1485", "T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20090", "technique_id": ["T1068", "T1190"], "tactics_id": ["TA0004", "TA0001"]}
+{"cve_id": "CVE-2021-20101", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20195", "technique_id": ["T1068", "T1499"], "tactics_id": ["TA0004", "TA0040"]}
+{"cve_id": "CVE-2021-20196", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20219", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20227", "technique_id": ["T1059", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-20236", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20237", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20239", "technique_id": ["T1005", "T1078"], "tactics_id": ["TA0009", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-20240", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-20252", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20255", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-20267", "technique_id": ["T1185", "T1499"], "tactics_id": ["TA0009", "TA0040"]}
+{"cve_id": "CVE-2021-20268", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-20278", "technique_id": ["T1134", "T1212"], "tactics_id": ["TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2021-20292", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-2031", "technique_id": ["T1040"], "tactics_id": ["TA0006", "TA0007"]}
+{"cve_id": "CVE-2021-20357", "technique_id": ["T1059", "T1068", "T1606"], "tactics_id": ["TA0002", "TA0004", "TA0006"]}
+{"cve_id": "CVE-2021-20412", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-20446", "technique_id": ["T1055", "T1212", "T1606"], "tactics_id": ["TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2021-20517", "technique_id": ["T1005", "T1565"], "tactics_id": ["TA0009", "TA0040"]}
+{"cve_id": "CVE-2021-20575", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-20585", "technique_id": ["T1185"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-20618", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-20638", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-20650", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-20653", "technique_id": ["T1211"], "tactics_id": ["TA0005"]}
+{"cve_id": "CVE-2021-20656", "technique_id": ["T1005", "T1059", "T1203", "T1485", "T1565"], "tactics_id": ["TA0009", "TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-20660", "technique_id": ["T1055", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-20788", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-20987", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-20990", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-21006", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21010", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21011", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-21017", "technique_id": ["T1203", "T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21027", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-21045", "technique_id": ["T1068", "T1204"], "tactics_id": ["TA0004", "TA0002"]}
+{"cve_id": "CVE-2021-21046", "technique_id": ["T1204", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-21066", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21166", "technique_id": ["T1110", "T1189"], "tactics_id": ["TA0006", "TA0001"]}
+{"cve_id": "CVE-2021-21193", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-21243", "technique_id": ["T1078", "T1203"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-21247", "technique_id": ["T1078", "T1203", "T1204"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-21252", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-21261", "technique_id": ["T1203", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-21269", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-21300", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21339", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-21380", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21503", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-21551", "technique_id": ["T1005", "T1068", "T1134", "T1499", "T1565"], "tactics_id": ["TA0009", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2021-21608", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21611", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-21615", "technique_id": ["T1083", "T1185", "T1560"], "tactics_id": ["TA0007", "TA0009"]}
+{"cve_id": "CVE-2021-21627", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-21644", "technique_id": ["T1068", "T1485"], "tactics_id": ["TA0004", "TA0040"]}
+{"cve_id": "CVE-2021-21723", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-21972", "technique_id": ["T1068", "T1190"], "tactics_id": ["TA0004", "TA0001"]}
+{"cve_id": "CVE-2021-21978", "technique_id": ["T1190", "T1203"], "tactics_id": ["TA0001", "TA0002"]}
+{"cve_id": "CVE-2021-21985", "technique_id": ["T1068", "T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-22171", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22173", "technique_id": ["T1040", "T1499"], "tactics_id": ["TA0006", "TA0007", "TA0040"]}
+{"cve_id": "CVE-2021-22205", "technique_id": ["T1133", "T1190", "T1210", "T1485", "T1565"], "tactics_id": ["TA0001", "TA0003", "TA0008", "TA0040"]}
+{"cve_id": "CVE-2021-22359", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-22364", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-22496", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22505", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-22519", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-22658", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-22661", "technique_id": ["T1078", "T1552", "T1606"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2021-22698", "technique_id": ["T1059", "T1505"], "tactics_id": ["TA0002", "TA0003"]}
+{"cve_id": "CVE-2021-22733", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-22736", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-22737", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22738", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22741", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22848", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-22856", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22857", "technique_id": ["T1005", "T1083"], "tactics_id": ["TA0009", "TA0007"]}
+{"cve_id": "CVE-2021-22893", "technique_id": ["T1059", "T1078", "T1133", "T1190", "T1566", "T1574"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-22894", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-22900", "technique_id": ["T1190", "T1505"], "tactics_id": ["TA0001", "TA0003"]}
+{"cve_id": "CVE-2021-22909", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-22915", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-22927", "technique_id": ["T1185"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-22986", "technique_id": ["T1068", "T1203"], "tactics_id": ["TA0004", "TA0002"]}
+{"cve_id": "CVE-2021-23279", "technique_id": ["T1485"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-23345", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-23357", "technique_id": ["T1083", "T1565"], "tactics_id": ["TA0007", "TA0040"]}
+{"cve_id": "CVE-2021-23365", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-23388", "technique_id": ["T1078", "T1499"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2021-23836", "technique_id": ["T1059", "T1189", "T1204"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-23845", "technique_id": ["T1185"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-23846", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-23900", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-23964", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-24074", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-24075", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-24085", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-24093", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-24094", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-24099", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-24114", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-24587", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-25140", "technique_id": ["T1083", "T1203", "T1565"], "tactics_id": ["TA0007", "TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-25178", "technique_id": ["T1204", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-25362", "technique_id": ["T1485"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-25646", "technique_id": ["T1190", "T1203"], "tactics_id": ["TA0001", "TA0002"]}
+{"cve_id": "CVE-2021-25647", "technique_id": ["T1055", "T1189", "T1204", "T1574"], "tactics_id": ["TA0004", "TA0005", "TA0001", "TA0002", "TA0003"]}
+{"cve_id": "CVE-2021-25676", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-26080", "technique_id": ["T1055", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-26200", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-26237", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-26294", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-26295", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-26296", "technique_id": ["T1068", "T1552"], "tactics_id": ["TA0004", "TA0006"]}
+{"cve_id": "CVE-2021-26411", "technique_id": ["T1203", "T1204", "T1566"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-26419", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-26563", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-26565", "technique_id": ["T1185", "T1557"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2021-26566", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-26567", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-26578", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-26679", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-26714", "technique_id": ["T1083", "T1565"], "tactics_id": ["TA0007", "TA0040"]}
+{"cve_id": "CVE-2021-26720", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-26822", "technique_id": ["T1059", "T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-26833", "technique_id": ["T1005", "T1552"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2021-26855", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-26961", "technique_id": ["T1068", "T1204"], "tactics_id": ["TA0004", "TA0002"]}
+{"cve_id": "CVE-2021-26966", "technique_id": ["T1059", "T1565"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-26992", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-27032", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-27043", "technique_id": ["T1204", "T1565"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-27076", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-27117", "technique_id": ["T1189", "T1203"], "tactics_id": ["TA0001", "TA0002"]}
+{"cve_id": "CVE-2021-27130", "technique_id": ["T1059", "T1505"], "tactics_id": ["TA0002", "TA0003"]}
+{"cve_id": "CVE-2021-27263", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-27277", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-27319", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-27448", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-27449", "technique_id": ["T1055", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-27453", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-27852", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-28042", "technique_id": ["T1083", "T1203"], "tactics_id": ["TA0007", "TA0002"]}
+{"cve_id": "CVE-2021-28148", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-28205", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-28543", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-28550", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-29200", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-29255", "technique_id": ["T1040", "T1552"], "tactics_id": ["TA0006", "TA0007"]}
+{"cve_id": "CVE-2021-29492", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-29629", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-29654", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-29665", "technique_id": ["T1068", "T1203"], "tactics_id": ["TA0004", "TA0002"]}
+{"cve_id": "CVE-2021-29692", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-29740", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-29899", "technique_id": ["T1078", "T1499"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2021-30080", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-3028", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-3037", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-30463", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-30657", "technique_id": ["T1204", "T1548"], "tactics_id": ["TA0002", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-30807", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-30883", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-31154", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-31166", "technique_id": ["T1059", "T1190", "T1210"], "tactics_id": ["TA0002", "TA0001", "TA0008"]}
+{"cve_id": "CVE-2021-31542", "technique_id": ["T1059", "T1083"], "tactics_id": ["TA0002", "TA0007"]}
+{"cve_id": "CVE-2021-3156", "technique_id": ["T1059", "T1068", "T1078"], "tactics_id": ["TA0002", "TA0004", "TA0001", "TA0003", "TA0005"]}
+{"cve_id": "CVE-2021-3160", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-3163", "technique_id": ["T1068", "T1078"], "tactics_id": ["TA0004", "TA0001", "TA0003", "TA0005"]}
+{"cve_id": "CVE-2021-3164", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-3183", "technique_id": ["T1078", "T1211"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-3287", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33041", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33357", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-3336", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-33394", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-33436", "technique_id": ["T1055"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-3344", "technique_id": ["T1068", "T1552"], "tactics_id": ["TA0004", "TA0006"]}
+{"cve_id": "CVE-2021-33470", "technique_id": ["T1059", "T1203", "T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33516", "technique_id": ["T1185"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-33525", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-33542", "technique_id": ["T1134", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-33558", "technique_id": ["T1005", "T1211"], "tactics_id": ["TA0009", "TA0005"]}
+{"cve_id": "CVE-2021-33563", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-33570", "technique_id": ["T1005", "T1059", "T1557"], "tactics_id": ["TA0009", "TA0002", "TA0006"]}
+{"cve_id": "CVE-2021-33571", "technique_id": ["T1211"], "tactics_id": ["TA0005"]}
+{"cve_id": "CVE-2021-33578", "technique_id": ["T1059", "T1068", "T1190", "T1485"], "tactics_id": ["TA0002", "TA0004", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2021-33583", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-33593", "technique_id": ["T1185"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-33602", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-33604", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33624", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-33627", "technique_id": ["T1211", "T1485"], "tactics_id": ["TA0005", "TA0040"]}
+{"cve_id": "CVE-2021-33629", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33696", "technique_id": ["T1059", "T1189"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-33698", "technique_id": ["T1078", "T1505"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33701", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-33703", "technique_id": ["T1059", "T1566"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-33704", "technique_id": ["T1078", "T1485", "T1548"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2021-33705", "technique_id": ["T1204", "T1565"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-33706", "technique_id": ["T1078", "T1203"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-33707", "technique_id": ["T1185", "T1566"], "tactics_id": ["TA0009", "TA0001"]}
+{"cve_id": "CVE-2021-33708", "technique_id": ["T1068", "T1078"], "tactics_id": ["TA0004", "TA0001", "TA0003", "TA0005"]}
+{"cve_id": "CVE-2021-33709", "technique_id": ["T1190", "T1203"], "tactics_id": ["TA0001", "TA0002"]}
+{"cve_id": "CVE-2021-33719", "technique_id": ["T1499", "T1574"], "tactics_id": ["TA0040", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33736", "technique_id": ["T1059", "T1078", "T1190"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33737", "technique_id": ["T1190", "T1499"], "tactics_id": ["TA0001", "TA0040"]}
+{"cve_id": "CVE-2021-33738", "technique_id": ["T1005", "T1203"], "tactics_id": ["TA0009", "TA0002"]}
+{"cve_id": "CVE-2021-3374", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-3377", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-33790", "technique_id": ["T1203", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33794", "technique_id": ["T1005", "T1059"], "tactics_id": ["TA0009", "TA0002"]}
+{"cve_id": "CVE-2021-3380", "technique_id": ["T1005", "T1203"], "tactics_id": ["TA0009", "TA0002"]}
+{"cve_id": "CVE-2021-33806", "technique_id": ["T1059", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33807", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-33813", "technique_id": ["T1190", "T1499"], "tactics_id": ["TA0001", "TA0040"]}
+{"cve_id": "CVE-2021-33824", "technique_id": ["T1190", "T1499"], "tactics_id": ["TA0001", "TA0040"]}
+{"cve_id": "CVE-2021-33840", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-33841", "technique_id": ["T1055", "T1190"], "tactics_id": ["TA0004", "TA0005", "TA0001"]}
+{"cve_id": "CVE-2021-33842", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33846", "technique_id": ["T1078", "T1212"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2021-33848", "technique_id": ["T1005", "T1059", "T1068", "T1190"], "tactics_id": ["TA0009", "TA0002", "TA0004", "TA0001"]}
+{"cve_id": "CVE-2021-33850", "technique_id": ["T1059", "T1190", "T1204"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-33879", "technique_id": ["T1055", "T1557"], "tactics_id": ["TA0004", "TA0005", "TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-33880", "technique_id": ["T1110", "T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-33881", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33883", "technique_id": ["T1005", "T1557"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2021-33884", "technique_id": ["T1059", "T1505"], "tactics_id": ["TA0002", "TA0003"]}
+{"cve_id": "CVE-2021-33885", "technique_id": ["T1055", "T1190"], "tactics_id": ["TA0004", "TA0005", "TA0001"]}
+{"cve_id": "CVE-2021-33886", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-33894", "technique_id": ["T1005", "T1059", "T1190", "T1565"], "tactics_id": ["TA0009", "TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2021-33895", "technique_id": ["T1212"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-33898", "technique_id": ["T1059", "T1203", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33903", "technique_id": ["T1212"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-33907", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-33910", "technique_id": ["T1211"], "tactics_id": ["TA0005"]}
+{"cve_id": "CVE-2021-33913", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33923", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-33924", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-33929", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-3393", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-33938", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-33945", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-33964", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-33965", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-3412", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-34218", "technique_id": ["T1190", "T1560", "T1565"], "tactics_id": ["TA0001", "TA0009", "TA0040"]}
+{"cve_id": "CVE-2021-34254", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34259", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34335", "technique_id": ["T1204", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-34362", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34363", "technique_id": ["T1565"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34371", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-3438", "technique_id": ["T1068", "T1499"], "tactics_id": ["TA0004", "TA0040"]}
+{"cve_id": "CVE-2021-34380", "technique_id": ["T1059", "T1499", "T1560", "T1565"], "tactics_id": ["TA0002", "TA0040", "TA0009"]}
+{"cve_id": "CVE-2021-34398", "technique_id": ["T1499", "T1560", "T1565", "T1574"], "tactics_id": ["TA0040", "TA0009", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-34399", "technique_id": ["T1499", "T1560", "T1565"], "tactics_id": ["TA0040", "TA0009"]}
+{"cve_id": "CVE-2021-34410", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34418", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34419", "technique_id": ["T1203", "T1566"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-34420", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34421", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34422", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34425", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34426", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34427", "technique_id": ["T1055"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-34430", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-34435", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34436", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34485", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34543", "technique_id": ["T1078", "T1565"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2021-34546", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34550", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34551", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34552", "technique_id": ["T1059", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-34553", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34555", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34561", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-34562", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34563", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-34565", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-34570", "technique_id": ["T1059", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-34571", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34574", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-34576", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-34578", "technique_id": ["T1212", "T1565"], "tactics_id": ["TA0006", "TA0040"]}
+{"cve_id": "CVE-2021-3458", "technique_id": ["T1212", "T1565"], "tactics_id": ["TA0006", "TA0040"]}
+{"cve_id": "CVE-2021-34581", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34594", "technique_id": ["T1210", "T1565"], "tactics_id": ["TA0008", "TA0040"]}
+{"cve_id": "CVE-2021-34596", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34600", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-34618", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34628", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34639", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34647", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34648", "technique_id": ["T1566"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-34675", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34676", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34679", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-34685", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34693", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34718", "technique_id": ["T1068", "T1560", "T1565"], "tactics_id": ["TA0004", "TA0009", "TA0040"]}
+{"cve_id": "CVE-2021-34730", "technique_id": ["T1059", "T1068", "T1499"], "tactics_id": ["TA0002", "TA0004", "TA0040"]}
+{"cve_id": "CVE-2021-34733", "technique_id": ["T1552", "T1560"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-34749", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-34761", "technique_id": ["T1059", "T1110", "T1565"], "tactics_id": ["TA0002", "TA0006", "TA0040"]}
+{"cve_id": "CVE-2021-34762", "technique_id": ["T1083", "T1560", "T1565"], "tactics_id": ["TA0007", "TA0009", "TA0040"]}
+{"cve_id": "CVE-2021-34765", "technique_id": ["T1068", "T1560"], "tactics_id": ["TA0004", "TA0009"]}
+{"cve_id": "CVE-2021-34766", "technique_id": ["T1203", "T1565"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-34770", "technique_id": ["T1059", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-34780", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34791", "technique_id": ["T1040"], "tactics_id": ["TA0006", "TA0007"]}
+{"cve_id": "CVE-2021-34798", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-34802", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-34803", "technique_id": ["T1574"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-34813", "technique_id": ["T1204", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-34816", "technique_id": ["T1059", "T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-34823", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-34829", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-3485", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-3486", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-3494", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-34985", "technique_id": ["T1059", "T1204", "T1560"], "tactics_id": ["TA0002", "TA0009"]}
+{"cve_id": "CVE-2021-34991", "technique_id": ["T1059", "T1068"], "tactics_id": ["TA0002", "TA0004"]}
+{"cve_id": "CVE-2021-35005", "technique_id": ["T1059", "T1560"], "tactics_id": ["TA0002", "TA0009"]}
+{"cve_id": "CVE-2021-35033", "technique_id": ["T1068", "T1133"], "tactics_id": ["TA0004", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2021-35034", "technique_id": ["T1133", "T1134"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-35035", "technique_id": ["T1133"], "tactics_id": ["TA0001", "TA0003"]}
+{"cve_id": "CVE-2021-35037", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35039", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-3504", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35045", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35046", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-35049", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35052", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-35053", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35062", "technique_id": ["T1059", "T1134"], "tactics_id": ["TA0002", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-3514", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35193", "technique_id": ["T1212"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-35213", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-35214", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-35223", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35231", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-35233", "technique_id": ["T1185"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-35234", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-35235", "technique_id": ["T1210", "T1560"], "tactics_id": ["TA0008", "TA0009"]}
+{"cve_id": "CVE-2021-35244", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35251", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-35269", "technique_id": ["T1574"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-3527", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35296", "technique_id": ["T1606"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-35297", "technique_id": ["T1574"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-35299", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-35300", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35302", "technique_id": ["T1560"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-35307", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35312", "technique_id": ["T1204", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-35325", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35326", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2021-35336", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-35337", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-35342", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-35368", "technique_id": ["T1211"], "tactics_id": ["TA0005"]}
+{"cve_id": "CVE-2021-3538", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2021-35380", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-35395", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-35451", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-35469", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2021-3547", "technique_id": ["T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2021-35492", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-3550", "technique_id": ["T1574"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-35501", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-3561", "technique_id": ["T1485", "T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2021-37975", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-38603", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-38699", "technique_id": ["T1059", "T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-38757", "technique_id": ["T1059", "T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-39609", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2021-40444", "technique_id": ["T1059", "T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-41026", "technique_id": ["T1005", "T1190"], "tactics_id": ["TA0009", "TA0001"]}
+{"cve_id": "CVE-2021-41773", "technique_id": ["T1055", "T1059"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-41878", "technique_id": ["T1059", "T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-43141", "technique_id": ["T1055", "T1059", "T1068", "T1078", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2021-43154", "technique_id": ["T1059", "T1189", "T1204"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-43287", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-43633", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-44108", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-44223", "technique_id": ["T1203", "T1565"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-44228", "technique_id": ["T1055", "T1059", "T1190"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-44310", "technique_id": ["T1055", "T1059"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-44321", "technique_id": ["T1055", "T1059", "T1204"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2021-44350", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-44421", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-44427", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-44453", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-44454", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-44458", "technique_id": ["T1204", "T1566"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-44462", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2021-44463", "technique_id": ["T1574"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-44531", "technique_id": ["T1059", "T1068", "T1212"], "tactics_id": ["TA0002", "TA0004", "TA0006"]}
+{"cve_id": "CVE-2021-44542", "technique_id": ["T1055"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2021-44543", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2021-44647", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2021-45228", "technique_id": ["T1059", "T1189", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-46167", "technique_id": ["T1005", "T1190", "T1499"], "tactics_id": ["TA0009", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2021-46437", "technique_id": ["T1059", "T1189"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2021-46669", "technique_id": ["T1203", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}

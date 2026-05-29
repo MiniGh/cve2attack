@@ -235,7 +235,7 @@ def run_mapping(
 def main() -> None:
     """CLI entry for stage 2 mapping."""
     parser = argparse.ArgumentParser(description="Run CVE to ATT&CK tactics mapping with LLM")
-    parser.add_argument("-m", "--model", default="qwen3:32b", help="Model name for local LLM API")
+    parser.add_argument("-m", "--model", default="sec-i1", help="Model name for local LLM API")
     parser.add_argument("-l", "--limit", type=int, default=None, help="Process only first N CVEs")
     parser.add_argument("-r", "--max-retries", type=int, default=3, help="Max retries for LLM request")
     parser.add_argument("-t", "--timeout", type=int, default=60, help="HTTP timeout in seconds")

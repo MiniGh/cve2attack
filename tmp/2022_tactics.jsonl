@@ -1,0 +1,199 @@
+{"cve_id": "CVE-2022-0012", "technique_id": ["T1485", "T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2022-0014", "technique_id": ["T1078", "T1204", "T1574"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2022-0019", "technique_id": ["T1078", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-0020", "technique_id": ["T1189", "T1574"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-0021", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-0023", "technique_id": ["T1210"], "tactics_id": ["TA0008"]}
+{"cve_id": "CVE-2022-0129", "technique_id": ["T1055", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2022-0154", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2022-0210", "technique_id": ["T1059", "T1078", "T1189"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-0220", "technique_id": ["T1185", "T1190"], "tactics_id": ["TA0009", "TA0001"]}
+{"cve_id": "CVE-2022-0221", "technique_id": ["T1005", "T1204"], "tactics_id": ["TA0009", "TA0002"]}
+{"cve_id": "CVE-2022-0232", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-0233", "technique_id": ["T1059", "T1078", "T1190"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-0236", "technique_id": ["T1005", "T1203"], "tactics_id": ["TA0009", "TA0002"]}
+{"cve_id": "CVE-2022-0489", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-0742", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-0793", "technique_id": ["T1203", "T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-0811", "technique_id": ["T1068", "T1078"], "tactics_id": ["TA0004", "TA0001", "TA0003", "TA0005"]}
+{"cve_id": "CVE-2022-0982", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-1003", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-1212", "technique_id": ["T1055", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2022-1219", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-1235", "technique_id": ["T1078", "T1110"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-1236", "technique_id": ["T1078", "T1110"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-1248", "technique_id": ["T1078", "T1136", "T1190"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-1256", "technique_id": ["T1068", "T1078", "T1203"], "tactics_id": ["TA0004", "TA0001", "TA0003", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2022-1257", "technique_id": ["T1078", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-1258", "technique_id": ["T1059", "T1078", "T1210"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005", "TA0008"]}
+{"cve_id": "CVE-2022-1345", "technique_id": ["T1059", "T1185"], "tactics_id": ["TA0002", "TA0009"]}
+{"cve_id": "CVE-2022-1347", "technique_id": ["T1068", "T1552"], "tactics_id": ["TA0004", "TA0006"]}
+{"cve_id": "CVE-2022-1350", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-1388", "technique_id": ["T1059", "T1083", "T1190", "T1485"], "tactics_id": ["TA0002", "TA0007", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-20015", "technique_id": ["T1005", "T1552"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2022-20018", "technique_id": ["T1005", "T1552"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2022-20023", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2022-20624", "technique_id": ["T1190", "T1499"], "tactics_id": ["TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-20635", "technique_id": ["T1055", "T1189", "T1204"], "tactics_id": ["TA0004", "TA0005", "TA0001", "TA0002"]}
+{"cve_id": "CVE-2022-20660", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2022-20698", "technique_id": ["T1211", "T1499"], "tactics_id": ["TA0005", "TA0040"]}
+{"cve_id": "CVE-2022-21199", "technique_id": ["T1005", "T1557"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2022-21246", "technique_id": ["T1005", "T1190", "T1485"], "tactics_id": ["TA0009", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-21265", "technique_id": ["T1078", "T1499", "T1565"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2022-21303", "technique_id": ["T1059", "T1190", "T1499", "T1574"], "tactics_id": ["TA0002", "TA0001", "TA0040", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21304", "technique_id": ["T1059", "T1190", "T1499", "T1574"], "tactics_id": ["TA0002", "TA0001", "TA0040", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21339", "technique_id": ["T1059", "T1190", "T1499", "T1574"], "tactics_id": ["TA0002", "TA0001", "TA0040", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21644", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-21653", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2022-21658", "technique_id": ["T1485"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2022-21664", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-21668", "technique_id": ["T1059", "T1190", "T1203", "T1505"], "tactics_id": ["TA0002", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2022-21671", "technique_id": ["T1005", "T1134"], "tactics_id": ["TA0009", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21679", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21682", "technique_id": ["T1083"], "tactics_id": ["TA0007"]}
+{"cve_id": "CVE-2022-21692", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21702", "technique_id": ["T1189", "T1204", "T1210", "T1485"], "tactics_id": ["TA0001", "TA0002", "TA0008", "TA0040"]}
+{"cve_id": "CVE-2022-21703", "technique_id": ["T1189", "T1548"], "tactics_id": ["TA0001", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-21704", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-21713", "technique_id": ["T1005", "T1190"], "tactics_id": ["TA0009", "TA0001"]}
+{"cve_id": "CVE-2022-21733", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-21796", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-21817", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-21822", "technique_id": ["T1190", "T1499"], "tactics_id": ["TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-21906", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-21999", "technique_id": ["T1068"], "tactics_id": ["TA0004"]}
+{"cve_id": "CVE-2022-22055", "technique_id": ["T1059", "T1068", "T1190"], "tactics_id": ["TA0002", "TA0004", "TA0001"]}
+{"cve_id": "CVE-2022-22056", "technique_id": ["T1078", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-22110", "technique_id": ["T1110", "T1211"], "tactics_id": ["TA0006", "TA0005"]}
+{"cve_id": "CVE-2022-22111", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-22112", "technique_id": ["T1055", "T1190"], "tactics_id": ["TA0004", "TA0005", "TA0001"]}
+{"cve_id": "CVE-2022-22113", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-22114", "technique_id": ["T1134", "T1185", "T1189"], "tactics_id": ["TA0004", "TA0005", "TA0009", "TA0001"]}
+{"cve_id": "CVE-2022-22115", "technique_id": ["T1134", "T1189", "T1204"], "tactics_id": ["TA0004", "TA0005", "TA0001", "TA0002"]}
+{"cve_id": "CVE-2022-22116", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-22121", "technique_id": ["T1078", "T1204"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002"]}
+{"cve_id": "CVE-2022-22152", "technique_id": ["T1078", "T1190"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-22156", "technique_id": ["T1211", "T1557"], "tactics_id": ["TA0005", "TA0006", "TA0009"]}
+{"cve_id": "CVE-2022-22161", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2022-22529", "technique_id": ["T1189", "T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-22549", "technique_id": ["T1203", "T1557"], "tactics_id": ["TA0002", "TA0006", "TA0009"]}
+{"cve_id": "CVE-2022-22550", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-22552", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-22553", "technique_id": ["T1078", "T1110"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-22559", "technique_id": ["T1005", "T1212"], "tactics_id": ["TA0009", "TA0006"]}
+{"cve_id": "CVE-2022-22560", "technique_id": ["T1078", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-22561", "technique_id": ["T1190", "T1212"], "tactics_id": ["TA0001", "TA0006"]}
+{"cve_id": "CVE-2022-22562", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-22563", "technique_id": ["T1078", "T1565"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2022-22565", "technique_id": ["T1005", "T1078"], "tactics_id": ["TA0009", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-22691", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-22789", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-22938", "technique_id": ["T1499"], "tactics_id": ["TA0040"]}
+{"cve_id": "CVE-2022-22963", "technique_id": ["T1005", "T1059"], "tactics_id": ["TA0009", "TA0002"]}
+{"cve_id": "CVE-2022-22965", "technique_id": ["T1055", "T1059", "T1190"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-23083", "technique_id": ["T1059", "T1189"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-23102", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-23106", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-23107", "technique_id": ["T1005", "T1485"], "tactics_id": ["TA0009", "TA0040"]}
+{"cve_id": "CVE-2022-23113", "technique_id": ["T1083", "T1203"], "tactics_id": ["TA0007", "TA0002"]}
+{"cve_id": "CVE-2022-23114", "technique_id": ["T1078", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-23120", "technique_id": ["T1574"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-23129", "technique_id": ["T1078", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006"]}
+{"cve_id": "CVE-2022-23160", "technique_id": ["T1068", "T1078"], "tactics_id": ["TA0004", "TA0001", "TA0003", "TA0005"]}
+{"cve_id": "CVE-2022-23163", "technique_id": ["T1078", "T1499"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0040"]}
+{"cve_id": "CVE-2022-23199", "technique_id": ["T1203", "T1204", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-23234", "technique_id": ["T1078", "T1203", "T1552"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002", "TA0006"]}
+{"cve_id": "CVE-2022-23346", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-23348", "technique_id": ["T1110"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-23352", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-23441", "technique_id": ["T1552", "T1557"], "tactics_id": ["TA0006", "TA0009"]}
+{"cve_id": "CVE-2022-23597", "technique_id": ["T1203", "T1204", "T1574"], "tactics_id": ["TA0002", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-23598", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-23599", "technique_id": ["T1204", "T1557"], "tactics_id": ["TA0002", "TA0006", "TA0009"]}
+{"cve_id": "CVE-2022-23647", "technique_id": ["T1189"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-23698", "technique_id": ["T1005", "T1133"], "tactics_id": ["TA0009", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2022-23863", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-23909", "technique_id": ["T1055", "T1078"], "tactics_id": ["TA0004", "TA0005", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2022-23970", "technique_id": ["T1133", "T1203"], "tactics_id": ["TA0001", "TA0003", "TA0002"]}
+{"cve_id": "CVE-2022-24070", "technique_id": ["T1005", "T1203", "T1211"], "tactics_id": ["TA0009", "TA0002", "TA0005"]}
+{"cve_id": "CVE-2022-24197", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-24302", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2022-24411", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-24412", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-24413", "technique_id": ["T1078", "T1203", "T1485"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-24428", "technique_id": ["T1005", "T1078", "T1548"], "tactics_id": ["TA0009", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-24663", "technique_id": ["T1059", "T1078"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-24816", "technique_id": ["T1133"], "tactics_id": ["TA0001", "TA0003"]}
+{"cve_id": "CVE-2022-24842", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-24845", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-25154", "technique_id": ["T1078", "T1574"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-25251", "technique_id": ["T1005", "T1190", "T1574"], "tactics_id": ["TA0009", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-25338", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-25372", "technique_id": ["T1134", "T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-25456", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-25457", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-25575", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-25584", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2022-25594", "technique_id": ["T1005"], "tactics_id": ["TA0009"]}
+{"cve_id": "CVE-2022-26110", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-26144", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-26249", "technique_id": ["T1005", "T1059", "T1190"], "tactics_id": ["TA0009", "TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-26250", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-26251", "technique_id": ["T1055", "T1059", "T1078", "T1190"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001", "TA0003"]}
+{"cve_id": "CVE-2022-26281", "technique_id": ["T1134"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-26318", "technique_id": ["T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-26511", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-26627", "technique_id": ["T1059"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-26671", "technique_id": ["T1190", "T1499", "T1552"], "tactics_id": ["TA0001", "TA0040", "TA0006"]}
+{"cve_id": "CVE-2022-26850", "technique_id": ["T1552"], "tactics_id": ["TA0006"]}
+{"cve_id": "CVE-2022-26852", "technique_id": ["T1078", "T1110", "T1203"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005", "TA0006", "TA0002"]}
+{"cve_id": "CVE-2022-26877", "technique_id": ["T1005", "T1189"], "tactics_id": ["TA0009", "TA0001"]}
+{"cve_id": "CVE-2022-26986", "technique_id": ["T1055", "T1059", "T1190", "T1565"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27022", "technique_id": ["T1059", "T1068", "T1190"], "tactics_id": ["TA0002", "TA0004", "TA0001"]}
+{"cve_id": "CVE-2022-27064", "technique_id": ["T1059", "T1189", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27128", "technique_id": ["T1136", "T1548"], "tactics_id": ["TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-27147", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27346", "technique_id": ["T1059", "T1189", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27348", "technique_id": ["T1059", "T1189", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27349", "technique_id": ["T1189", "T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-27351", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27357", "technique_id": ["T1059", "T1189", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27377", "technique_id": ["T1059", "T1190", "T1203", "T1499"], "tactics_id": ["TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27380", "technique_id": ["T1055", "T1059", "T1190", "T1203", "T1499"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27381", "technique_id": ["T1059", "T1190", "T1499"], "tactics_id": ["TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27382", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27383", "technique_id": ["T1055", "T1059", "T1190", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27384", "technique_id": ["T1059", "T1190", "T1499"], "tactics_id": ["TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27385", "technique_id": ["T1059", "T1190", "T1499"], "tactics_id": ["TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27386", "technique_id": ["T1059", "T1190", "T1499"], "tactics_id": ["TA0002", "TA0001", "TA0040"]}
+{"cve_id": "CVE-2022-27387", "technique_id": ["T1055", "T1059", "T1190", "T1203"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27416", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-27418", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-27419", "technique_id": ["T1203", "T1499"], "tactics_id": ["TA0002", "TA0040"]}
+{"cve_id": "CVE-2022-27449", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27451", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27452", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27455", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27457", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27458", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-27463", "technique_id": ["T1189", "T1190"], "tactics_id": ["TA0001"]}
+{"cve_id": "CVE-2022-27608", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-27609", "technique_id": ["T1078"], "tactics_id": ["TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-27649", "technique_id": ["T1548"], "tactics_id": ["TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-27818", "technique_id": ["T1005", "T1499"], "tactics_id": ["TA0009", "TA0040"]}
+{"cve_id": "CVE-2022-27883", "technique_id": ["T1068", "T1204", "T1566"], "tactics_id": ["TA0004", "TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-27945", "technique_id": ["T1059", "T1078"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-27991", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-28000", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-28002", "technique_id": ["T1005", "T1190"], "tactics_id": ["TA0009", "TA0001"]}
+{"cve_id": "CVE-2022-28052", "technique_id": ["T1055", "T1059", "T1505"], "tactics_id": ["TA0004", "TA0005", "TA0002", "TA0003"]}
+{"cve_id": "CVE-2022-28352", "technique_id": ["T1203", "T1557"], "tactics_id": ["TA0002", "TA0006", "TA0009"]}
+{"cve_id": "CVE-2022-28388", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-28389", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-28468", "technique_id": ["T1059", "T1190"], "tactics_id": ["TA0002", "TA0001"]}
+{"cve_id": "CVE-2022-29039", "technique_id": ["T1059", "T1078", "T1189", "T1203"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-29042", "technique_id": ["T1059", "T1078", "T1189", "T1203"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-29044", "technique_id": ["T1059", "T1078", "T1189", "T1203"], "tactics_id": ["TA0002", "TA0001", "TA0003", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-29051", "technique_id": ["T1203", "T1210", "T1548"], "tactics_id": ["TA0002", "TA0008", "TA0004", "TA0005"]}
+{"cve_id": "CVE-2022-29156", "technique_id": ["T1203"], "tactics_id": ["TA0002"]}
+{"cve_id": "CVE-2022-30190", "technique_id": ["T1204"], "tactics_id": ["TA0002"]}

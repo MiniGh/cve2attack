@@ -53,7 +53,10 @@ def load_gt_tactics_by_cve(gt_jsonl_file: Path) -> Dict[str, Set[str]]:
             if not cve_id:
                 continue
 
-            tactics = record.get("tactics", [])
+            # Validate_data中使用
+            # tactics = record.get("tactics", [])
+            # ./tmp中使用
+            tactics = record.get("tactics_id", [])
             if not isinstance(tactics, list):
                 tactics = []
             gt[cve_id] = {str(x).strip().upper() for x in tactics if str(x).strip()}
