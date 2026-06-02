@@ -1,0 +1,816 @@
+{
+  "primary_reference": "union(data_result, cve2attack_result)",
+  "rows": [
+    {
+      "year": "1999",
+      "data_result": {
+        "cves": 1579,
+        "truth_techniques": 2440,
+        "predicted_techniques": 31180,
+        "hit_rate_at_10": 0.6288790373654212,
+        "hit_rate_at_20": 0.7365421152628245,
+        "recall_at_10": 0.5324994722398141,
+        "recall_at_20": 0.6483744986278228
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 1579,
+        "truth_techniques": 2440,
+        "predicted_techniques": 31180,
+        "hit_rate_at_10": 0.6288790373654212,
+        "hit_rate_at_20": 0.7365421152628245,
+        "recall_at_10": 0.5324994722398141,
+        "recall_at_20": 0.6483744986278228
+      }
+    },
+    {
+      "year": "2000",
+      "data_result": {
+        "cves": 1242,
+        "truth_techniques": 2184,
+        "predicted_techniques": 24680,
+        "hit_rate_at_10": 0.604669887278583,
+        "hit_rate_at_20": 0.7334943639291466,
+        "recall_at_10": 0.4844605475040259,
+        "recall_at_20": 0.6236580783682223
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 1242,
+        "truth_techniques": 2184,
+        "predicted_techniques": 24680,
+        "hit_rate_at_10": 0.604669887278583,
+        "hit_rate_at_20": 0.7334943639291466,
+        "recall_at_10": 0.4844605475040259,
+        "recall_at_20": 0.6236580783682223
+      }
+    },
+    {
+      "year": "2001",
+      "data_result": {
+        "cves": 1556,
+        "truth_techniques": 2747,
+        "predicted_techniques": 30740,
+        "hit_rate_at_10": 0.6195372750642674,
+        "hit_rate_at_20": 0.7525706940874036,
+        "recall_at_10": 0.48977230995225846,
+        "recall_at_20": 0.6258966825804869
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 1556,
+        "truth_techniques": 2747,
+        "predicted_techniques": 30740,
+        "hit_rate_at_10": 0.6195372750642674,
+        "hit_rate_at_20": 0.7525706940874036,
+        "recall_at_10": 0.48977230995225846,
+        "recall_at_20": 0.6258966825804869
+      }
+    },
+    {
+      "year": "2002",
+      "data_result": {
+        "cves": 2393,
+        "truth_techniques": 3822,
+        "predicted_techniques": 47480,
+        "hit_rate_at_10": 0.5854575846218136,
+        "hit_rate_at_20": 0.7028834099456749,
+        "recall_at_10": 0.47914054882295565,
+        "recall_at_20": 0.6051051678506756
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 2393,
+        "truth_techniques": 3822,
+        "predicted_techniques": 47480,
+        "hit_rate_at_10": 0.5854575846218136,
+        "hit_rate_at_20": 0.7028834099456749,
+        "recall_at_10": 0.47914054882295565,
+        "recall_at_20": 0.6051051678506756
+      }
+    },
+    {
+      "year": "2003",
+      "data_result": {
+        "cves": 1553,
+        "truth_techniques": 2487,
+        "predicted_techniques": 30820,
+        "hit_rate_at_10": 0.5885383129426915,
+        "hit_rate_at_20": 0.7314874436574372,
+        "recall_at_10": 0.48570662005948567,
+        "recall_at_20": 0.6269616410633794
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 1553,
+        "truth_techniques": 2487,
+        "predicted_techniques": 30820,
+        "hit_rate_at_10": 0.5885383129426915,
+        "hit_rate_at_20": 0.7314874436574372,
+        "recall_at_10": 0.48570662005948567,
+        "recall_at_20": 0.6269616410633794
+      }
+    },
+    {
+      "year": "2004",
+      "data_result": {
+        "cves": 2707,
+        "truth_techniques": 4097,
+        "predicted_techniques": 53800,
+        "hit_rate_at_10": 0.5751754710011082,
+        "hit_rate_at_20": 0.7303287772441818,
+        "recall_at_10": 0.47580962935599064,
+        "recall_at_20": 0.6377478143085828
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 2707,
+        "truth_techniques": 4097,
+        "predicted_techniques": 53800,
+        "hit_rate_at_10": 0.5751754710011082,
+        "hit_rate_at_20": 0.7303287772441818,
+        "recall_at_10": 0.47580962935599064,
+        "recall_at_20": 0.6377478143085828
+      }
+    },
+    {
+      "year": "2005",
+      "data_result": {
+        "cves": 4767,
+        "truth_techniques": 7285,
+        "predicted_techniques": 94920,
+        "hit_rate_at_10": 0.551709670652402,
+        "hit_rate_at_20": 0.7117684078036501,
+        "recall_at_10": 0.44362831770006095,
+        "recall_at_20": 0.6057043962959627
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 4767,
+        "truth_techniques": 7285,
+        "predicted_techniques": 94920,
+        "hit_rate_at_10": 0.551709670652402,
+        "hit_rate_at_20": 0.7117684078036501,
+        "recall_at_10": 0.44362831770006095,
+        "recall_at_20": 0.6057043962959627
+      }
+    },
+    {
+      "year": "2006",
+      "data_result": {
+        "cves": 7142,
+        "truth_techniques": 10439,
+        "predicted_techniques": 142500,
+        "hit_rate_at_10": 0.5582469896387566,
+        "hit_rate_at_20": 0.7355082609913189,
+        "recall_at_10": 0.4660155885372912,
+        "recall_at_20": 0.6433958741715675
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 7142,
+        "truth_techniques": 10439,
+        "predicted_techniques": 142500,
+        "hit_rate_at_10": 0.5582469896387566,
+        "hit_rate_at_20": 0.7355082609913189,
+        "recall_at_10": 0.4660155885372912,
+        "recall_at_20": 0.6433958741715675
+      }
+    },
+    {
+      "year": "2007",
+      "data_result": {
+        "cves": 6580,
+        "truth_techniques": 9679,
+        "predicted_techniques": 130360,
+        "hit_rate_at_10": 0.5551671732522796,
+        "hit_rate_at_20": 0.7150455927051672,
+        "recall_at_10": 0.4613779128672745,
+        "recall_at_20": 0.6253444782168182
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 6580,
+        "truth_techniques": 9679,
+        "predicted_techniques": 130360,
+        "hit_rate_at_10": 0.5551671732522796,
+        "hit_rate_at_20": 0.7150455927051672,
+        "recall_at_10": 0.4613779128672745,
+        "recall_at_20": 0.6253444782168182
+      }
+    },
+    {
+      "year": "2008",
+      "data_result": {
+        "cves": 7176,
+        "truth_techniques": 10747,
+        "predicted_techniques": 142100,
+        "hit_rate_at_10": 0.5464046822742475,
+        "hit_rate_at_20": 0.725891861761427,
+        "recall_at_10": 0.44432367149758434,
+        "recall_at_20": 0.6300457543664059
+      },
+      "cve2attack_result": {
+        "cves": 5,
+        "truth_techniques": 6,
+        "predicted_techniques": 100,
+        "hit_rate_at_10": 0.6,
+        "hit_rate_at_20": 0.6,
+        "recall_at_10": 0.6,
+        "recall_at_20": 0.6
+      },
+      "union": {
+        "cves": 7176,
+        "truth_techniques": 10753,
+        "predicted_techniques": 142100,
+        "hit_rate_at_10": 0.5466833890746934,
+        "hit_rate_at_20": 0.7260312151616499,
+        "recall_at_10": 0.44441657376439964,
+        "recall_at_20": 0.6300689799331096
+      }
+    },
+    {
+      "year": "2009",
+      "data_result": {
+        "cves": 5037,
+        "truth_techniques": 7612,
+        "predicted_techniques": 98880,
+        "hit_rate_at_10": 0.5386142545165773,
+        "hit_rate_at_20": 0.7166964462973993,
+        "recall_at_10": 0.434736757518175,
+        "recall_at_20": 0.61615946755911
+      },
+      "cve2attack_result": {
+        "cves": 18,
+        "truth_techniques": 24,
+        "predicted_techniques": 340,
+        "hit_rate_at_10": 0.4444444444444444,
+        "hit_rate_at_20": 0.6111111111111112,
+        "recall_at_10": 0.3611111111111111,
+        "recall_at_20": 0.5277777777777778
+      },
+      "union": {
+        "cves": 5040,
+        "truth_techniques": 7636,
+        "predicted_techniques": 98920,
+        "hit_rate_at_10": 0.539484126984127,
+        "hit_rate_at_20": 0.7180555555555556,
+        "recall_at_10": 0.4347590702947845,
+        "recall_at_20": 0.6164210128495841
+      }
+    },
+    {
+      "year": "2010",
+      "data_result": {
+        "cves": 5216,
+        "truth_techniques": 7963,
+        "predicted_techniques": 101900,
+        "hit_rate_at_10": 0.5237730061349694,
+        "hit_rate_at_20": 0.7014953987730062,
+        "recall_at_10": 0.41753578732106333,
+        "recall_at_20": 0.5999968047034755
+      },
+      "cve2attack_result": {
+        "cves": 31,
+        "truth_techniques": 39,
+        "predicted_techniques": 560,
+        "hit_rate_at_10": 0.41935483870967744,
+        "hit_rate_at_20": 0.5806451612903226,
+        "recall_at_10": 0.3709677419354839,
+        "recall_at_20": 0.5161290322580645
+      },
+      "union": {
+        "cves": 5217,
+        "truth_techniques": 8001,
+        "predicted_techniques": 101920,
+        "hit_rate_at_10": 0.5255894192064405,
+        "hit_rate_at_20": 0.7028943837454475,
+        "recall_at_10": 0.41785828381573065,
+        "recall_at_20": 0.6003386365088481
+      }
+    },
+    {
+      "year": "2011",
+      "data_result": {
+        "cves": 4859,
+        "truth_techniques": 7442,
+        "predicted_techniques": 92540,
+        "hit_rate_at_10": 0.4869314673801194,
+        "hit_rate_at_20": 0.6593949372298827,
+        "recall_at_10": 0.38788045093869356,
+        "recall_at_20": 0.5635944753149934
+      },
+      "cve2attack_result": {
+        "cves": 13,
+        "truth_techniques": 20,
+        "predicted_techniques": 260,
+        "hit_rate_at_10": 0.6153846153846154,
+        "hit_rate_at_20": 0.6923076923076923,
+        "recall_at_10": 0.5,
+        "recall_at_20": 0.6538461538461539
+      },
+      "union": {
+        "cves": 4861,
+        "truth_techniques": 7459,
+        "predicted_techniques": 92580,
+        "hit_rate_at_10": 0.4873482822464513,
+        "hit_rate_at_20": 0.6597407940752932,
+        "recall_at_10": 0.3879402957781894,
+        "recall_at_20": 0.5636300258291612
+      }
+    },
+    {
+      "year": "2012",
+      "data_result": {
+        "cves": 5890,
+        "truth_techniques": 8859,
+        "predicted_techniques": 109940,
+        "hit_rate_at_10": 0.4767402376910017,
+        "hit_rate_at_20": 0.6709677419354839,
+        "recall_at_10": 0.39236181852480684,
+        "recall_at_20": 0.5822778720996039
+      },
+      "cve2attack_result": {
+        "cves": 20,
+        "truth_techniques": 33,
+        "predicted_techniques": 380,
+        "hit_rate_at_10": 0.75,
+        "hit_rate_at_20": 0.75,
+        "recall_at_10": 0.575,
+        "recall_at_20": 0.6416666666666666
+      },
+      "union": {
+        "cves": 5893,
+        "truth_techniques": 8892,
+        "predicted_techniques": 110000,
+        "hit_rate_at_10": 0.47819446801289667,
+        "hit_rate_at_20": 0.6721534023417615,
+        "recall_at_10": 0.39278428267058874,
+        "recall_at_20": 0.5826319361954863
+      }
+    },
+    {
+      "year": "2013",
+      "data_result": {
+        "cves": 6774,
+        "truth_techniques": 10355,
+        "predicted_techniques": 128340,
+        "hit_rate_at_10": 0.48139946855624444,
+        "hit_rate_at_20": 0.6542663123708297,
+        "recall_at_10": 0.38768821966341804,
+        "recall_at_20": 0.5670443361873824
+      },
+      "cve2attack_result": {
+        "cves": 36,
+        "truth_techniques": 57,
+        "predicted_techniques": 680,
+        "hit_rate_at_10": 0.5833333333333334,
+        "hit_rate_at_20": 0.6944444444444444,
+        "recall_at_10": 0.3842592592592593,
+        "recall_at_20": 0.48148148148148157
+      },
+      "union": {
+        "cves": 6780,
+        "truth_techniques": 10408,
+        "predicted_techniques": 128460,
+        "hit_rate_at_10": 0.4830383480825959,
+        "hit_rate_at_20": 0.6554572271386431,
+        "recall_at_10": 0.388002294329727,
+        "recall_at_20": 0.5670415437561446
+      }
+    },
+    {
+      "year": "2014",
+      "data_result": {
+        "cves": 8976,
+        "truth_techniques": 14621,
+        "predicted_techniques": 139200,
+        "hit_rate_at_10": 0.44217914438502676,
+        "hit_rate_at_20": 0.5471256684491979,
+        "recall_at_10": 0.3595643939393938,
+        "recall_at_20": 0.46599636066547767
+      },
+      "cve2attack_result": {
+        "cves": 44,
+        "truth_techniques": 84,
+        "predicted_techniques": 820,
+        "hit_rate_at_10": 0.5681818181818182,
+        "hit_rate_at_20": 0.6590909090909091,
+        "recall_at_10": 0.4231060606060606,
+        "recall_at_20": 0.5045454545454545
+      },
+      "union": {
+        "cves": 8982,
+        "truth_techniques": 14696,
+        "predicted_techniques": 139320,
+        "hit_rate_at_10": 0.44333110665776,
+        "hit_rate_at_20": 0.5480961923847696,
+        "recall_at_10": 0.3600195099193094,
+        "recall_at_20": 0.4663098684140762
+      }
+    },
+    {
+      "year": "2015",
+      "data_result": {
+        "cves": 8746,
+        "truth_techniques": 13628,
+        "predicted_techniques": 151200,
+        "hit_rate_at_10": 0.5049165332723531,
+        "hit_rate_at_20": 0.6105648296364052,
+        "recall_at_10": 0.41389397057702637,
+        "recall_at_20": 0.521028660721092
+      },
+      "cve2attack_result": {
+        "cves": 40,
+        "truth_techniques": 64,
+        "predicted_techniques": 720,
+        "hit_rate_at_10": 0.55,
+        "hit_rate_at_20": 0.6,
+        "recall_at_10": 0.475,
+        "recall_at_20": 0.5291666666666666
+      },
+      "union": {
+        "cves": 8748,
+        "truth_techniques": 13690,
+        "predicted_techniques": 151240,
+        "hit_rate_at_10": 0.5061728395061729,
+        "hit_rate_at_20": 0.6113397347965249,
+        "recall_at_10": 0.4142590415224167,
+        "recall_at_20": 0.5211825287956979
+      }
+    },
+    {
+      "year": "2016",
+      "data_result": {
+        "cves": 10555,
+        "truth_techniques": 15939,
+        "predicted_techniques": 182260,
+        "hit_rate_at_10": 0.420558976788252,
+        "hit_rate_at_20": 0.6216958787304595,
+        "recall_at_10": 0.3409345604655883,
+        "recall_at_20": 0.543619814576707
+      },
+      "cve2attack_result": {
+        "cves": 30,
+        "truth_techniques": 53,
+        "predicted_techniques": 480,
+        "hit_rate_at_10": 0.43333333333333335,
+        "hit_rate_at_20": 0.5,
+        "recall_at_10": 0.2833333333333333,
+        "recall_at_20": 0.35
+      },
+      "union": {
+        "cves": 10555,
+        "truth_techniques": 15988,
+        "predicted_techniques": 182260,
+        "hit_rate_at_10": 0.42112742775935574,
+        "hit_rate_at_20": 0.6222643297015632,
+        "recall_at_10": 0.3408071101486543,
+        "recall_at_20": 0.5434765739550202
+      }
+    },
+    {
+      "year": "2017",
+      "data_result": {
+        "cves": 17014,
+        "truth_techniques": 25357,
+        "predicted_techniques": 301780,
+        "hit_rate_at_10": 0.39038438932643704,
+        "hit_rate_at_20": 0.48107440930998,
+        "recall_at_10": 0.31935985024470964,
+        "recall_at_20": 0.4128039746912444
+      },
+      "cve2attack_result": {
+        "cves": 50,
+        "truth_techniques": 73,
+        "predicted_techniques": 860,
+        "hit_rate_at_10": 0.5,
+        "hit_rate_at_20": 0.56,
+        "recall_at_10": 0.40666666666666673,
+        "recall_at_20": 0.46666666666666673
+      },
+      "union": {
+        "cves": 17019,
+        "truth_techniques": 25417,
+        "predicted_techniques": 301880,
+        "hit_rate_at_10": 0.39091603501968386,
+        "hit_rate_at_20": 0.4814618955285269,
+        "recall_at_10": 0.319368851992684,
+        "recall_at_20": 0.4127904200440782
+      }
+    },
+    {
+      "year": "2018",
+      "data_result": {
+        "cves": 17486,
+        "truth_techniques": 26343,
+        "predicted_techniques": 324120,
+        "hit_rate_at_10": 0.4604826718517671,
+        "hit_rate_at_20": 0.5642228068168821,
+        "recall_at_10": 0.38714874393846155,
+        "recall_at_20": 0.5002376277439193
+      },
+      "cve2attack_result": {
+        "cves": 126,
+        "truth_techniques": 238,
+        "predicted_techniques": 2200,
+        "hit_rate_at_10": 0.4365079365079365,
+        "hit_rate_at_20": 0.6031746031746031,
+        "recall_at_10": 0.31226379440665164,
+        "recall_at_20": 0.4395313681027967
+      },
+      "union": {
+        "cves": 17486,
+        "truth_techniques": 26350,
+        "predicted_techniques": 324120,
+        "hit_rate_at_10": 0.4605398604597964,
+        "hit_rate_at_20": 0.5642799954249114,
+        "recall_at_10": 0.38710775876937387,
+        "recall_at_20": 0.5002157054441747
+      }
+    },
+    {
+      "year": "2019",
+      "data_result": {
+        "cves": 17028,
+        "truth_techniques": 26672,
+        "predicted_techniques": 307960,
+        "hit_rate_at_10": 0.44050974864928355,
+        "hit_rate_at_20": 0.536293164200141,
+        "recall_at_10": 0.3674270144936107,
+        "recall_at_20": 0.4727942218692764
+      },
+      "cve2attack_result": {
+        "cves": 166,
+        "truth_techniques": 345,
+        "predicted_techniques": 2880,
+        "hit_rate_at_10": 0.4939759036144578,
+        "hit_rate_at_20": 0.6506024096385542,
+        "recall_at_10": 0.3412220309810672,
+        "recall_at_20": 0.4856282271944923
+      },
+      "union": {
+        "cves": 17028,
+        "truth_techniques": 26685,
+        "predicted_techniques": 307960,
+        "hit_rate_at_10": 0.44050974864928355,
+        "hit_rate_at_20": 0.536293164200141,
+        "recall_at_10": 0.3674182054731738,
+        "recall_at_20": 0.47279960515954333
+      }
+    },
+    {
+      "year": "2020",
+      "data_result": {
+        "cves": 20594,
+        "truth_techniques": 33414,
+        "predicted_techniques": 380020,
+        "hit_rate_at_10": 0.47576964164319707,
+        "hit_rate_at_20": 0.5731280955618141,
+        "recall_at_10": 0.3922527394572129,
+        "recall_at_20": 0.4974488741195196
+      },
+      "cve2attack_result": {
+        "cves": 441,
+        "truth_techniques": 931,
+        "predicted_techniques": 8220,
+        "hit_rate_at_10": 0.5011337868480725,
+        "hit_rate_at_20": 0.6666666666666666,
+        "recall_at_10": 0.31531152143397034,
+        "recall_at_20": 0.4509124284634489
+      },
+      "union": {
+        "cves": 20594,
+        "truth_techniques": 33516,
+        "predicted_techniques": 380020,
+        "hit_rate_at_10": 0.4761095464698456,
+        "hit_rate_at_20": 0.5733708847237059,
+        "recall_at_10": 0.3919485207835662,
+        "recall_at_20": 0.4971696087764009
+      }
+    },
+    {
+      "year": "2021",
+      "data_result": {
+        "cves": 23053,
+        "truth_techniques": 37772,
+        "predicted_techniques": 420080,
+        "hit_rate_at_10": 0.46093783889298573,
+        "hit_rate_at_20": 0.5725935886869388,
+        "recall_at_10": 0.37274326730254453,
+        "recall_at_20": 0.4925296789273285
+      },
+      "cve2attack_result": {
+        "cves": 442,
+        "truth_techniques": 680,
+        "predicted_techniques": 8340,
+        "hit_rate_at_10": 0.497737556561086,
+        "hit_rate_at_20": 0.6493212669683258,
+        "recall_at_10": 0.40637254901960773,
+        "recall_at_20": 0.5355580693815988
+      },
+      "union": {
+        "cves": 23053,
+        "truth_techniques": 37925,
+        "predicted_techniques": 420080,
+        "hit_rate_at_10": 0.4614150002168915,
+        "hit_rate_at_20": 0.5732442632195376,
+        "recall_at_10": 0.3724808285743963,
+        "recall_at_20": 0.4922159092082753
+      }
+    },
+    {
+      "year": "2022",
+      "data_result": {
+        "cves": 26034,
+        "truth_techniques": 40378,
+        "predicted_techniques": 475600,
+        "hit_rate_at_10": 0.44207574709994624,
+        "hit_rate_at_20": 0.5600752861642467,
+        "recall_at_10": 0.3687056188755897,
+        "recall_at_20": 0.48849832350350936
+      },
+      "cve2attack_result": {
+        "cves": 199,
+        "truth_techniques": 393,
+        "predicted_techniques": 3840,
+        "hit_rate_at_10": 0.5678391959798995,
+        "hit_rate_at_20": 0.7035175879396985,
+        "recall_at_10": 0.3515075376884423,
+        "recall_at_20": 0.49849246231155775
+      },
+      "union": {
+        "cves": 26034,
+        "truth_techniques": 40454,
+        "predicted_techniques": 475600,
+        "hit_rate_at_10": 0.44242144887454865,
+        "hit_rate_at_20": 0.56038257663056,
+        "recall_at_10": 0.3686008108772579,
+        "recall_at_20": 0.4883723892856185
+      }
+    },
+    {
+      "year": "2023",
+      "data_result": {
+        "cves": 29439,
+        "truth_techniques": 46910,
+        "predicted_techniques": 540020,
+        "hit_rate_at_10": 0.4694113251129454,
+        "hit_rate_at_20": 0.5933625462821427,
+        "recall_at_10": 0.384650895017246,
+        "recall_at_20": 0.5179016659145043
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 29439,
+        "truth_techniques": 46910,
+        "predicted_techniques": 540020,
+        "hit_rate_at_10": 0.4694113251129454,
+        "hit_rate_at_20": 0.5933625462821427,
+        "recall_at_10": 0.384650895017246,
+        "recall_at_20": 0.5179016659145043
+      }
+    },
+    {
+      "year": "2024",
+      "data_result": {
+        "cves": 37428,
+        "truth_techniques": 61352,
+        "predicted_techniques": 715900,
+        "hit_rate_at_10": 0.4743774714117773,
+        "hit_rate_at_20": 0.6067382708132949,
+        "recall_at_10": 0.3810960960387855,
+        "recall_at_20": 0.5180751805371091
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 37428,
+        "truth_techniques": 61352,
+        "predicted_techniques": 715900,
+        "hit_rate_at_10": 0.4743774714117773,
+        "hit_rate_at_20": 0.6067382708132949,
+        "recall_at_10": 0.3810960960387855,
+        "recall_at_20": 0.5180751805371091
+      }
+    },
+    {
+      "year": "2025",
+      "data_result": {
+        "cves": 5637,
+        "truth_techniques": 8854,
+        "predicted_techniques": 109340,
+        "hit_rate_at_10": 0.47933297853468154,
+        "hit_rate_at_20": 0.5923363491218734,
+        "recall_at_10": 0.3953662873700123,
+        "recall_at_20": 0.513038357676463
+      },
+      "cve2attack_result": {
+        "cves": 0,
+        "truth_techniques": 0,
+        "predicted_techniques": 0,
+        "hit_rate_at_10": 0.0,
+        "hit_rate_at_20": 0.0,
+        "recall_at_10": 0.0,
+        "recall_at_20": 0.0
+      },
+      "union": {
+        "cves": 5637,
+        "truth_techniques": 8854,
+        "predicted_techniques": 109340,
+        "hit_rate_at_10": 0.47933297853468154,
+        "hit_rate_at_20": 0.5923363491218734,
+        "recall_at_10": 0.3953662873700123,
+        "recall_at_20": 0.513038357676463
+      }
+    }
+  ],
+  "skipped_years": []
+}

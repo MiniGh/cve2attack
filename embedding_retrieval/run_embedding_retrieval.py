@@ -28,6 +28,12 @@ except ImportError as exc:  # pragma: no cover
         "Missing dependency: openai. Install with: pip install openai numpy"
     ) from exc
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DOMAIN_DIR = PROJECT_ROOT / "cve_to_attack_domain" / "result"
@@ -388,10 +394,21 @@ def ensure_paths(args: argparse.Namespace) -> Tuple[Path, Path, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir / "tech_embeddings_cache.npz", output_dir / "candidates.jsonl", output_dir / "inspect_sample.md"
 
+def render_progress(current: int, total: int, prefix: str, bar_len: int = 30) -> str:
+    """Render a compact progress bar string."""
+    if total <= 0:
+        return f"{prefix} [no items]"
+    pct = current / total * 100
+    filled = int(bar_len * current / total)
+    bar = "=" * filled + "-" * (bar_len - filled)
+    return f"{prefix} [{bar}] {current}/{total} ({pct:.1f}%)"
 
 def main() -> None:
     args = parse_args()
     cache_path, candidates_path, inspect_path = ensure_paths(args)
+
+    if load_dotenv is not None:
+        load_dotenv()
 
     api_key = os.getenv("SILICONFLOW_API_KEY", "").strip()
     if not api_key:
@@ -405,6 +422,8 @@ def main() -> None:
         raise SystemExit(f"Missing CVE directory: {args.cve_dir}")
 
     client = OpenAI(api_key=api_key, base_url=EMBED_BASE_URL)
+    print(f"[INFO] Using embed model: {EMBED_MODEL}")
+    print(f"[INFO] Output directory: {args.output_dir}")
 
     if cache_path.exists():
         tech_embeddings, techniques = load_tech_cache(cache_path)
@@ -434,30 +453,49 @@ def main() -> None:
     print(f"[INFO] Missing raw CVE records: {missing_count}")
     print(f"[INFO] Empty descriptions skipped: {empty_desc_count}")
 
+    total_queries = len(query_records)
+    print(f"[INFO] Starting retrieval for {total_queries} CVEs")
+
+    records_by_year: Dict[str, List[dict]] = {}
+    for record in query_records:
+        year = get_year_from_cve_id(record["cve_id"])
+        records_by_year.setdefault(year, []).append(record)
+
     rng = random.Random(args.seed)
     inspect_samples: List[dict] = []
     output_records: List[dict] = []
+    seen_count = 0
 
-    for idx, query in enumerate(query_records, start=1):
-        q_vec_raw = embed_texts(client=client, texts=[query["query_text"]], model=EMBED_MODEL, batch_size=1)
-        q_vec = l2_normalize(q_vec_raw)[0]
+    for year in sorted(records_by_year):
+        year_records = records_by_year[year]
+        total_year = len(year_records)
+        print(f"[INFO] Processing year {year} with {total_year} CVEs")
 
-        techniques_only = top_k_candidates(q_vec, tech_embeddings, techniques, args.top_k)
-        output_records.append({"cve_id": query["cve_id"], "techniques": techniques_only})
+        for idx, query in enumerate(year_records, start=1):
+            q_vec_raw = embed_texts(client=client, texts=[query["query_text"]], model=EMBED_MODEL, batch_size=1)
+            q_vec = l2_normalize(q_vec_raw)[0]
 
-        reservoir_sample_push(
-            rng=rng,
-            samples=inspect_samples,
-            candidate={"cve_id": query["cve_id"], "query_text": query["query_text"], "techniques": techniques_only},
-            seen_count=idx,
-            sample_size=args.sample_size,
-        )
+            techniques_only = top_k_candidates(q_vec, tech_embeddings, techniques, args.top_k)
+            output_records.append({"cve_id": query["cve_id"], "techniques": techniques_only})
 
-        if args.query_sleep_every > 0 and idx % args.query_sleep_every == 0:
-            time.sleep(args.query_sleep_seconds)
+            seen_count += 1
+            reservoir_sample_push(
+                rng=rng,
+                samples=inspect_samples,
+                candidate={"cve_id": query["cve_id"], "query_text": query["query_text"], "techniques": techniques_only},
+                seen_count=seen_count,
+                sample_size=args.sample_size,
+            )
 
-        if idx % 1000 == 0:
-            print(f"[INFO] Processed CVEs: {idx}")
+            if args.query_sleep_every > 0 and seen_count % args.query_sleep_every == 0:
+                time.sleep(args.query_sleep_seconds)
+
+            if idx % 20 == 0 or idx == total_year:
+                progress = render_progress(idx, total_year, prefix=f"[{year}]")
+                print(f"\r{progress}", end="", flush=True)
+
+        if total_year:
+            print()
 
     written_paths = write_yearly_outputs(output_records, candidates_path.parent)
     write_inspect_markdown(inspect_samples, inspect_path)
