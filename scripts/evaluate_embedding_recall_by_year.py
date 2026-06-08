@@ -9,6 +9,7 @@ It writes a markdown report and a JSON summary with per-year metrics.
 
 from __future__ import annotations
 
+import argparse
 import json
 from collections import defaultdict
 from dataclasses import dataclass
@@ -20,8 +21,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PRED_DIR = PROJECT_ROOT / "output" / "retrieval"
 DATA_REF_DIR = PROJECT_ROOT / "data_result"
 CVE2ATTACK_REF_DIR = PROJECT_ROOT / "cve2attack_result"
-OUTPUT_MD = PROJECT_ROOT / "output" / "retrieval" / "embedding_recall_by_year.md"
-OUTPUT_JSON = PROJECT_ROOT / "output" / "retrieval" / "embedding_recall_by_year.json"
+OUTPUT_MD = PROJECT_ROOT / "output" / "retrieval" / "2embedding_recall_by_year.md"
+OUTPUT_JSON = PROJECT_ROOT / "output" / "retrieval" / "2embedding_recall_by_year.json"
 
 
 @dataclass(frozen=True)
@@ -157,16 +158,37 @@ def write_report(rows: List[dict], skipped_years: List[str]) -> None:
     OUTPUT_MD.write_text("\n".join(lines), encoding="utf-8")
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Evaluate embedding retrieval results by year.")
+    parser.add_argument("--start-year", type=int, default=None, help="Start year (inclusive) for evaluation range.")
+    parser.add_argument("--end-year", type=int, default=None, help="End year (inclusive) for evaluation range.")
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
     pred_by_year = load_jsonl_directory(PRED_DIR)
     data_by_year = load_jsonl_directory(DATA_REF_DIR)
     cve2attack_by_year = load_jsonl_directory(CVE2ATTACK_REF_DIR)
 
     all_years = sorted(set(data_by_year) | set(cve2attack_by_year))
+    if args.start_year is not None or args.end_year is not None:
+        filtered_years: List[str] = []
+        for year in all_years:
+            year_i = int(year)
+            if args.start_year is not None and year_i < args.start_year:
+                continue
+            if args.end_year is not None and year_i > args.end_year:
+                continue
+            filtered_years.append(year)
+        years_to_eval = filtered_years
+    else:
+        years_to_eval = all_years
+
     rows: List[dict] = []
     skipped_years: List[str] = []
 
-    for year in all_years:
+    for year in years_to_eval:
         data_truth = data_by_year.get(year, {})
         cve2attack_truth = cve2attack_by_year.get(year, {})
         union_truth = merge_reference_maps(data_truth, cve2attack_truth)

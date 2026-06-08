@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import random
 import re
 import time
@@ -22,16 +21,11 @@ from typing import Dict, List, Sequence, Tuple
 import numpy as np
 
 try:
-    from openai import OpenAI
+    from sentence_transformers import SentenceTransformer
 except ImportError as exc:  # pragma: no cover
     raise SystemExit(
-        "Missing dependency: openai. Install with: pip install openai numpy"
+        "Missing dependency: sentence-transformers/torch. Install with: pip install sentence-transformers torch numpy"
     ) from exc
-
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    load_dotenv = None
 
 
 
@@ -41,8 +35,7 @@ DEFAULT_CVE_DIR = PROJECT_ROOT / "og_data" / "cve"
 DEFAULT_ATTACK_BUNDLE = PROJECT_ROOT / "og_data" / "enterprise-attack.json"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "output" / "retrieval"
 
-EMBED_MODEL = "BAAI/bge-m3"
-EMBED_BASE_URL = "https://api.siliconflow.cn/v1"
+EMBED_MODEL = "basel/ATTACK-BERT"
 
 
 @dataclass
@@ -190,36 +183,22 @@ def l2_normalize(vectors: np.ndarray) -> np.ndarray:
     return vectors / norms
 
 
-def embed_texts(client: OpenAI, texts: Sequence[str], model: str, batch_size: int, max_retries: int = 3) -> np.ndarray:
-    """Embed texts through the OpenAI-compatible endpoint with retry logic."""
-    all_vectors: List[List[float]] = []
+def embed_texts(
+    model: SentenceTransformer,
+    texts: Sequence[str],
+    batch_size: int,
+) -> np.ndarray:
+    """Embed texts with sentence-transformers."""
+    if not texts:
+        return np.asarray([], dtype=np.float32)
 
-    for start in range(0, len(texts), batch_size):
-        batch = texts[start : start + batch_size]
-        last_error: Exception | None = None
-
-        for attempt in range(max_retries):
-            try:
-                response = client.embeddings.create(model=model, input=batch)
-                all_vectors.extend([item.embedding for item in response.data])
-                last_error = None
-                break
-            except Exception as exc:  # pragma: no cover
-                last_error = exc
-                message = str(exc).lower()
-                retryable = "429" in message or "rate limit" in message
-                if attempt < max_retries - 1 and retryable:
-                    time.sleep(2**attempt)
-                    continue
-                if attempt < max_retries - 1 and not retryable:
-                    time.sleep(2**attempt)
-                    continue
-                raise
-
-        if last_error is not None:
-            raise last_error
-
-    return np.asarray(all_vectors, dtype=np.float32)
+    vectors = model.encode(
+        list(texts),
+        batch_size=batch_size,
+        show_progress_bar=False,
+        convert_to_numpy=True,
+    )
+    return np.asarray(vectors, dtype=np.float32)
 
 
 def save_tech_cache(cache_path: Path, embeddings: np.ndarray, techniques: Sequence[TechniqueDoc]) -> None:
@@ -392,7 +371,8 @@ def ensure_paths(args: argparse.Namespace) -> Tuple[Path, Path, Path]:
     """Resolve output paths from args."""
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
-    return output_dir / "tech_embeddings_cache.npz", output_dir / "candidates.jsonl", output_dir / "inspect_sample.md"
+    cache_name = f"tech_embeddings_cache_{EMBED_MODEL.replace('/', '_')}.npz"
+    return output_dir / cache_name, output_dir / "candidates.jsonl", output_dir / "inspect_sample.md"
 
 def render_progress(current: int, total: int, prefix: str, bar_len: int = 30) -> str:
     """Render a compact progress bar string."""
@@ -407,12 +387,7 @@ def main() -> None:
     args = parse_args()
     cache_path, candidates_path, inspect_path = ensure_paths(args)
 
-    if load_dotenv is not None:
-        load_dotenv()
-
-    api_key = os.getenv("SILICONFLOW_API_KEY", "").strip()
-    if not api_key:
-        raise SystemExit("SILICONFLOW_API_KEY is not set in environment.")
+    model = SentenceTransformer(EMBED_MODEL)
 
     if not args.attack_bundle.exists():
         raise SystemExit(f"Missing ATT&CK bundle: {args.attack_bundle}")
@@ -421,7 +396,6 @@ def main() -> None:
     if not args.cve_dir.exists():
         raise SystemExit(f"Missing CVE directory: {args.cve_dir}")
 
-    client = OpenAI(api_key=api_key, base_url=EMBED_BASE_URL)
     print(f"[INFO] Using embed model: {EMBED_MODEL}")
     print(f"[INFO] Output directory: {args.output_dir}")
 
@@ -435,7 +409,11 @@ def main() -> None:
             raise SystemExit("No technique docs extracted from enterprise-attack.json")
 
         tech_docs = [t.doc for t in techniques]
-        raw_vectors = embed_texts(client=client, texts=tech_docs, model=EMBED_MODEL, batch_size=args.batch_size)
+        raw_vectors = embed_texts(
+            model=model,
+            texts=tech_docs,
+            batch_size=args.batch_size,
+        )
         tech_embeddings = l2_normalize(raw_vectors).astype(np.float32)
         save_tech_cache(cache_path, tech_embeddings, techniques)
 
@@ -463,20 +441,25 @@ def main() -> None:
 
     rng = random.Random(args.seed)
     inspect_samples: List[dict] = []
-    output_records: List[dict] = []
+    written_paths: List[Path] = []
     seen_count = 0
 
     for year in sorted(records_by_year):
         year_records = records_by_year[year]
         total_year = len(year_records)
         print(f"[INFO] Processing year {year} with {total_year} CVEs")
+        year_output_records: List[dict] = []
 
         for idx, query in enumerate(year_records, start=1):
-            q_vec_raw = embed_texts(client=client, texts=[query["query_text"]], model=EMBED_MODEL, batch_size=1)
+            q_vec_raw = embed_texts(
+                model=model,
+                texts=[query["query_text"]],
+                batch_size=1,
+            )
             q_vec = l2_normalize(q_vec_raw)[0]
 
             techniques_only = top_k_candidates(q_vec, tech_embeddings, techniques, args.top_k)
-            output_records.append({"cve_id": query["cve_id"], "techniques": techniques_only})
+            year_output_records.append({"cve_id": query["cve_id"], "techniques": techniques_only})
 
             seen_count += 1
             reservoir_sample_push(
@@ -497,7 +480,9 @@ def main() -> None:
         if total_year:
             print()
 
-    written_paths = write_yearly_outputs(output_records, candidates_path.parent)
+        if year_output_records:
+            written_paths.extend(write_yearly_outputs(year_output_records, candidates_path.parent))
+
     write_inspect_markdown(inspect_samples, inspect_path)
 
     print(f"[INFO] Wrote yearly outputs: {len(written_paths)} files under {candidates_path.parent}")
