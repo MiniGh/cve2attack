@@ -11,15 +11,15 @@ In affected Ops Manager versions there is an exposed http route was that may all
 **Top-10 Techniques**
 
 1. T1654
-2. T1538
-3. T1530
+2. T1530
+3. T1538
 4. T1580
 5. T1619
 6. T1074
 7. T1595
 8. T1213
-9. T1217
-10. T1602
+9. T1049
+10. T1526
 
 ## 2. CVE-2006-7253
 
@@ -29,16 +29,16 @@ GE Healthcare Infinia II has a default password of (1) infinia for the infinia u
 
 **Top-10 Techniques**
 
-1. T1556
-2. T1201
+1. T1201
+2. T1556
 3. T1110
 4. T1555
 5. T1552
 6. T1550
 7. T1111
 8. T1003
-9. T1606
-10. T1621
+9. T1621
+10. T1558
 
 ## 3. CVE-2008-0293
 
@@ -51,13 +51,13 @@ Unspecified vulnerability in cron.php in FreeSeat before 1.1.5d, when format.php
 1. T1546
 2. T1053
 3. T1648
-4. T1562
-5. T1212
-6. T1185
+4. T1212
+5. T1548
+6. T1562
 7. T1068
 8. T1678
-9. T1548
-10. T1606
+9. T1564
+10. T1185
 
 ## 4. CVE-2024-1386
 
@@ -70,13 +70,13 @@ The MailerLite – Signup forms (official) plugin for WordPress is vulnerable to
 1. T1204
 2. T1189
 3. T1534
-4. T1566
-5. T1606
-6. T1598
-7. T1585
-8. T1672
-9. T1667
-10. T1586
+4. T1606
+5. T1566
+6. T1585
+7. T1598
+8. T1586
+9. T1672
+10. T1667
 
 ## 5. CVE-2012-5168
 
@@ -89,12 +89,12 @@ ATutor AContent before 1.2-1 allows remote attackers to modify arbitrary user pa
 1. T1556
 2. T1110
 3. T1098
-4. T1606
-5. T1201
+4. T1201
+5. T1606
 6. T1550
-7. T1187
-8. T1531
-9. T1555
+7. T1555
+8. T1187
+9. T1531
 10. T1552
 
 ## 6. CVE-2025-11190
@@ -109,12 +109,12 @@ The Kiwire Captive Portal contains an open redirection issue via the login-url p
 2. T1539
 3. T1606
 4. T1608
-5. T1669
-6. T1187
+5. T1189
+6. T1669
 7. T1557
-8. T1204
-9. T1558
-10. T1189
+8. T1187
+9. T1659
+10. T1204
 
 ## 7. CVE-2011-4561
 
@@ -126,13 +126,13 @@ Cross-site scripting (XSS) vulnerability in admin.php in Phorum 5.2.18 allows re
 
 1. T1189
 2. T1221
-3. T1185
-4. T1220
+3. T1220
+4. T1185
 5. T1203
-6. T1204
-7. T1659
-8. T1608
-9. T1176
+6. T1608
+7. T1176
+8. T1659
+9. T1204
 10. T1594
 
 ## 8. CVE-2023-5686
@@ -143,16 +143,16 @@ Heap-based Buffer Overflow in GitHub repository radareorg/radare2 prior to 5.9.0
 
 **Top-10 Techniques**
 
-1. T1620
-2. T1622
+1. T1622
+2. T1620
 3. T1030
 4. T1562
 5. T1559
-6. T1497
-7. T1678
-8. T1496
-9. T1068
-10. T1029
+6. T1678
+7. T1497
+8. T1499
+9. T1496
+10. T1068
 
 ## 9. CVE-2025-60340
 
@@ -168,10 +168,10 @@ Multiple buffer overflows in the SetClientState function of Tenda AC6 v.15.03.06
 4. T1205
 5. T1562
 6. T1008
-7. T1489
-8. T1557
-9. T1529
-10. T1095
+7. T1557
+8. T1489
+9. T1095
+10. T1668
 
 ## 10. CVE-2020-9022
 
@@ -188,9 +188,9 @@ An issue was discovered on Xirrus XR520, XR620, XR2436, and XH2-120 devices. The
 5. T1132
 6. T1221
 7. T1189
-8. T1606
-9. T1059
-10. T1001
+8. T1001
+9. T1056
+10. T1606
 
 ## 11. CVE-2017-17675
 
@@ -202,14 +202,14 @@ BMC Remedy Mid Tier 9.1SP3 is affected by log hijacking. Remote logging can be a
 
 1. T1654
 2. T1033
-3. T1074
-4. T1217
-5. T1040
-6. T1114
-7. T1087
+3. T1114
+4. T1087
+5. T1074
+6. T1040
+7. T1217
 8. T1562
-9. T1041
-10. T1602
+9. T1602
+10. T1589
 
 ## 12. CVE-2023-2716
 
@@ -223,10 +223,10 @@ The Groundhogg plugin for WordPress is vulnerable to unauthorized access of data
 2. T1020
 3. T1005
 4. T1041
-5. T1048
-6. T1567
-7. T1074
-8. T1530
+5. T1567
+6. T1048
+7. T1530
+8. T1074
 9. T1105
 10. T1039
 
@@ -243,16 +243,16 @@ authenticated attacker to achieve remote code execution on the system by
 
 **Top-10 Techniques**
 
-1. T1601
-2. T1200
-3. T1495
-4. T1542
-5. T1554
-6. T1652
+1. T1200
+2. T1495
+3. T1542
+4. T1601
+5. T1652
+6. T1554
 7. T1120
 8. T1091
-9. T1072
-10. T1068
+9. T1068
+10. T1072
 
 ## 14. CVE-2022-38156
 
@@ -268,10 +268,10 @@ A remote command injection issues exists in the web server of the Kratos Spectra
 4. T1187
 5. T1110
 6. T1111
-7. T1606
-8. T1021
-9. T1558
-10. T1056
+7. T1558
+8. T1606
+9. T1201
+10. T1621
 
 ## 15. CVE-2010-0035
 
@@ -285,12 +285,12 @@ The Key Distribution Center (KDC) in Kerberos in Microsoft Windows 2000 SP4, Ser
 2. T1207
 3. T1531
 4. T1484
-5. T1098
+5. T1212
 6. T1550
-7. T1556
-8. T1666
-9. T1212
-10. T1529
+7. T1098
+8. T1556
+9. T1666
+10. T1668
 
 ## 16. CVE-2025-21991
 
@@ -348,13 +348,13 @@ whether the first CPU on the respective node needs microcode update.
 
 1. T1620
 2. T1495
-3. T1601
-4. T1082
-5. T1014
-6. T1480
-7. T1622
-8. T1497
-9. T1542
+3. T1082
+4. T1014
+5. T1480
+6. T1622
+7. T1497
+8. T1542
+9. T1601
 10. T1673
 
 ## 17. CVE-2025-11901
@@ -368,14 +368,14 @@ Refer to the 'Security Update for UEFI firmware' section on the ASUS Security Ad
 
 1. T1495
 2. T1496
-3. T1601
-4. T1542
-5. T1068
-6. T1200
-7. T1668
-8. T1620
-9. T1014
-10. T1562
+3. T1620
+4. T1068
+5. T1542
+6. T1014
+7. T1200
+8. T1668
+9. T1652
+10. T1601
 
 ## 18. CVE-2013-4743
 
@@ -388,13 +388,13 @@ Static HTTP Server 1.0 has a Local Overflow
 1. T1499
 2. T1498
 3. T1665
-4. T1001
-5. T1568
-6. T1104
-7. T1571
-8. T1572
-9. T1040
-10. T1090
+4. T1568
+5. T1104
+6. T1659
+7. T1001
+8. T1040
+9. T1572
+10. T1557
 
 ## 19. CVE-2019-2903
 
@@ -408,12 +408,12 @@ Vulnerability in the Oracle Outside In Technology product of Oracle Fusion Middl
 2. T1211
 3. T1210
 4. T1203
-5. T1584
-6. T1095
-7. T1068
-8. T1588
-9. T1557
-10. T1571
+5. T1095
+6. T1068
+7. T1571
+8. T1557
+9. T1584
+10. T1008
 
 ## 20. CVE-2016-3052
 
@@ -423,15 +423,15 @@ Under non-standard configurations, IBM WebSphere MQ might send password data in 
 
 **Top-10 Techniques**
 
-1. T1111
-2. T1555
-3. T1556
-4. T1056
-5. T1552
-6. T1003
-7. T1187
+1. T1555
+2. T1111
+3. T1552
+4. T1003
+5. T1056
+6. T1201
+7. T1556
 8. T1606
-9. T1201
+9. T1187
 10. T1110
 
 ## 21. CVE-2022-28901
@@ -467,10 +467,10 @@ In NGINX Unit before version 1.34.2 with the Java Language Module in use, undisc
 4. T1008
 5. T1568
 6. T1584
-7. T1104
-8. T1557
+7. T1557
+8. T1104
 9. T1665
-10. T1190
+10. T1659
 
 ## 23. CVE-2022-21333
 
@@ -481,15 +481,15 @@ Vulnerability in the MySQL Cluster product of Oracle MySQL (component: Cluster: 
 **Top-10 Techniques**
 
 1. T1190
-2. T1210
-3. T1499
-4. T1496
-5. T1498
+2. T1499
+3. T1210
+4. T1498
+5. T1496
 6. T1562
-7. T1578
-8. T1068
-9. T1584
-10. T1008
+7. T1068
+8. T1578
+9. T1008
+10. T1584
 
 ## 24. CVE-2020-6832
 
@@ -506,8 +506,8 @@ An issue was discovered in GitLab Enterprise Edition (EE) 8.9.0 through 12.6.1. 
 5. T1681
 6. T1596
 7. T1195
-8. T1594
-9. T1654
+8. T1654
+9. T1594
 10. T1211
 
 ## 25. CVE-2022-38850
@@ -526,8 +526,8 @@ The MPlayer Project mencoder SVN-r38374-13.0.1 is vulnerable to Divide By Zero v
 6. T1600
 7. T1486
 8. T1564
-9. T1132
-10. T1001
+9. T1001
+10. T1132
 
 ## 26. CVE-2025-26936
 
@@ -538,15 +538,15 @@ Improper Control of Generation of Code ('Code Injection') vulnerability in NotFo
 **Top-10 Techniques**
 
 1. T1055
-2. T1620
-3. T1129
+2. T1129
+3. T1554
 4. T1218
-5. T1221
+5. T1620
 6. T1211
-7. T1554
+7. T1221
 8. T1127
-9. T1220
-10. T1216
+9. T1505
+10. T1176
 
 ## 27. CVE-2018-15188
 
@@ -557,15 +557,15 @@ PHP Scripts Mall advanced-real-estate-script 4.0.9 allows remote attackers to ca
 **Top-10 Techniques**
 
 1. T1531
-2. T1491
-3. T1499
-4. T1489
+2. T1499
+3. T1491
+4. T1498
 5. T1578
-6. T1070
-7. T1498
+6. T1489
+7. T1070
 8. T1485
-9. T1665
-10. T1561
+9. T1666
+10. T1665
 
 ## 28. CVE-2025-58348
 
@@ -577,14 +577,14 @@ An issue was discovered in the Wi-Fi driver in Samsung Mobile Processor and Wear
 
 1. T1496
 2. T1495
-3. T1011
+3. T1620
 4. T1669
 5. T1543
-6. T1620
-7. T1200
-8. T1601
+6. T1200
+7. T1011
+8. T1668
 9. T1569
-10. T1668
+10. T1057
 
 ## 29. CVE-2003-0158
 
@@ -598,11 +598,11 @@ Rejected reason: DO NOT USE THIS CANDIDATE NUMBER.  ConsultIDs: CVE-2003-0139.  
 2. T1587
 3. T1203
 4. T1480
-5. T1588
-6. T1127
-7. T1553
-8. T1036
-9. T1218
+5. T1553
+6. T1036
+7. T1588
+8. T1195
+9. T1127
 10. T1554
 
 ## 30. CVE-2010-1906
@@ -619,7 +619,7 @@ tgsrv.exe in the Repair Service in Consona Dynamic Agent, Repair Manager, Subscr
 4. T1029
 5. T1562
 6. T1546
-7. T1480
-8. T1653
-9. T1558
+7. T1653
+8. T1197
+9. T1543
 10. T1547

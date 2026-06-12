@@ -36,6 +36,7 @@ DEFAULT_ATTACK_BUNDLE = PROJECT_ROOT / "og_data" / "enterprise-attack.json"
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "output" / "retrieval"
 
 EMBED_MODEL = "basel/ATTACK-BERT"
+CACHE_VERSION = "v3_procedure_examples"
 
 
 @dataclass
@@ -67,18 +68,18 @@ def parse_args() -> argparse.Namespace:
 
 
 def clean_markdown_links(text: str) -> str:
-    """Convert markdown links like [x](y) into x."""
+    """将 Markdown 链接 [x](y) 转成纯文本 x。"""
     return re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text or "")
 
 
 def normalize_text_for_doc(text: str) -> str:
-    """Simple whitespace cleanup for document composition."""
+    """对文档内容做基础的空白符清理。"""
     cleaned = clean_markdown_links(text)
     return re.sub(r"\s+", " ", cleaned).strip()
 
 
 def get_year_from_cve_id(cve_id: str) -> str:
-    """Extract year from CVE ID like CVE-2024-1234."""
+    """从 CVE 编号（如 CVE-2024-1234）中提取年份。"""
     parts = cve_id.split("-")
     if len(parts) < 3 or not parts[1].isdigit():
         raise ValueError(f"Unexpected CVE format: {cve_id}")
@@ -86,7 +87,7 @@ def get_year_from_cve_id(cve_id: str) -> str:
 
 
 def extract_tech_id(external_references: Sequence[dict]) -> str | None:
-    """Read ATT&CK external ID from external_references."""
+    """从 external_references 中读取 ATT&CK 的 external_id。"""
     for ref in external_references or []:
         if ref.get("source_name") == "mitre-attack":
             ext_id = ref.get("external_id")
@@ -96,7 +97,7 @@ def extract_tech_id(external_references: Sequence[dict]) -> str | None:
 
 
 def build_procedure_map(objects: Sequence[dict]) -> Dict[str, List[str]]:
-    """Collect relationship descriptions for uses->technique references."""
+    """收集指向 technique 的 uses 关系中的 Procedure Examples。"""
     mapping: Dict[str, List[str]] = {}
     for obj in objects:
         if obj.get("type") != "relationship":
@@ -112,13 +113,31 @@ def build_procedure_map(objects: Sequence[dict]) -> Dict[str, List[str]]:
         if not desc:
             continue
 
+        # ATT&CK 把 Procedure Examples 存在 relationship 的 description 里，这里按 technique 的 STIX id 聚合。
         mapping.setdefault(target_ref, []).append(desc)
 
     return mapping
 
 
+def compose_technique_doc(name: str, description: str, procedure_examples: Sequence[str]) -> str:
+    """为一个 technique 拼接用于嵌入检索的文本。"""
+    parts: List[str] = []
+
+    if name:
+        parts.append(f"Technique Name: {name}")
+    if description:
+        parts.append(f"Technique Description: {description}")
+
+    # 将 Procedure Examples 单独成段，方便后续人工检查实际喂给模型的文本。
+    procedure_text = "\n".join(f"- {example}" for example in procedure_examples if example)
+    if procedure_text:
+        parts.append(f"Procedure Examples:\n{procedure_text}")
+
+    return "\n\n".join(parts)
+
+
 def extract_technique_kb(attack_bundle_path: Path, procedure_char_limit: int) -> List[TechniqueDoc]:
-    """Extract top-level ATT&CK techniques and compose retrieval documents."""
+    """提取顶层 ATT&CK technique，并组合成嵌入检索文档。"""
     with attack_bundle_path.open("r", encoding="utf-8") as f:
         bundle = json.load(f)
 
@@ -150,17 +169,15 @@ def extract_technique_kb(attack_bundle_path: Path, procedure_char_limit: int) ->
         ]
 
         procedure_chunks = procedure_map.get(stix_id, [])
-        procedure_text = " ".join(chunk for chunk in procedure_chunks if chunk).strip()
+        unique_procedures = list(dict.fromkeys(chunk for chunk in procedure_chunks if chunk))
+        procedure_text = "\n".join(unique_procedures)
+        # 这里是嵌入输入长度的保护阈值，过长的 procedure 列表会被截断。
         if len(procedure_text) > procedure_char_limit:
             procedure_text = procedure_text[:procedure_char_limit].rstrip()
 
-        doc_parts = [part for part in (name, description, procedure_text) if part]
-        if not doc_parts:
+        doc = compose_technique_doc(name=name, description=description, procedure_examples=procedure_text.splitlines())
+        if not doc:
             continue
-
-        doc = "。".join(doc_parts[:1])
-        if len(doc_parts) > 1:
-            doc = doc + " " + " ".join(doc_parts[1:])
 
         techniques.append(
             TechniqueDoc(
@@ -175,9 +192,31 @@ def extract_technique_kb(attack_bundle_path: Path, procedure_char_limit: int) ->
     techniques.sort(key=lambda x: x.tech_id)
     return techniques
 
+def write_technique_export(techniques: Sequence[TechniqueDoc], output_path: Path) -> None:
+    """把实际用于嵌入的 technique 文本写到文件中，方便后续核对。"""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    lines: List[str] = []
+
+    for technique in techniques:
+        lines.append(
+            json.dumps(
+                {
+                    "tech_id": technique.tech_id,
+                    "name": technique.name,
+                    "tactics": technique.tactics,
+                    "stix_id": technique.stix_id,
+                    "doc": technique.doc,
+                },
+                ensure_ascii=False,
+            )
+        )
+
+    output_path.write_text("\n".join(lines), encoding="utf-8")
+
+
 
 def l2_normalize(vectors: np.ndarray) -> np.ndarray:
-    """L2-normalize vectors along the last dimension."""
+    """按最后一维对向量做 L2 归一化。"""
     norms = np.linalg.norm(vectors, axis=1, keepdims=True)
     norms[norms == 0] = 1.0
     return vectors / norms
@@ -188,7 +227,7 @@ def embed_texts(
     texts: Sequence[str],
     batch_size: int,
 ) -> np.ndarray:
-    """Embed texts with sentence-transformers."""
+    """使用 sentence-transformers 对文本进行向量化。"""
     if not texts:
         return np.asarray([], dtype=np.float32)
 
@@ -202,7 +241,7 @@ def embed_texts(
 
 
 def save_tech_cache(cache_path: Path, embeddings: np.ndarray, techniques: Sequence[TechniqueDoc]) -> None:
-    """Persist normalized technique embeddings and metadata."""
+    """保存归一化后的 technique 向量及其元数据。"""
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(
         cache_path,
@@ -210,26 +249,30 @@ def save_tech_cache(cache_path: Path, embeddings: np.ndarray, techniques: Sequen
         tech_ids=np.asarray([t.tech_id for t in techniques], dtype=object),
         names=np.asarray([t.name for t in techniques], dtype=object),
         tactics=np.asarray([json.dumps(t.tactics, ensure_ascii=False) for t in techniques], dtype=object),
+        stix_ids=np.asarray([t.stix_id for t in techniques], dtype=object),
+        docs=np.asarray([t.doc for t in techniques], dtype=object),
     )
 
 
 def load_tech_cache(cache_path: Path) -> Tuple[np.ndarray, List[TechniqueDoc]]:
-    """Load technique embeddings and metadata from cache."""
+    """从缓存中加载 technique 向量及其元数据。"""
     loaded = np.load(cache_path, allow_pickle=True)
     embeddings = loaded["embeddings"].astype(np.float32)
     tech_ids = loaded["tech_ids"].tolist()
     names = loaded["names"].tolist()
     tactics_json = loaded["tactics"].tolist()
+    stix_ids = loaded["stix_ids"].tolist() if "stix_ids" in loaded.files else ["" for _ in tech_ids]
+    docs = loaded["docs"].tolist() if "docs" in loaded.files else ["" for _ in tech_ids]
 
     techniques: List[TechniqueDoc] = []
-    for tech_id, name, tactics_s in zip(tech_ids, names, tactics_json):
+    for tech_id, name, tactics_s, stix_id, doc in zip(tech_ids, names, tactics_json, stix_ids, docs):
         techniques.append(
             TechniqueDoc(
                 tech_id=str(tech_id),
                 name=str(name),
                 tactics=list(json.loads(str(tactics_s))),
-                stix_id="",
-                doc="",
+                stix_id=str(stix_id),
+                doc=str(doc),
             )
         )
 
@@ -237,7 +280,7 @@ def load_tech_cache(cache_path: Path) -> Tuple[np.ndarray, List[TechniqueDoc]]:
 
 
 def collect_enterprise_cve_ids(domain_dir: Path) -> List[str]:
-    """Read all yearly mapping files and return unique Enterprise CVE IDs."""
+    """读取各年份映射文件，返回去重后的 Enterprise CVE ID 列表。"""
     ids: List[str] = []
     seen = set()
     for domain_file in sorted(domain_dir.glob("CVE-*.jsonl")):
@@ -261,7 +304,7 @@ def collect_enterprise_cve_ids(domain_dir: Path) -> List[str]:
 
 
 def build_query_records(cve_ids: Sequence[str], cve_dir: Path) -> Tuple[List[dict], int, int]:
-    """Join Enterprise CVE IDs with raw descriptions from yearly CVE dict files."""
+    """把 Enterprise CVE ID 与每年原始 CVE 描述文件关联起来。"""
     ids_by_year: Dict[str, List[str]] = {}
     for cve_id in cve_ids:
         ids_by_year.setdefault(get_year_from_cve_id(cve_id), []).append(cve_id)
@@ -301,7 +344,7 @@ def build_query_records(cve_ids: Sequence[str], cve_dir: Path) -> Tuple[List[dic
 
 
 def top_k_candidates(query_embedding: np.ndarray, tech_embeddings: np.ndarray, techniques: Sequence[TechniqueDoc], top_k: int) -> List[str]:
-    """Compute top-k cosine candidates using normalized dot product."""
+    """使用归一化后的点积计算 top-k 余弦候选。"""
     scores = tech_embeddings @ query_embedding
     k = min(top_k, len(scores))
     if k <= 0:
@@ -313,7 +356,7 @@ def top_k_candidates(query_embedding: np.ndarray, tech_embeddings: np.ndarray, t
 
 
 def reservoir_sample_push(rng: random.Random, samples: List[dict], candidate: dict, seen_count: int, sample_size: int) -> None:
-    """Maintain a fixed-size random sample via reservoir sampling."""
+    """使用蓄水池采样维护固定大小的随机样本。"""
     if sample_size <= 0:
         return
 
@@ -327,7 +370,7 @@ def reservoir_sample_push(rng: random.Random, samples: List[dict], candidate: di
 
 
 def write_inspect_markdown(sample_records: Sequence[dict], output_path: Path) -> None:
-    """Write a human-readable markdown report for random CVE samples."""
+    """输出一个可阅读的 markdown 抽样报告。"""
     lines: List[str] = ["# Embedding Retrieval Inspection Sample", "", f"Sample size: {len(sample_records)}", ""]
 
     for i, item in enumerate(sample_records, start=1):
@@ -352,7 +395,7 @@ def write_inspect_markdown(sample_records: Sequence[dict], output_path: Path) ->
 
 
 def write_yearly_outputs(records: Sequence[dict], output_dir: Path) -> List[Path]:
-    """Write one JSONL file per CVE year."""
+    """按年份输出每个 CVE 的 JSONL 结果文件。"""
     grouped: Dict[str, List[dict]] = {}
     for record in records:
         grouped.setdefault(get_year_from_cve_id(record["cve_id"]), []).append(record)
@@ -367,15 +410,16 @@ def write_yearly_outputs(records: Sequence[dict], output_dir: Path) -> List[Path
 
     return written_paths
 
-def ensure_paths(args: argparse.Namespace) -> Tuple[Path, Path, Path]:
-    """Resolve output paths from args."""
+def ensure_paths(args: argparse.Namespace) -> Tuple[Path, Path, Path, Path]:
+    """根据参数解析输出路径。"""
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
-    cache_name = f"tech_embeddings_cache_{EMBED_MODEL.replace('/', '_')}.npz"
-    return output_dir / cache_name, output_dir / "candidates.jsonl", output_dir / "inspect_sample.md"
+    cache_name = f"tech_embeddings_cache_{CACHE_VERSION}_{EMBED_MODEL.replace('/', '_')}.npz"
+    technique_export_path = output_dir / "techniques_for_embedding.jsonl"
+    return output_dir / cache_name, output_dir / "candidates.jsonl", output_dir / "inspect_sample.md", technique_export_path
 
 def render_progress(current: int, total: int, prefix: str, bar_len: int = 30) -> str:
-    """Render a compact progress bar string."""
+    """生成简洁的进度条字符串。"""
     if total <= 0:
         return f"{prefix} [no items]"
     pct = current / total * 100
@@ -385,7 +429,7 @@ def render_progress(current: int, total: int, prefix: str, bar_len: int = 30) ->
 
 def main() -> None:
     args = parse_args()
-    cache_path, candidates_path, inspect_path = ensure_paths(args)
+    cache_path, candidates_path, inspect_path, technique_export_path = ensure_paths(args)
 
     model = SentenceTransformer(EMBED_MODEL)
 
@@ -399,14 +443,21 @@ def main() -> None:
     print(f"[INFO] Using embed model: {EMBED_MODEL}")
     print(f"[INFO] Output directory: {args.output_dir}")
 
+    # 主流程：优先加载技术向量缓存；如果缓存不存在，则重新构造 technique 文档、导出文本并生成新向量。
     if cache_path.exists():
         tech_embeddings, techniques = load_tech_cache(cache_path)
         print(f"[INFO] Loaded technique cache: {cache_path}")
         print(f"[INFO] Technique vectors: {tech_embeddings.shape[0]}")
+        if techniques and techniques[0].doc:
+            write_technique_export(techniques, technique_export_path)
     else:
+        # 重新提取 ATT&CK technique 文本，确保 procedure examples 和 description 都进入嵌入输入。
         techniques = extract_technique_kb(args.attack_bundle, args.procedure_char_limit)
         if not techniques:
             raise SystemExit("No technique docs extracted from enterprise-attack.json")
+
+        # 将实际用于嵌入的 technique 文本落盘，便于人工核对。
+        write_technique_export(techniques, technique_export_path)
 
         tech_docs = [t.doc for t in techniques]
         raw_vectors = embed_texts(
@@ -418,6 +469,7 @@ def main() -> None:
         save_tech_cache(cache_path, tech_embeddings, techniques)
 
         print(f"[INFO] Extracted techniques: {len(techniques)}")
+        print(f"[INFO] Wrote technique export: {technique_export_path}")
         print(f"[INFO] Saved technique cache: {cache_path}")
 
     enterprise_ids = collect_enterprise_cve_ids(args.domain_dir)
