@@ -129,6 +129,13 @@ def parse_args() -> argparse.Namespace:
         "--seed", type=int, default=42,
         help="Random seed for inspect sample reservoir sampling."
     )
+    parser.add_argument(
+        "--rewrite-cache", type=Path, default=None,
+        help="Path to JSON file mapping CVE IDs to rewritten query text. "
+             "When provided, only CVEs in this cache are processed "
+             "(Enterprise domain filter is skipped) and rewritten text "
+             "is used as query_text instead of raw CVE description."
+    )
     return parser.parse_args()
 
 
@@ -612,10 +619,11 @@ def main() -> None:
     # ── 校验输入文件存在 ──
     if not args.attack_bundle.exists():
         raise SystemExit(f"Missing ATT&CK bundle: {args.attack_bundle}")
-    if not args.domain_dir.exists():
-        raise SystemExit(f"Missing domain directory: {args.domain_dir}")
-    if not args.cve_dir.exists():
-        raise SystemExit(f"Missing CVE directory: {args.cve_dir}")
+    if args.rewrite_cache is None:
+        if not args.domain_dir.exists():
+            raise SystemExit(f"Missing domain directory: {args.domain_dir}")
+        if not args.cve_dir.exists():
+            raise SystemExit(f"Missing CVE directory: {args.cve_dir}")
 
     print(f"[INFO] Using embed model: {EMBED_MODEL}")
     print(f"[INFO] Output directory: {args.output_dir}")
@@ -657,19 +665,55 @@ def main() -> None:
         # [注释] 不再打印 technique export 路径
         print(f"[INFO] Saved technique cache: {cache_path}")
 
-    # ── 步骤 B: 收集 Enterprise CVE ──
-    enterprise_ids = collect_enterprise_cve_ids(args.domain_dir)
-    if args.max_cves is not None:
-        enterprise_ids = enterprise_ids[: max(0, args.max_cves)]
+    # ── 步骤 B: 收集 CVE 查询记录 ──
+    if args.rewrite_cache is not None:
+        # Rewrite-cache mode: load rewritten texts, skip domain/cve-dir
+        if not args.rewrite_cache.exists():
+            raise SystemExit(f"Missing rewrite cache file: {args.rewrite_cache}")
 
-    query_records, missing_count, empty_desc_count = build_query_records(
-        enterprise_ids, args.cve_dir
-    )
+        with args.rewrite_cache.open("r", encoding="utf-8") as f:
+            rewrite_map = json.load(f)
 
-    print(f"[INFO] Enterprise CVE IDs from mapping: {len(enterprise_ids)}")
-    print(f"[INFO] Query-ready CVEs: {len(query_records)}")
-    print(f"[INFO] Missing raw CVE records: {missing_count}")
-    print(f"[INFO] Empty descriptions skipped: {empty_desc_count}")
+        if not isinstance(rewrite_map, dict):
+            raise SystemExit(
+                "Rewrite cache must be a JSON object mapping CVE IDs to rewritten text."
+            )
+
+        raw_cve_ids = list(rewrite_map.keys())
+        if args.max_cves is not None:
+            raw_cve_ids = raw_cve_ids[: max(0, args.max_cves)]
+
+        query_records = []
+        empty_desc_count = 0
+        for cve_id in sorted(raw_cve_ids):
+            rewritten_text = rewrite_map.get(cve_id)
+            if not isinstance(rewritten_text, str) or not rewritten_text.strip():
+                empty_desc_count += 1
+                continue
+            query_records.append({
+                "cve_id": cve_id,
+                "domain": "Enterprise",
+                "query_text": rewritten_text.strip(),
+            })
+
+        print(f"[INFO] Rewrite cache loaded: {args.rewrite_cache}")
+        print(f"[INFO] Total keys in cache: {len(rewrite_map)}")
+        print(f"[INFO] Query-ready CVEs: {len(query_records)}")
+        print(f"[INFO] Empty rewrite texts skipped: {empty_desc_count}")
+    else:
+        # Normal mode: collect Enterprise CVEs via domain filter + raw descriptions
+        enterprise_ids = collect_enterprise_cve_ids(args.domain_dir)
+        if args.max_cves is not None:
+            enterprise_ids = enterprise_ids[: max(0, args.max_cves)]
+
+        query_records, missing_count, empty_desc_count = build_query_records(
+            enterprise_ids, args.cve_dir
+        )
+
+        print(f"[INFO] Enterprise CVE IDs from mapping: {len(enterprise_ids)}")
+        print(f"[INFO] Query-ready CVEs: {len(query_records)}")
+        print(f"[INFO] Missing raw CVE records: {missing_count}")
+        print(f"[INFO] Empty descriptions skipped: {empty_desc_count}")
 
     # ── 步骤 C: 逐 CVE 检索 ──
     total_queries = len(query_records)
