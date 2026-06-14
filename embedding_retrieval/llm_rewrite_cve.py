@@ -186,12 +186,16 @@ def parse_args() -> argparse.Namespace:
         description="LLM rewrite of CVE descriptions for V3 retrieval.")
     p.add_argument("--cve2attack-dir", type=Path,
                    default=Path(__file__).resolve().parents[1]
-                   / "Validate_data" / "cve2attack",
-                   help="Directory with CVE ground-truth JSONL files.")
+                   / "cve2attack_result",
+                   help="Directory with CVE tech JSONL files (eval set).")
     p.add_argument("--cve-dir", type=Path,
                    default=Path(__file__).resolve().parents[1]
                    / "og_data" / "cve",
                    help="Directory with raw CVE JSON dicts.")
+    p.add_argument("--cwe-source-dir", type=Path,
+                   default=Path(__file__).resolve().parents[1]
+                   / "Validate_data" / "cve2attack",
+                   help="Directory with CWE mapping JSONL files.")
     p.add_argument("--cwe-xml", type=Path,
                    default=Path(__file__).resolve().parents[1]
                    / "og_data" / "cwe.xml",
@@ -218,20 +222,29 @@ def main() -> None:
     cwe_db = load_cwe_db(args.cwe_xml)
     print(f"[INFO] Loaded {len(cwe_db)} CWE entries.")
 
-    # 2. Load CVE entries from CVE2ATT&CK evaluation set
+    # 2. Load CVE entries from CVE2ATT&CK evaluation set (small, ~1661)
     entries = load_cve2attack_entries(args.cve2attack_dir)
     total = len(entries)
     print(f"[INFO] Loaded {total} CVE entries from {args.cve2attack_dir}.")
+
+    # 3. Build CWE lookup from Validate_data (cve_id -> cwes)
+    print(f"[INFO] Building CWE lookup from {args.cwe_source_dir} ...")
+    cwe_lookup: Dict[str, list] = {}
+    for entry in load_cve2attack_entries(args.cwe_source_dir):
+        cves = entry.get("cwes", [])
+        if cves:
+            cwe_lookup[entry["cve_id"]] = cves
+    print(f"[INFO] CWE lookup has {len(cwe_lookup)} entries.")
 
     if args.max_entries > 0:
         entries = entries[:args.max_entries]
         print(f"[INFO] Capped to {len(entries)} entries.")
 
-    # 3. Load existing cache
+    # 4. Load existing cache
     cache = {} if args.no_cache else load_rewrite_cache(args.cache_path)
     print(f"[INFO] Cache has {len(cache)} entries (path: {args.cache_path}).")
 
-    # 4. Determine which CVEs need rewriting
+    # 5. Determine which CVEs need rewriting
     to_process = []
     already_cached = 0
     missing_desc = 0
@@ -248,7 +261,7 @@ def main() -> None:
         to_process.append({
             "cve_id": cve_id,
             "cve_desc": cve_desc,
-            "cwe_ids": entry.get("cwes", []),
+            "cwe_ids": cwe_lookup.get(cve_id, []),
         })
 
     print(f"[INFO] Already cached: {already_cached}")
