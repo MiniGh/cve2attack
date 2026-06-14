@@ -626,9 +626,9 @@ def main() -> None:
         tech_embeddings, techniques = load_tech_cache(cache_path)
         print(f"[INFO] Loaded technique cache: {cache_path}")
         print(f"[INFO] Technique vectors: {tech_embeddings.shape[0]}")
-        # 重新导出文本方便核对（即使缓存存在也导出，确保 techniques_for_embedding.jsonl 是最新的）
-        if techniques and techniques[0].doc:
-            write_technique_export(techniques, technique_export_path)
+        # [注释] 不再导出 techniques_for_embedding.jsonl
+        # if techniques and techniques[0].doc:
+        #     write_technique_export(techniques, technique_export_path)
     else:
         # ── 提取 and ATT&CK technique 知识库 ──
         # v4: 只用 name + description，不再收集 Procedure Examples
@@ -638,8 +638,8 @@ def main() -> None:
                 "No technique docs extracted from enterprise-attack.json"
             )
 
-        # 导出 technique 文本供核对
-        write_technique_export(techniques, technique_export_path)
+        # [注释] 不再导出 techniques_for_embedding.jsonl
+        # write_technique_export(techniques, technique_export_path)
 
         # 批量编码 technique 文档
         tech_docs = [t.doc for t in techniques]
@@ -654,7 +654,7 @@ def main() -> None:
         save_tech_cache(cache_path, tech_embeddings, techniques)
 
         print(f"[INFO] Extracted techniques: {len(techniques)}")
-        print(f"[INFO] Wrote technique export: {technique_export_path}")
+        # [注释] 不再打印 technique export 路径
         print(f"[INFO] Saved technique cache: {cache_path}")
 
     # ── 步骤 B: 收集 Enterprise CVE ──
@@ -743,13 +743,14 @@ def main() -> None:
             )
 
     # ── 步骤 D: 写入输出 ──
-    write_inspect_markdown(inspect_samples, inspect_path)
+    # [注释] 不再生成 inspect_sample.md
+    # write_inspect_markdown(inspect_samples, inspect_path)
 
     print(
         f"[INFO] Wrote yearly outputs: {len(written_paths)} files under "
         f"{candidates_path.parent}"
     )
-    print(f"[INFO] Wrote inspect sample: {inspect_path}")
+    # [注释] 不再打印 inspect sample 路径
 
 
 if __name__ == "__main__":
