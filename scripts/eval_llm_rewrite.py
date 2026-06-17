@@ -30,6 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CVE2ATTACK_DIR = PROJECT_ROOT / "cve2attack_result"
 V1_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval"
 V3_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval" / "llm_rewritten"
+V4_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval" / "fused"
 OUTPUT_MD = PROJECT_ROOT / "output" / "retrieval" / "eval_comparison.md"
 
 # Git commit holding the V2 (+procedures) retrieval results
@@ -73,7 +74,15 @@ def load_jsonl_directory(directory: Path) -> Dict[str, List[str]]:
                     continue
                 record = json.loads(line)
                 cve_id = str(record["cve_id"])
-                techniques = [str(t) for t in record.get("techniques", []) if str(t).strip()]
+                raw_techs = record.get("techniques", [])
+                techniques: List[str] = []
+                for t in raw_techs:
+                    if isinstance(t, dict):
+                        tid = str(t.get("id", "")).strip()
+                    else:
+                        tid = str(t).strip()
+                    if tid:
+                        techniques.append(tid)
                 per_cve[cve_id] = techniques
     return per_cve
 
@@ -90,9 +99,15 @@ def load_truth(directory: Path) -> Dict[str, Set[str]]:
                     continue
                 record = json.loads(line)
                 cve_id = str(record["cve_id"])
-                techniques = set(
-                    str(t) for t in record.get("techniques", []) if str(t).strip()
-                )
+                raw_techs = record.get("techniques", [])
+                techniques = set()
+                for t in raw_techs:
+                    if isinstance(t, dict):
+                        tid = str(t.get("id", "")).strip()
+                    else:
+                        tid = str(t).strip()
+                    if tid:
+                        techniques.add(tid)
                 if techniques:
                     truth[cve_id] = techniques
     return truth
@@ -230,7 +245,7 @@ def write_comparison_table(methods: List[MethodSummary]) -> None:
 # ---------------------------------------------------------------------------
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Compare 3 retrieval methods on CVE2ATT&CK eval set.",
+        description="Compare 4 retrieval methods on CVE2ATT&CK eval set.",
     )
     parser.add_argument(
         "--v1-dir",
@@ -249,6 +264,12 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=V3_DEFAULT_DIR,
         help=f"Path to V3 retrieval output directory (default: {V3_DEFAULT_DIR})",
+    )
+    parser.add_argument(
+        "--v4-dir",
+        type=Path,
+        default=V4_DEFAULT_DIR,
+        help=f"Path to V4 retrieval output directory (default: {V4_DEFAULT_DIR})",
     )
     parser.add_argument(
         "--no-v2-extract",
@@ -312,6 +333,13 @@ def main() -> None:
     print(f"\n{v3_name}: {v3_metrics.cves} CVEs, "
           f"R@10={v3_metrics.recall_at_10:.4f}, R@20={v3_metrics.recall_at_20:.4f}")
 
+    # --- V4 ---
+    v4_name = "V4: +structured chain"
+    v4_pred = load_jsonl_directory(args.v4_dir)
+    v4_metrics = compute_metrics(v4_pred, truth)
+    print(f"\n{v4_name}: {v4_metrics.cves} CVEs, "
+          f"R@10={v4_metrics.recall_at_10:.4f}, R@20={v4_metrics.recall_at_20:.4f}")
+
     # --- Report ---
     methods: List[MethodSummary] = [
         MethodSummary(name=v1_name, dir_path=args.v1_dir, cves=v1_metrics.cves, pred=v1_pred, metrics=v1_metrics),
@@ -326,6 +354,9 @@ def main() -> None:
         )
     methods.append(
         MethodSummary(name=v3_name, dir_path=args.v3_dir, cves=v3_metrics.cves, pred=v3_pred, metrics=v3_metrics)
+    )
+    methods.append(
+        MethodSummary(name=v4_name, dir_path=args.v4_dir, cves=v4_metrics.cves, pred=v4_pred, metrics=v4_metrics)
     )
 
     write_comparison_table(methods)

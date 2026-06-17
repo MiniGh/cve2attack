@@ -474,8 +474,8 @@ def top_k_candidates(
     tech_embeddings: np.ndarray,
     techniques: Sequence[TechniqueDoc],
     top_k: int,
-) -> List[str]:
-    """计算查询向量与所有 technique 向量的余弦相似度，返回 top-k technique ID 列表。
+) -> List[Tuple[str, float]]:
+    """计算查询向量与所有 technique 向量的余弦相似度，返回 top-k (technique ID, score) 元组列表。
 
     前提条件：所有向量均已 L2 归一化，此时点积等价于余弦相似度。
     """
@@ -488,7 +488,7 @@ def top_k_candidates(
     top_idx = np.argpartition(scores, -k)[-k:]
     # 排序使结果按分数降序
     top_idx = top_idx[np.argsort(scores[top_idx])[::-1]]
-    return [techniques[int(idx)].tech_id for idx in top_idx]
+    return [(techniques[int(idx)].tech_id, float(scores[idx])) for idx in top_idx]
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -744,13 +744,17 @@ def main() -> None:
             )
             q_vec = l2_normalize(q_vec_raw)[0]
 
-            # 与 technique 向量矩阵做点积得到 top-k 候选
-            techniques_only = top_k_candidates(
+            # 与 technique 向量矩阵做点积得到 top-k (ID, score) 候选
+            techniques_with_scores = top_k_candidates(
                 q_vec, tech_embeddings, techniques, args.top_k
             )
+            techniques_for_output = [
+                {"id": tech_id, "score": round(score, 4)}
+                for tech_id, score in techniques_with_scores
+            ]
             year_output_records.append({
                 "cve_id": query["cve_id"],
-                "techniques": techniques_only,
+                "techniques": techniques_for_output,
             })
 
             # 蓄水池抽样（用于生成的人工检查报告）
@@ -761,7 +765,7 @@ def main() -> None:
                 candidate={
                     "cve_id": query["cve_id"],
                     "query_text": query["query_text"],
-                    "techniques": techniques_only,
+                    "techniques": techniques_for_output,
                 },
                 seen_count=seen_count,
                 sample_size=args.sample_size,
