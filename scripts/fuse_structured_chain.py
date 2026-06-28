@@ -24,7 +24,7 @@ FANOUT_THRESHOLD = 10   # ≤10: add new candidates; >10: boost only
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CHAIN_FILE = PROJECT_ROOT / "Validate_data" / "cve2technique_full.jsonl"
 CWE_XML = PROJECT_ROOT / "og_data" / "cwe.xml"
-V3_DIR = PROJECT_ROOT / "output" / "retrieval" / "llm_rewritten"
+V3_DIR = PROJECT_ROOT / "output" / "retrieval" / "llm_rewritten_proc"
 OUTPUT_DIR = PROJECT_ROOT / "output" / "retrieval" / "fused"
 
 

@@ -29,7 +29,7 @@ from typing import Dict, List, Mapping, Optional, Set
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CVE2ATTACK_DIR = PROJECT_ROOT / "cve2attack_result"
 V1_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval"
-V3_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval" / "llm_rewritten"
+V3_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval" / "llm_rewritten_proc"
 V4_DEFAULT_DIR = PROJECT_ROOT / "output" / "retrieval" / "fused"
 OUTPUT_MD = PROJECT_ROOT / "output" / "retrieval" / "eval_comparison.md"
 

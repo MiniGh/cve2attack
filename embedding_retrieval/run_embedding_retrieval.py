@@ -1,14 +1,25 @@
 """
-Embedding-only CVE to ATT&CK retrieval pipeline (v4 — description only).
+Embedding-only CVE to ATT&CK retrieval pipeline (v5 — rewrite + procedure).
 
 This script implements phase-1 retrieval with these constraints:
 - Enterprise domain only.
 - Parent techniques only (no sub-techniques).
 - No structured chain (CWE→CAPEC→ATT&CK), no LLM reranking.
-- No Procedure Examples in technique documents; only technique name + description.
 - Output top-k technique IDs per CVE.
 
+Key design:
+  - Technique docs use name + description only by default.
+  - When --rewrite-cache is used, Procedure Examples are automatically included
+    because LLM-rewritten CVE descriptions (active attacker-action language)
+    semantically align better with Procedure Examples.
+  - CVE query text uses either raw description or LLM-rewritten text.
+
 Change log:
+  v5 (rewrite+procedure): --rewrite-cache 模式下 technique 文档自动加入
+      Procedure Examples。改写后的 CVE 是主动攻击者行为语言，与 Procedure
+      Examples 描述的真实攻击行为语义更匹配。缓存版本号动态区分是否含
+      Procedure Examples，避免误用。
+
   v4 (description_only): Removed Procedure Examples from technique embedding
       documents.  Reverted to the approach from commit cf3b2bb where only
       the technique's own name and description are used.  Rationale: adding
@@ -53,9 +64,9 @@ DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "output" / "retrieval"
 #  嵌入模型 & 缓存版本
 # ─────────────────────────────────────────────────────────────────
 EMBED_MODEL = "basel/ATTACK-BERT"
-# CACHE_VERSION 决定了缓存文件名；修改 technique 文档内容时必须变更版本号，
-# 否则会误用旧向量导致结果不一致。
-CACHE_VERSION = "v4_description_only"
+# CACHE_VERSION 基础版本号；实际使用时会在后面附加 "_proc" 或 "_nodesc"
+# 以区分 technique 文档中是否包含 Procedure Examples，避免缓存误用。
+CACHE_VERSION = "v5"
 
 
 @dataclass
@@ -83,7 +94,7 @@ class TechniqueDoc:
 def parse_args() -> argparse.Namespace:
     """解析命令行参数，返回 argparse.Namespace。"""
     parser = argparse.ArgumentParser(
-        description="Run embedding retrieval for Enterprise CVEs (v4 description-only)."
+        description="Run embedding retrieval for Enterprise CVEs (v5 — rewrite+procedure)."
     )
     parser.add_argument(
         "--domain-dir", type=Path, default=DEFAULT_DOMAIN_DIR,
@@ -112,6 +123,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--batch-size", type=int, default=32,
         help="Embedding batch size for technique docs."
+    )
+    parser.add_argument(
+        "--procedure-char-limit", type=int, default=0,
+        help="Max procedure text length per technique (default 0 = disabled). "
+             "When > 0, Procedure Examples from STIX relationship objects are "
+             "included in technique documents for embedding. Recommended: 1500. "
+             "Auto-enabled when --rewrite-cache is used (defaults to 1500)."
     )
     parser.add_argument(
         "--query-sleep-every", type=int, default=10,
@@ -181,13 +199,49 @@ def extract_tech_id(external_references: Sequence[dict]) -> str | None:
     return None
 
 
-def compose_technique_doc(name: str, description: str) -> str:
+def build_procedure_map(objects: Sequence[dict]) -> Dict[str, List[str]]:
+    """收集指向 technique 的 uses 关系中的 Procedure Examples。
+
+    ATT&CK 把 Procedure Examples 存在 relationship（type=uses）的 description 里，
+    这里按 technique 的 STIX id 聚合。
+    """
+    mapping: Dict[str, List[str]] = {}
+    for obj in objects:
+        if obj.get("type") != "relationship":
+            continue
+        if obj.get("relationship_type") != "uses":
+            continue
+
+        target_ref = obj.get("target_ref")
+        if not isinstance(target_ref, str):
+            continue
+
+        desc = normalize_text_for_doc(obj.get("description", ""))
+        if not desc:
+            continue
+
+        mapping.setdefault(target_ref, []).append(desc)
+
+    return mapping
+
+
+def compose_technique_doc(
+    name: str,
+    description: str,
+    procedure_examples: Sequence[str] | None = None,
+) -> str:
     """为一条 technique 构造嵌入检索文本。
 
     v4 (description_only): 只用 name + description，不再拼接 Procedure Examples。
+    v5 (rewrite+procedure): 使用 rewrite 时自动加入 Procedure Examples，
+        因为改写后的 CVE 是主动攻击者行为语言，与 Procedure Examples 语义更匹配。
+
     格式：
         Technique Name: <name>
         Technique Description: <description>
+        [Procedure Examples:
+        - <example1>
+        - <example2>]
     """
     parts: List[str] = []
 
@@ -196,10 +250,21 @@ def compose_technique_doc(name: str, description: str) -> str:
     if description:
         parts.append(f"Technique Description: {description}")
 
+    if procedure_examples:
+        procedure_text = "\n".join(
+            f"- {example}" for example in procedure_examples if example
+        )
+        if procedure_text:
+            parts.append(f"Procedure Examples:\n{procedure_text}")
+
     return "\n\n".join(parts)
 
 
-def extract_technique_kb(attack_bundle_path: Path) -> List[TechniqueDoc]:
+def extract_technique_kb(
+    attack_bundle_path: Path,
+    include_procedures: bool = False,
+    procedure_char_limit: int = 1500,
+) -> List[TechniqueDoc]:
     """从 MITRE ATT&CK STIX bundle 中提取顶层 (parent-only) technique 知识库。
 
     过滤规则：
@@ -208,11 +273,22 @@ def extract_technique_kb(attack_bundle_path: Path) -> List[TechniqueDoc]:
       - 排除已撤销 (revoked == true)
       - 排除已废弃 (x_mitre_deprecated == true)
       - external_id 含 "." 的兜底排除（子技术的特征）
+
+    Args:
+        attack_bundle_path: enterprise-attack.json 路径
+        include_procedures: 是否加入 Procedure Examples（rewrite 模式下启用）
+        procedure_char_limit: Procedure Examples 字符数上限保护
     """
     with attack_bundle_path.open("r", encoding="utf-8") as f:
         bundle = json.load(f)
 
     objects = bundle.get("objects", [])
+
+    # 预先构建 Procedure Examples 映射表（仅在需要时）
+    procedure_map = (
+        build_procedure_map(objects) if include_procedures else None
+    )
+
     techniques: List[TechniqueDoc] = []
 
     for obj in objects:
@@ -248,8 +324,21 @@ def extract_technique_kb(attack_bundle_path: Path) -> List[TechniqueDoc]:
             if isinstance(phase, dict) and isinstance(phase.get("phase_name"), str)
         ]
 
-        # ── 构造嵌入文档 (v4: name + description only) ──
-        doc = compose_technique_doc(name=name, description=description)
+        # ── 构造嵌入文档 ──
+        procedure_examples: list[str] | None = None
+        if procedure_map is not None and stix_id in procedure_map:
+            chunks = procedure_map[stix_id]
+            unique_procedures = list(dict.fromkeys(chunk for chunk in chunks if chunk))
+            procedure_text = "\n".join(unique_procedures)
+            if len(procedure_text) > procedure_char_limit:
+                procedure_text = procedure_text[:procedure_char_limit].rstrip()
+            procedure_examples = procedure_text.splitlines() if procedure_text else None
+
+        doc = compose_technique_doc(
+            name=name,
+            description=description,
+            procedure_examples=procedure_examples,
+        )
         if not doc:
             continue
 
@@ -579,9 +668,13 @@ def ensure_paths(args: argparse.Namespace) -> Tuple[Path, Path, Path, Path]:
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # 缓存版本后缀：区分是否包含 Procedure Examples，避免缓存误用
+    proc_suffix = "_proc" if getattr(args, "procedure_char_limit", 0) > 0 else "_nodesc"
+    cache_version_full = f"{CACHE_VERSION}{proc_suffix}"
+
     # 缓存文件名包含版本号和模型名，确保不同配置的缓存不会互相覆盖
     cache_name = (
-        f"tech_embeddings_cache_{CACHE_VERSION}_"
+        f"tech_embeddings_cache_{cache_version_full}_"
         f"{EMBED_MODEL.replace('/', '_')}.npz"
     )
     technique_export_path = output_dir / "techniques_for_embedding.jsonl"
@@ -609,6 +702,15 @@ def render_progress(current: int, total: int, prefix: str, bar_len: int = 30) ->
 def main() -> None:
     """嵌入检索主入口：加载/构建技术知识库 → 逐 CVE 检索 → 输出结果。"""
     args = parse_args()
+
+    # ── rewrite 模式自动启用 Procedure Examples ──
+    # 改写后的 CVE 是主动攻击者行为语言，与 Procedure Examples 语义更匹配
+    # 必须在 ensure_paths 之前执行，因为缓存文件名依赖此逻辑
+    if args.rewrite_cache is not None and args.procedure_char_limit == 0:
+        args.procedure_char_limit = 1500
+        print("[INFO] --rewrite-cache detected: auto-enabled Procedure Examples "
+              f"(char_limit={args.procedure_char_limit})")
+
     cache_path, candidates_path, inspect_path, technique_export_path = ensure_paths(
         args
     )
@@ -625,8 +727,14 @@ def main() -> None:
         if not args.cve_dir.exists():
             raise SystemExit(f"Missing CVE directory: {args.cve_dir}")
 
+    procedure_char_limit = args.procedure_char_limit
+
     print(f"[INFO] Using embed model: {EMBED_MODEL}")
     print(f"[INFO] Output directory: {args.output_dir}")
+    if procedure_char_limit > 0:
+        print(f"[INFO] Technique docs include Procedure Examples (char_limit={procedure_char_limit})")
+    else:
+        print("[INFO] Technique docs: name + description only")
 
     # ── 步骤 A: 获取 technique 向量 ──
     # 优先加载缓存；缓存不存在或版本不匹配则重新提取 technique 文本并编码
@@ -638,9 +746,14 @@ def main() -> None:
         # if techniques and techniques[0].doc:
         #     write_technique_export(techniques, technique_export_path)
     else:
-        # ── 提取 and ATT&CK technique 知识库 ──
-        # v4: 只用 name + description，不再收集 Procedure Examples
-        techniques = extract_technique_kb(args.attack_bundle)
+        # ── 提取 ATT&CK technique 知识库 ──
+        # procedure_char_limit > 0 时加入 Procedure Examples（如 rewrite 模式）
+        include_procedures = procedure_char_limit > 0
+        techniques = extract_technique_kb(
+            args.attack_bundle,
+            include_procedures=include_procedures,
+            procedure_char_limit=procedure_char_limit,
+        )
         if not techniques:
             raise SystemExit(
                 "No technique docs extracted from enterprise-attack.json"
