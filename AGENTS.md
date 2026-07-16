@@ -1,138 +1,438 @@
-# AGENTS.md
+# CVE → ATT&CK Stage-1 项目结构与命令行说明
 
-本文件是面向维护本项目的 Agent 的代码导航和修改约定。开始实现功能或修改方法前，先阅读本文件；用户研究方案和明确要求始终优先于这里的默认约定。
+本文档介绍项目的目标、代码组织、数据流、实验配置、文件格式和命令行用法。它同时面向项目使用者和需要理解代码的 Agent。
 
-## 1. 项目边界
+## 1. 项目目标与范围
 
-本仓库实现 CVE → MITRE ATT&CK Technique 映射流程的第一阶段：为每个 CVE 生成排序后的 Technique 候选集。
+本项目实现 CVE → MITRE ATT&CK Technique 映射流程的第一阶段：根据 CVE 信息生成一个按相关性排序的 ATT&CK Technique 候选集。候选集会交给映射流程的后续阶段继续判断或筛选。
 
-需要明确区分：
+项目中需要区分两种第一阶段方法：
 
-- `main` 与 `new_method` 是第一阶段候选生成的两种独立方法。
-- 当前代码属于 `new_method` 的嵌入检索方法，不是 `main` 中分层映射方法的后续阶段。
-- 不要把 `main` 的分层 LLM 流程移植进本流水线，也不要在本项目中假设存在来自 `main` 的前置结果。
-- 当前选定方案是 V3a：使用 `sec-i1` 将 CVE 描述改写为攻击者动作语言，再用 `basel/ATTACK-BERT` 在顶层 Technique 的名称和描述上检索。
+- `main` 分支保存分层映射方法。
+- `new_method` 分支保存基于文本改写与向量检索的候选生成方法。
 
-## 2. 首先去哪里找代码
+两者是第一阶段的两种独立实现，不是前后相接的两个阶段。本文档描述的是重构后的 `new_method` 方法。
 
-活动代码只在 `src/cve2attack/`。收到修改需求时，按下表定位：
+当前选定方案为 V3a：
 
-| 需求 | 首要文件 | 相关文件 |
-| --- | --- | --- |
-| 修改或新增命令行命令 | `src/cve2attack/cli.py` | `src/cve2attack/__main__.py` |
-| 修改完整运行流程、运行目录或 manifest | `src/cve2attack/pipeline.py` | `src/cve2attack/config.py` |
-| 修改实验配置字段、默认值或策略校验 | `src/cve2attack/config.py` | `experiments/*.yaml` |
-| 修改 CVE、benchmark 或旧候选结果的读取 | `src/cve2attack/data/loaders.py` | `src/cve2attack/schemas.py` |
-| 修改候选输出格式或旧格式兼容 | `src/cve2attack/schemas.py` | `src/cve2attack/data/loaders.py`, `tests/test_schemas.py` |
-| 修改 CVE → ATT&CK domain 分类 | `src/cve2attack/domain/classifier.py` | `data/derived/domain_mapping/` |
-| 修改 LLM 重写提示词或 CWE 上下文 | `src/cve2attack/rewrite/pipeline.py` | `src/cve2attack/rewrite/ollama.py` |
-| 修改 Ollama 地址调用、超时或重试 | `src/cve2attack/rewrite/ollama.py` | 对应实验 YAML 的 `query.llm` |
-| 修改嵌入模型封装或向量归一化 | `src/cve2attack/retrieval/embedder.py` | `src/cve2attack/retrieval/generator.py` |
-| 修改 Technique 文本、procedure 或子技术过滤 | `src/cve2attack/retrieval/technique_kb.py` | `tests/test_technique_kb.py` |
-| 修改相似度、排序、Top-K 或嵌入缓存 | `src/cve2attack/retrieval/generator.py` | `src/cve2attack/retrieval/embedder.py`, `tests/test_retrieval.py` |
-| 修改 V4 的结构化链融合 | `src/cve2attack/fusion/structured_chain.py` | `experiments/v4_rewrite_chain.yaml` |
-| 修改 Recall、覆盖率或评估样本集合 | `src/cve2attack/evaluation/metrics.py` | `src/cve2attack/evaluation/report.py`, `tests/test_metrics.py` |
-| 修改 Markdown 实验报告 | `src/cve2attack/evaluation/report.py` | `src/cve2attack/cli.py` |
-| 增加一种已有组件的新组合方案 | 新建 `experiments/<name>.yaml` | 通常不需要复制 Python 代码 |
-| 记录方案结论或废弃原因 | `docs/experiment_history.md` | 对应实验 YAML 的 `description` |
+1. 读取 CVE 描述和 CWE 信息。
+2. 使用 `sec-i1` 将漏洞描述改写为 ATT&CK 风格的攻击者动作描述。
+3. 使用 `basel/ATTACK-BERT` 分别编码 CVE 查询文本和 ATT&CK Technique 文本。
+4. 通过归一化向量点积计算余弦相似度。
+5. 返回相似度最高的顶层 Technique 候选。
 
-`archive/` 中是历史实现，只用于追溯。除非用户明确要求恢复或研究旧方法，否则不要从这里开始修改，也不要让活动代码 import `archive/`。
+项目还保留了其他实验方案，用于比较原始描述、procedure examples 和结构化知识链等因素的影响。
 
-## 3. 运行流程
+## 2. 整体数据流
 
-一次 `run` 的主流程在 `src/cve2attack/pipeline.py::run_experiment`：
+```text
+实验 YAML
+   │
+   ▼
+选择 CVE 集合 ──────────────── benchmark CVE / 全部 Enterprise CVE
+   │
+   ▼
+构造查询文本 ───────────────── 原始 CVE 描述 / LLM rewrite cache
+   │
+   ▼
+构造 Technique 文档 ────────── 名称 + 描述 [+ procedure examples]
+   │
+   ▼
+ATTACK-BERT 编码与相似度排序
+   │
+   ▼
+候选 Technique 列表
+   │
+   ├── 可选：CWE → CAPEC → ATT&CK 结构化链融合
+   │
+   ▼
+规范化候选 JSONL
+   │
+   ├── 在指定 benchmark 上计算指标
+   │
+   ▼
+runs/<run_id>/
+```
 
-1. `load_experiment` 读取 YAML 并合并稳定默认值。
-2. `select_input_ids` 从指定 benchmark 或 Enterprise domain 映射选择 CVE。
-3. `build_queries` 使用原始描述或已有 LLM rewrite cache 构建查询文本。
-4. `load_technique_documents` 从 ATT&CK STIX bundle 构建 Technique 文本。
-5. `SentenceTransformerEmbedder` 加载模型并生成向量。
-6. `retrieve_candidates` 计算相似度并生成排序候选。
-7. 如果 `fusion.strategy=structured_chain`，再执行结构化链融合。
-8. 写入规范候选文件，并在指定 benchmark 的完整固定样本集合上评估。
-9. 将 manifest、metrics 和报告写入独立的 `runs/<run_id>/`。
+完整流程由 `src/cve2attack/pipeline.py` 组织。各处理步骤分别实现在 `data`、`rewrite`、`retrieval`、`fusion` 和 `evaluation` 子包中。
 
-排查行为不符合预期时，沿这条链定位，避免把所有新逻辑继续堆进 `pipeline.py`。独立、可测试的策略应放入对应子包，`pipeline.py` 只负责组织流程。
-
-## 4. 根目录结构
+## 3. 项目目录
 
 ```text
 .
-├── AGENTS.md                 # 本文件：Agent 导航与修改约定
-├── README.md                 # 面向使用者的项目说明和运行示例
-├── pyproject.toml            # Python 包、依赖与命令行入口
-├── experiments/              # 版本化实验定义，不保存运行结果
-├── src/cve2attack/           # 唯一活动代码区
-├── tests/                    # 快速单元测试
+├── AGENTS.md
+├── README.md
+├── pyproject.toml
+├── experiments/
+│   ├── v1_raw_attackbert.yaml
+│   ├── v2_raw_procedures.yaml
+│   ├── v3a_llm_rewrite.yaml
+│   ├── v3b_llm_rewrite_procedures.yaml
+│   └── v4_rewrite_chain.yaml
+├── src/cve2attack/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── cli.py
+│   ├── config.py
+│   ├── pipeline.py
+│   ├── schemas.py
+│   ├── data/
+│   │   └── loaders.py
+│   ├── domain/
+│   │   └── classifier.py
+│   ├── rewrite/
+│   │   ├── ollama.py
+│   │   └── pipeline.py
+│   ├── retrieval/
+│   │   ├── embedder.py
+│   │   ├── generator.py
+│   │   └── technique_kb.py
+│   ├── fusion/
+│   │   └── structured_chain.py
+│   └── evaluation/
+│       ├── metrics.py
+│       └── report.py
+├── tests/
 ├── data/
-│   ├── benchmarks/           # 两套相互独立的论文标注数据集
-│   ├── knowledge/            # ATT&CK、CWE、CAPEC 知识源
-│   ├── raw/                  # 原始 CVE 数据和下载包
-│   └── derived/              # domain、rewrite、embedding、chain 中间数据
-├── docs/                     # 研究方案与实验历史
-├── runs/                     # 单次运行结果，Git 忽略
-├── comparisons/              # 多次运行的固定 cohort 对比，Git 忽略
-└── archive/                  # 不活动的历史代码与本地备份
+│   ├── benchmarks/
+│   ├── knowledge/
+│   ├── raw/
+│   └── derived/
+├── docs/
+├── runs/
+├── comparisons/
+└── archive/
 ```
 
-### 数据目录约束
+根目录文件的作用：
 
-- `data/benchmarks/data_result/` 与 `data/benchmarks/cve2attack_result/` 来自不同论文，必须分别保存和评估。
-- 绝对不要隐式合并两套 benchmark。若研究上需要联合数据集，必须新建有明确名称、来源和生成方式的版本化数据集。
-- 每个 benchmark 的说明写在其 `dataset.yaml`；不要猜测论文引用信息。
-- `data/raw/cve/` 保存按年份组织的原始 CVE JSON。
-- `data/knowledge/enterprise-attack.json` 是 Technique 和 procedure 的来源。
-- `data/derived/rewrite_cache/` 保存昂贵的 LLM 改写，并以 benchmark/模型或提示词版本区分。
-- `data/derived/embedding_cache/` 是可重建的机器缓存，不提交 Git。
-- `data/derived/structured_chain/` 只供显式启用该策略的方案（当前为 V4）使用。
+- `AGENTS.md`：项目结构和命令行参考，也就是本文档。
+- `README.md`：较简短的项目介绍和快速运行示例。
+- `pyproject.toml`：Python 包信息、依赖、可执行命令入口和测试配置。
+- `experiments/`：可复现的实验定义。这里只保存方法和参数，不保存实验结果。
+- `src/cve2attack/`：当前生效的项目代码。
+- `tests/`：不依赖完整数据运行的快速单元测试。
+- `docs/experiment_history.md`：各实验方案的背景、结果和取舍记录。
+- `runs/`：每次候选生成的独立输出目录，不进入 Git。
+- `comparisons/`：多个 run 的统一评估结果，不进入 Git。
+- `archive/`：重构前代码、旧 TF-IDF 实现和本地历史材料；不属于当前运行路径。
 
-## 5. 实验配置
+## 4. Python 代码结构
 
-实验配置是方法定义，运行目录是一次执行的结果，两者不要混在一起。
+### 4.1 命令入口：`cli.py` 与 `__main__.py`
 
-现有配置：
+`src/cve2attack/cli.py` 定义全部命令行子命令和参数，并把命令分发给对应模块。
 
-- `v1_raw_attackbert.yaml`：原始 CVE 描述 + Technique 名称/描述。
-- `v2_raw_procedures.yaml`：V1 加入 procedure examples。
-- `v3a_llm_rewrite.yaml`：LLM 改写 + 名称/描述；当前选定方案。
-- `v3b_llm_rewrite_procedures.yaml`：V3a 加入 procedure examples。
-- `v4_rewrite_chain.yaml`：改写检索结果再融合 CWE-CAPEC-ATT&CK 历史链。
+它提供以下命令：
 
-核心字段：
+- `validate`：读取并校验实验 YAML。
+- `inspect`：在不加载嵌入模型的情况下检查输入与数据覆盖。
+- `classify-domain`：重新生成 CVE 的 Enterprise、ICS、Mobile 分类。
+- `rewrite`：调用兼容 Ollama 的服务生成 CVE 改写缓存。
+- `run`：执行完整候选生成和评估流程。
+- `compare`：在同一 benchmark 上重新比较一个或多个 run。
+
+`src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
+
+### 4.2 配置：`config.py`
+
+`src/cve2attack/config.py` 负责：
+
+- 确定项目根目录 `PROJECT_ROOT`。
+- 定义实验配置的默认值 `DEFAULTS`。
+- 读取 YAML 并递归合并默认配置。
+- 校验 input、query 和 fusion 的 strategy 名称。
+- 将配置中的相对路径解析为项目根目录下的路径。
+
+当前支持：
+
+- `input.mode`：`benchmark`、`full_enterprise`。
+- `query.strategy`：`raw_description`、`rewrite_cache`。
+- `fusion.strategy`：`none`、`structured_chain`。
+
+### 4.3 流程编排：`pipeline.py`
+
+`src/cve2attack/pipeline.py` 是一次实验运行的总入口。
+
+主要函数：
+
+- `select_input_ids`：根据配置选择需要处理的 CVE ID。
+- `build_queries`：读取原始 CVE 描述或 rewrite cache，生成 `CVE ID → 查询文本`。
+- `make_run_id`：用时间和实验名生成默认运行 ID。
+- `run_experiment`：执行 Technique 文档构造、嵌入、检索、可选融合、结果写入和评估。
+
+运行开始时会先创建 `manifest.json`，状态为 `running`。成功后状态变为 `complete`；发生异常时状态变为 `failed`，并在 manifest 中记录错误类型和消息。
+
+### 4.4 数据读取：`data/loaders.py`
+
+`src/cve2attack/data/loaders.py` 集中处理项目数据格式：
+
+- `iter_jsonl`：逐行读取 JSONL，并在格式错误时报告文件和行号。
+- `benchmark_truth`：读取 benchmark 的 CVE → Technique 标注；默认将子技术上卷到父 Technique。
+- `candidate_records`：读取新格式或历史格式的候选结果。
+- `write_candidate_records`：按 CVE 年份写出候选 JSONL。
+- `enterprise_cve_ids`：从 domain mapping 中选择 Enterprise CVE。
+- `CVERepository`：按年份延迟加载原始 CVE 文件，并提供描述和 CWE 查询。
+
+`CVERepository` 对每个年份文件最多读取一次，避免反复解析体积较大的原始数据。
+
+### 4.5 数据对象与兼容格式：`schemas.py`
+
+`src/cve2attack/schemas.py` 定义统一候选格式：
+
+- `TechniqueCandidate`：一个 Technique 候选及其分数、来源和元数据。
+- `CandidateRecord`：一个 CVE 的完整候选列表。
+- `parent_technique_id`：规范化 Technique ID，并把 `Txxxx.xxx` 上卷到 `Txxxx`。
+- `parse_candidate`：解析规范格式和两种历史候选格式。
+
+新运行只写统一 schema，但读取器仍兼容历史结果中的 Technique 字符串列表和带分数字典列表。
+
+### 4.6 Domain 分类：`domain/classifier.py`
+
+`src/cve2attack/domain/classifier.py` 根据 CVE 描述、来源标识和 CPE 中的关键词，将 CVE 分类为：
+
+- `ICS`
+- `Mobile`
+- `Enterprise`
+
+优先级为 ICS、Mobile、Enterprise。没有命中 ICS 或 Mobile 关键词的记录默认归入 Enterprise。分类结果按年份写入 `data/derived/domain_mapping/`。
+
+### 4.7 LLM 改写：`rewrite/`
+
+`src/cve2attack/rewrite/pipeline.py` 负责：
+
+- 从 `data/knowledge/cwe.xml` 读取 CWE 名称和描述。
+- 将 CVE 描述与 CWE 信息组合成提示词。
+- 要求模型输出 3–5 句 ATT&CK 风格的攻击者动作描述。
+- 并行处理 CVE，并定期将结果安全写入 JSON cache。
+- 跳过已有缓存，统计成功、失败、缺少描述等数量。
+
+`src/cve2attack/rewrite/ollama.py` 是一个小型 HTTP 客户端。它向实验配置中的 generate endpoint 发送非流式请求，支持超时、重试和指数等待。
+
+### 4.8 Technique 语料：`retrieval/technique_kb.py`
+
+`src/cve2attack/retrieval/technique_kb.py` 从 `enterprise-attack.json` 构建检索语料。
+
+它会：
+
+- 读取 STIX `attack-pattern` 对象。
+- 排除子技术、已撤销和已弃用的 Technique。
+- 提取 MITRE external ID、名称、描述、tactic 和 STIX ID。
+- 根据配置决定是否把 relationship 中的 procedure examples 加入 Technique 文本。
+- 对 procedure 文本去重，并按 `procedure_char_limit` 截断。
+
+最终每个 Technique 被表示为一个 `TechniqueDocument`。
+
+### 4.9 嵌入与候选检索：`retrieval/embedder.py`、`generator.py`
+
+`src/cve2attack/retrieval/embedder.py` 提供：
+
+- 通用 `Embedder` 接口。
+- 基于 `sentence-transformers` 的 `SentenceTransformerEmbedder`。
+- `l2_normalize` 向量归一化函数。
+
+模型在创建 `SentenceTransformerEmbedder` 时才加载，因此 schema、评估和配置命令不需要加载 Torch 或模型。
+
+`src/cve2attack/retrieval/generator.py` 负责：
+
+- 根据模型、ATT&CK 数据文件和 Technique 文本设置计算 embedding cache key。
+- 复用或生成 Technique embedding cache。
+- 分批编码 CVE 查询文本。
+- 通过归一化向量点积计算余弦相似度。
+- 使用 Top-K 排序生成 `CandidateRecord`。
+
+候选元数据会保存 Technique 名称和 tactics，候选来源标记为 `embedding`。
+
+### 4.10 结构化链融合：`fusion/structured_chain.py`
+
+该模块实现 V4 使用的历史 CWE → CAPEC → ATT&CK 融合方法。
+
+它会：
+
+- 读取 CWE 的 abstraction，只接受 `Base` 和 `Variant`。
+- 读取每个 CVE 的 CWE、CAPEC 和 Technique 链。
+- 根据 CWE/CAPEC 的 fan-out 计算结构化链贡献分数。
+- 使用 `alpha` 把链分数加到已有嵌入候选。
+- 当链的 Technique 数量不超过 `fanout_threshold` 时，允许加入原候选中没有的 Technique。
+- 最终重新排序并截取 `top_k`。
+
+融合后的候选来源可以同时包含 `embedding` 和 `structured_chain`，元数据中包含 `chain_score`。
+
+### 4.11 评估与报告：`evaluation/`
+
+`src/cve2attack/evaluation/metrics.py` 在 benchmark 的完整 CVE 集合上计算：
+
+- 预测覆盖率。
+- Hit@10、Hit@20。
+- Recall@10、Recall@20。
+
+没有生成预测的 benchmark CVE 仍保留在分母中，并按未命中处理。
+
+`src/cve2attack/evaluation/report.py` 将单次运行或多次运行对比写成 Markdown 表格。原始数值同时保存在 `metrics.json`。
+
+## 5. 测试结构
+
+```text
+tests/
+├── test_schemas.py
+├── test_retrieval.py
+├── test_technique_kb.py
+└── test_metrics.py
+```
+
+- `test_schemas.py`：规范候选输出和历史格式兼容。
+- `test_retrieval.py`：使用假 Embedder 验证候选排序和结构。
+- `test_technique_kb.py`：父 Technique 筛选与 procedure 文本开关。
+- `test_metrics.py`：固定 benchmark cohort、缺失预测和覆盖率语义。
+
+## 6. 数据目录与文件格式
+
+### 6.1 `data/benchmarks/`
+
+这里保存用于评估的 CVE → Technique 人工或论文标注数据。
+
+```text
+data/benchmarks/
+├── data_result/
+│   ├── dataset.yaml
+│   └── CVE-<year>.jsonl
+└── cve2attack_result/
+    ├── dataset.yaml
+    └── CVE-<year>.jsonl
+```
+
+`data_result` 与 `cve2attack_result` 来自不同论文，标注范围和策略不同。它们是两个独立 benchmark，程序不会自动合并。
+
+每行 benchmark 数据至少包含：
+
+```json
+{
+  "cve_id": "CVE-2022-0014",
+  "techniques": ["T1574"]
+}
+```
+
+Technique 也可以是带 ID 字段的对象。评估读取时，子技术默认上卷到顶层 Technique。
+
+### 6.2 `data/raw/`
+
+`data/raw/cve/CVE-<year>.json` 保存原始 CVE 记录。每个年份文件是以 CVE ID 为键的 JSON 对象。流水线主要使用其中的：
+
+- `description`
+- `cwes`
+- `cpes`
+- `sourceIdentifier`
+
+`data/raw/downloads/` 保存 CWE、CAPEC 等来源数据的原始压缩包。
+
+### 6.3 `data/knowledge/`
+
+- `enterprise-attack.json`：MITRE ATT&CK Enterprise STIX bundle。
+- `cwe.xml`：CWE catalog，用于重写上下文和结构化链过滤。
+- `capec.xml`：CAPEC catalog，作为历史知识源保留。
+
+### 6.4 `data/derived/`
+
+- `domain_mapping/`：按年份保存 CVE domain 分类。
+- `rewrite_cache/`：LLM 生成的 CVE 查询改写，格式为 `CVE ID → 文本` 的 JSON 对象。
+- `embedding_cache/`：Technique embedding 的 `.npz` 缓存，可重建且不进入 Git。
+- `structured_chain/`：V4 使用的历史 CWE-CAPEC-ATT&CK 链数据。
+
+rewrite cache 示例：
+
+```json
+{
+  "CVE-2022-0014": "An attacker exploits ..."
+}
+```
+
+实验配置中的 `{benchmark}` 会替换为当前输入 benchmark 名称。例如：
+
+```text
+data/derived/rewrite_cache/cve2attack_result_sec_i1.json
+data/derived/rewrite_cache/data_result_sec_i1.json
+```
+
+## 7. 实验配置
+
+一个实验 YAML 描述“采用什么方法”，而不是“一次运行的结果”。同一实验可以用不同 benchmark 或不同 run ID 多次执行。
+
+### 7.1 当前实验
+
+| 配置 | 查询文本 | Technique 文本 | 融合 |
+| --- | --- | --- | --- |
+| `v1_raw_attackbert.yaml` | 原始 CVE 描述 | 名称 + 描述 | 无 |
+| `v2_raw_procedures.yaml` | 原始 CVE 描述 | 名称 + 描述 + procedures | 无 |
+| `v3a_llm_rewrite.yaml` | sec-i1 改写 | 名称 + 描述 | 无 |
+| `v3b_llm_rewrite_procedures.yaml` | sec-i1 改写 | 名称 + 描述 + procedures | 无 |
+| `v4_rewrite_chain.yaml` | sec-i1 改写 | 名称 + 描述 + procedures | structured chain |
+
+### 7.2 配置字段
 
 ```yaml
-name: unique_experiment_name
+name: v3a_llm_rewrite
+description: Human-readable experiment description.
+
 input:
-  mode: benchmark            # benchmark 或 full_enterprise
+  mode: benchmark
   benchmark: cve2attack_result
+
 query:
-  strategy: raw_description  # raw_description 或 rewrite_cache
+  strategy: rewrite_cache
+  cache: data/derived/rewrite_cache/{benchmark}_sec_i1.json
+  llm:
+    base_url: http://host:11434/api/generate
+    model: sec-i1
+    timeout_seconds: 120
+    max_retries: 3
+
 technique_document:
   include_procedures: false
+  procedure_char_limit: 1500
+
 retrieval:
   model: basel/ATTACK-BERT
   top_k: 20
   batch_size: 32
+
 fusion:
-  strategy: none             # none 或 structured_chain
+  strategy: none
+
 evaluation:
-  benchmarks: [input]        # 对当前选择的 input benchmark 评估
+  benchmarks: [input]
 ```
 
-如果新方案只是更换模型、Top-K、是否使用 procedure、是否重写或融合参数，复制最接近的 YAML 并修改即可，不要复制整套 Python 流程。
+字段含义：
 
-如果新增真正的新策略：
+| 字段 | 含义 |
+| --- | --- |
+| `name` | 实验唯一名称，也是默认 run ID 的一部分。 |
+| `description` | 实验目的或组成的可读说明。 |
+| `input.mode` | `benchmark` 表示只处理某套 benchmark 中的 CVE；`full_enterprise` 表示处理 domain mapping 中全部 Enterprise CVE。 |
+| `input.benchmark` | 输入 benchmark 目录名。命令行 `--benchmark` 可以临时覆盖。 |
+| `query.strategy` | 使用 `raw_description` 或 `rewrite_cache` 作为检索查询。 |
+| `query.cache` | rewrite cache 路径；支持 `{benchmark}` 占位符。 |
+| `query.llm.*` | `rewrite` 命令使用的服务地址、模型、单次请求超时和最大尝试次数。 |
+| `technique_document.include_procedures` | 是否把 ATT&CK procedure examples 加入 Technique 文本。 |
+| `procedure_char_limit` | 每个 Technique 最多保留多少个 procedure 字符；小于等于 0 表示不截断。 |
+| `retrieval.model` | sentence-transformers 模型名或本地模型路径。 |
+| `retrieval.top_k` | 每个 CVE 最终保留的候选数量。 |
+| `retrieval.batch_size` | CVE 和 Technique 文本编码批大小。 |
+| `fusion.strategy` | `none` 或 `structured_chain`。 |
+| `evaluation.benchmarks` | 要评估的 benchmark；`input` 表示使用当前 input benchmark。 |
 
-1. 在对应子包中新建可单测的实现。
-2. 在 `config.py` 中注册并校验新的 strategy 值。
-3. 在 `pipeline.py` 中只增加策略调度。
-4. 新建唯一命名的实验 YAML。
-5. 增加针对策略本身的测试。
-6. 在 `docs/experiment_history.md` 记录目的和结果。
+V4 还使用：
 
-## 6. 候选输出格式
+| 字段 | 含义 |
+| --- | --- |
+| `fusion.chain_file` | CVE-CWE-CAPEC-Technique 链文件。 |
+| `fusion.cwe_xml` | CWE catalog 路径。 |
+| `fusion.alpha` | 结构化链贡献加入检索分数时的权重。 |
+| `fusion.fanout_threshold` | 链候选数不超过此值时，允许向检索列表加入新 Technique。 |
 
-所有新代码必须写规范 schema，定义位于 `src/cve2attack/schemas.py`：
+## 8. 候选输出与运行目录
+
+新候选记录使用 schema 1.0：
 
 ```json
 {
@@ -144,94 +444,342 @@ evaluation:
       "technique_id": "T1574",
       "score": 0.6575,
       "sources": ["embedding"],
-      "metadata": {}
+      "metadata": {
+        "name": "Hijack Execution Flow",
+        "tactics": ["persistence", "privilege-escalation"]
+      }
     }
   ]
 }
 ```
 
-必须保持的约束：
+字段说明：
 
-- 新输出只能使用 `candidates`，不要重新输出旧字段 `techniques`。
-- 旧的 `techniques: ["T..."]` 和 `techniques: [{"id": ..., "score": ...}]` 仅由共享 reader 兼容。
-- 子技术 ID 默认通过 `parent_technique_id` 上卷到顶层 Technique；修改这一规则会改变 benchmark 口径，必须同时更新测试和实验说明。
-- 候选必须保持排序，写入和读取过程中不能用无序集合代替最终列表。
-- 新增字段优先放入 `metadata`，不要随意改变顶层 schema。
+- `schema_version`：候选文件格式版本。
+- `cve_id`：当前 CVE。
+- `domain`：当前流程中的 ATT&CK domain，现为 Enterprise。
+- `candidates`：按分数从高到低排列的候选。
+- `technique_id`：顶层 ATT&CK Technique ID。
+- `score`：检索相似度或融合后的分数。
+- `sources`：分数来源，例如 `embedding`、`structured_chain`。
+- `metadata`：Technique 名称、tactics、chain score 等附加信息。
 
-## 7. 评估不可破坏的约束
-
-过去出现过输出格式不一致导致指标全部为 0，以及仅在“同时存在预测的 CVE”上计算指标的问题。修改评估时必须遵守：
-
-- 分母是所选 benchmark 的完整固定 cohort，不是预测文件与 benchmark 的交集。
-- 没有预测的 benchmark CVE 计为未命中。
-- `coverage` 单独报告，不能用过滤缺失预测的方法提高 Recall。
-- 两套论文 benchmark 分开报告。
-- 比较多个 run 时，必须显式传入同一个 `--benchmark`。
-- schema 解析统一走 `CandidateRecord.from_dict`/`candidate_records`，不要在评估脚本中再次手写格式判断。
-
-任何评估修改至少要覆盖 `tests/test_metrics.py` 中“缺失预测降低覆盖率且计为 miss”的行为。
-
-## 8. 运行结果
-
-每次运行创建新的 `runs/<run_id>/`，不得覆盖已有目录。典型内容：
+每次 `run` 创建独立目录：
 
 ```text
 runs/<run_id>/
-├── manifest.json             # resolved config、commit、状态、覆盖信息
-├── candidates/               # 按年份保存的规范候选 JSONL
+├── manifest.json
+├── candidates/
+│   ├── CVE-2008.jsonl
+│   └── ...
 ├── metrics.json
 └── report.md
 ```
 
-- `runs/` 和 `comparisons/` 被 Git 忽略，不要把大批实验输出提交到源码历史。
-- 需要长期保留的结论应整理进 `docs/experiment_history.md`；需要版本化的小型指标摘要应单独设计明确文件，而不是把整个 run 加入 Git。
-- 历史混合结果保存在 `runs/legacy_import_20260628/`，不要把它当作新流水线的默认输出目录。
-- 不要删除用户已有 run、cache 或 `archive/local_bak/`，除非用户明确要求。
+`manifest.json` 记录：
 
-## 9. 常用开发和验证命令
+- schema version、run ID、实验名和创建时间。
+- 当前 Git commit。
+- 原始配置文件与合并默认值后的完整配置。
+- `running`、`complete` 或 `failed` 状态。
+- 查询覆盖情况、Technique 数量和候选记录数量。
+- 使用的 embedding cache 路径。
+- 失败时的异常类型和错误消息。
 
-在仓库根目录运行：
+`metrics.json` 保存各 benchmark 的原始指标；`report.md` 保存便于阅读的百分比表格。
+
+## 9. 指标含义
+
+| 指标 | 含义 |
+| --- | --- |
+| `benchmark_cves` | benchmark 中的 CVE 总数，也是所有指标的固定分母。 |
+| `predicted_cves` | 实际存在候选记录的 benchmark CVE 数量。 |
+| `coverage` | `predicted_cves / benchmark_cves`。 |
+| `hit_rate_at_10` | 前 10 个候选中至少命中一个真实 Technique 的 CVE 比例。 |
+| `hit_rate_at_20` | 前 20 个候选中至少命中一个真实 Technique 的 CVE 比例。 |
+| `recall_at_10` | 对每个 CVE 计算 Top-10 命中真实 Technique 的比例，再在完整 benchmark 上求平均。 |
+| `recall_at_20` | 对每个 CVE 计算 Top-20 命中真实 Technique 的比例，再在完整 benchmark 上求平均。 |
+
+没有候选记录的 CVE 按未命中处理，不会从分母中删除。`data_result` 和 `cve2attack_result` 始终分别报告。
+
+## 10. 安装与命令入口
+
+项目要求 Python 3.10 或更高版本。核心依赖为：
+
+- NumPy
+- PyYAML
+- sentence-transformers
+
+在项目根目录安装为 editable package：
 
 ```bash
-.venv/bin/pip install -e . --no-deps
-
-.venv/bin/python -m unittest discover -s tests -v
-
-.venv/bin/python -m cve2attack validate experiments/v3a_llm_rewrite.yaml
-
-.venv/bin/python -m cve2attack inspect experiments/v3a_llm_rewrite.yaml
-
-.venv/bin/python -m cve2attack run experiments/v3a_llm_rewrite.yaml --max-cves 2
+.venv/bin/pip install -e .
 ```
 
-比较两个已完成运行：
+以下两种调用方式等价：
+
+```bash
+.venv/bin/python -m cve2attack <command> [arguments]
+.venv/bin/cve2attack-stage1 <command> [arguments]
+```
+
+查看总帮助：
+
+```bash
+.venv/bin/python -m cve2attack --help
+```
+
+## 11. 命令行参考
+
+### 11.1 `validate`：校验实验配置
+
+```bash
+.venv/bin/python -m cve2attack validate <experiment>
+```
+
+参数：
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `experiment` | 是 | 实验 YAML 路径，例如 `experiments/v3a_llm_rewrite.yaml`。 |
+
+该命令读取 YAML、合并默认值并校验当前支持的 input/query/fusion strategy。它不检查所有数据文件是否存在，也不加载模型。
+
+示例：
+
+```bash
+.venv/bin/python -m cve2attack validate experiments/v3a_llm_rewrite.yaml
+```
+
+成功时输出：
+
+```text
+Valid experiment: v3a_llm_rewrite
+```
+
+### 11.2 `inspect`：检查输入覆盖
+
+```bash
+.venv/bin/python -m cve2attack inspect <experiment> \
+  [--max-cves N] \
+  [--benchmark NAME]
+```
+
+参数：
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `experiment` | 是 | 实验 YAML 路径。 |
+| `--max-cves N` | 否 | 只检查排序后最前面的 N 个 CVE；不指定时检查完整输入集合。 |
+| `--benchmark NAME` | 否 | 临时把输入切换到 `data/benchmarks/NAME/`，不修改 YAML。 |
+
+该命令会检查 CVE 选择、原始描述或 rewrite 覆盖，并读取 ATT&CK 知识库统计 Technique 数量。它不会加载 embedding 模型，也不会创建 run。
+
+输出字段：
+
+| 字段 | 含义 |
+| --- | --- |
+| `selected_cves` | 输入集合选择出的 CVE 数量。 |
+| `query_cves` | 实际找到查询文本的 CVE 数量。 |
+| `missing_description` | raw description 策略下缺少描述的数量。 |
+| `missing_rewrite` | rewrite cache 策略下缺少改写的数量。 |
+| `technique_count` | 检索语料中的顶层、有效 Technique 数量。 |
+
+示例：
+
+```bash
+.venv/bin/python -m cve2attack inspect \
+  experiments/v3a_llm_rewrite.yaml \
+  --benchmark cve2attack_result
+```
+
+### 11.3 `classify-domain`：重新生成 domain mapping
+
+```bash
+.venv/bin/python -m cve2attack classify-domain
+```
+
+该命令没有额外参数。它读取 `data/raw/cve/CVE-<year>.json`，并覆盖写入：
+
+```text
+data/derived/domain_mapping/CVE-<year>.jsonl
+```
+
+完成后输出总数以及 Enterprise、ICS、Mobile 的数量。该命令会重建整个年份范围的 domain mapping。
+
+### 11.4 `rewrite`：生成 LLM 改写缓存
+
+```bash
+.venv/bin/python -m cve2attack rewrite <experiment> \
+  [--workers N] \
+  [--max-cves N] \
+  [--no-cache] \
+  [--benchmark NAME]
+```
+
+参数：
+
+| 参数 | 必需 | 默认值 | 含义 |
+| --- | --- | --- | --- |
+| `experiment` | 是 | — | 必须使用 `query.strategy: rewrite_cache` 的实验 YAML。 |
+| `--workers N` | 否 | `4` | 同时发送 LLM 请求的线程数；最小有效并发为 1。 |
+| `--max-cves N` | 否 | 全部 | 只处理排序后最前面的 N 个输入 CVE。 |
+| `--no-cache` | 否 | false | 忽略已有 cache，从空映射重新生成，并最终覆盖该 cache 文件。 |
+| `--benchmark NAME` | 否 | YAML 中的值 | 临时选择 benchmark，并影响 `{benchmark}` cache 路径。 |
+
+默认情况下，已有且非空的改写会被保留并跳过。程序每完成 20 个请求或完成全部任务时写一次 cache，写入采用临时文件替换，降低中途损坏风险。
+
+`--no-cache` 与 `--max-cves` 同时使用时，最终文件只包含本次选择范围内成功生成的内容，因此不要把这种小样本命令用于需要保留的完整 cache。
+
+输出统计：
+
+- `requested`：本次选择的 CVE 数量。
+- `already_cached`：已有有效改写的数量。
+- `success`：本次成功生成数量。
+- `failed`：请求失败或返回空文本的数量。
+- `missing_description`：缺少原始描述、无法构造提示词的数量。
+- `cache_size`：写入后 cache 的总条目数。
+
+小规模示例：
+
+```bash
+.venv/bin/python -m cve2attack rewrite \
+  experiments/v3a_llm_rewrite.yaml \
+  --workers 2 \
+  --max-cves 20
+```
+
+### 11.5 `run`：执行候选生成实验
+
+```bash
+.venv/bin/python -m cve2attack run <experiment> \
+  [--run-id ID] \
+  [--max-cves N] \
+  [--benchmark NAME]
+```
+
+参数：
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `experiment` | 是 | 实验 YAML 路径。 |
+| `--run-id ID` | 否 | 指定 `runs/ID/`；不指定时使用 `时间_实验名`。目标目录已存在时命令会停止，不覆盖旧 run。 |
+| `--max-cves N` | 否 | 只运行排序后最前面的 N 个 CVE，适合冒烟测试。 |
+| `--benchmark NAME` | 否 | 临时覆盖 input benchmark，同时影响 rewrite cache 的 `{benchmark}` 路径和 `evaluation: [input]`。 |
+
+该命令会加载 embedding 模型。模型在本机没有缓存时，sentence-transformers 可能尝试下载模型。
+
+V3a/V3b/V4 的 `run` 只读取现有 rewrite cache，不会自动调用 LLM 补齐缺失项；缺少 rewrite 的 CVE 会记录在 input coverage 中并跳过候选生成。
+
+完整 V3a 示例：
+
+```bash
+.venv/bin/python -m cve2attack run \
+  experiments/v3a_llm_rewrite.yaml \
+  --benchmark cve2attack_result
+```
+
+两条 CVE 冒烟测试：
+
+```bash
+.venv/bin/python -m cve2attack run \
+  experiments/v1_raw_attackbert.yaml \
+  --max-cves 2 \
+  --run-id smoke_v1
+```
+
+在另一套论文数据上执行相同方法：
+
+```bash
+.venv/bin/python -m cve2attack run \
+  experiments/v1_raw_attackbert.yaml \
+  --benchmark data_result
+```
+
+### 11.6 `compare`：统一比较多个 run
+
+```bash
+.venv/bin/python -m cve2attack compare \
+  --benchmark NAME \
+  [--comparison-id ID] \
+  <run> [<run> ...]
+```
+
+参数：
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `runs` | 是 | 一个或多个 run 目录，可使用相对项目根目录或绝对路径。目录中可以有 `candidates/` 子目录，也可以直接包含年度候选 JSONL。 |
+| `--benchmark NAME` | 是 | 用于所有 run 的同一固定 benchmark，例如 `cve2attack_result`。 |
+| `--comparison-id ID` | 否 | 指定 `comparisons/ID/`；默认使用 `时间_benchmark`。目录已存在时不会覆盖。 |
+
+输出目录：
+
+```text
+comparisons/<comparison_id>/
+├── metrics.json
+├── cohort.json
+└── report.md
+```
+
+- `metrics.json`：所有 run 的指标。
+- `cohort.json`：本次比较使用的固定 CVE ID 集合。
+- `report.md`：覆盖率与 Recall 的对比表格。
+
+示例：
 
 ```bash
 .venv/bin/python -m cve2attack compare \
   --benchmark cve2attack_result \
-  runs/<run-a> runs/<run-b>
+  --comparison-id v1_vs_v3a \
+  runs/20260716_v1_raw_attackbert \
+  runs/20260716_v3a_llm_rewrite
 ```
 
-建议的验证顺序：
+## 12. 常用使用流程
 
-1. `validate` 检查配置结构。
-2. `inspect` 检查路径、查询覆盖和 Technique 数量，不加载嵌入模型。
-3. 运行单元测试。
-4. 使用 `--max-cves 2` 或另一小样本执行真实模型冒烟测试。
-5. 只有在用户需要时再运行完整 benchmark。
+### 12.1 检查并运行已有 V3a cache
 
-`rewrite` 会调用实验 YAML 中配置的外部 Ollama 服务，并写入昂贵缓存。执行大规模重写前先检查服务、benchmark 和 cache 路径，优先用 `--max-cves` 小规模验证。不要因为缺少一个 rewrite 就无条件重建整个 cache。
+```bash
+.venv/bin/python -m cve2attack validate experiments/v3a_llm_rewrite.yaml
 
-## 10. 修改完成前检查
+.venv/bin/python -m cve2attack inspect experiments/v3a_llm_rewrite.yaml
 
-- 改动发生在活动目录，而不是 `archive/`。
-- 配置路径相对项目根目录解析，没有写入个人绝对路径。
-- 新方法有唯一 experiment name，不覆盖旧实验定义。
-- 新 run 使用新目录，不覆盖旧结果。
-- 两套 benchmark 没有被隐式合并。
-- 输出仍能由 `CandidateRecord.from_dict` 读取。
-- 固定 cohort、missing-as-miss 和 coverage 语义保持正确。
-- 相关单元测试已增加或更新，并全部通过。
-- 至少完成 `validate` 和 `inspect`；涉及模型流程时完成小样本冒烟测试。
-- 没有提交 `runs/`、`comparisons/`、embedding cache、日志、虚拟环境或 `__pycache__`。
-- 若实验含义或结论发生变化，同步更新 README/实验历史，而不是只改代码。
+.venv/bin/python -m cve2attack run experiments/v3a_llm_rewrite.yaml
+```
+
+### 12.2 先补充 rewrite，再运行
+
+```bash
+.venv/bin/python -m cve2attack rewrite \
+  experiments/v3a_llm_rewrite.yaml \
+  --workers 4
+
+.venv/bin/python -m cve2attack inspect experiments/v3a_llm_rewrite.yaml
+
+.venv/bin/python -m cve2attack run experiments/v3a_llm_rewrite.yaml
+```
+
+### 12.3 运行测试
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+如果安装了可选测试依赖，也可以运行：
+
+```bash
+.venv/bin/pytest
+```
+
+## 13. 运行时注意事项
+
+- `runs/`、`comparisons/` 和 `data/derived/embedding_cache/` 被 Git 忽略。
+- `rewrite` 会访问实验 YAML 中配置的外部 LLM 服务。
+- `run` 可能加载或下载体积较大的 sentence-transformers 模型。
+- `--max-cves` 取排序后前 N 个 CVE，不是随机采样。
+- `run` 和 `compare` 不覆盖已存在的目标目录。
+- `classify-domain` 会重新写入所有年度 domain mapping。
+- `--benchmark` 只覆盖本次命令使用的输入配置，不会修改实验 YAML。
+- `archive/` 中的代码不参与当前 Python 包导入和运行。
+- 历史混合实验结果保存在 `runs/legacy_import_20260628/`，仅用于追溯。
