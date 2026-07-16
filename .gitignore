@@ -1,3 +1,19 @@
-bak/
 .env
 .venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Every execution is isolated here. Keep selected metrics/reports separately.
+runs/
+comparisons/
+
+# Rebuildable and machine-specific caches.
+data/derived/embedding_cache/
+
+# Historical local material retained outside the active pipeline.
+archive/local_bak/

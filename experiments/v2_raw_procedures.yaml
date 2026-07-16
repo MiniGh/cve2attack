@@ -1,0 +1,18 @@
+name: v2_raw_procedures
+description: Raw CVE description against ATT&CK name, description and procedure examples.
+input:
+  mode: benchmark
+  benchmark: cve2attack_result
+query:
+  strategy: raw_description
+technique_document:
+  include_procedures: true
+  procedure_char_limit: 1500
+retrieval:
+  model: basel/ATTACK-BERT
+  top_k: 20
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

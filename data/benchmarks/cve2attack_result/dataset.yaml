@@ -1,0 +1,12 @@
+name: cve2attack_result
+kind: benchmark
+task: cve_to_attack_technique
+source: CVE2ATT&CK paper dataset
+citation: null
+format: yearly_jsonl
+years: 2008-2022
+annotated_cves: 1661
+record_schema:
+  cve_id: string
+  techniques: list[string]
+notes: Preserved unchanged from the original cve2attack_result directory.

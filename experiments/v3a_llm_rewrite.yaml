@@ -1,0 +1,23 @@
+name: v3a_llm_rewrite
+description: "Selected method: sec-i1 rewrite plus ATTACK-BERT retrieval on name and description."
+input:
+  mode: benchmark
+  benchmark: cve2attack_result
+query:
+  strategy: rewrite_cache
+  cache: data/derived/rewrite_cache/{benchmark}_sec_i1.json
+  llm:
+    base_url: http://172.23.216.73:11434/api/generate
+    model: sec-i1
+    timeout_seconds: 120
+    max_retries: 3
+technique_document:
+  include_procedures: false
+retrieval:
+  model: basel/ATTACK-BERT
+  top_k: 20
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

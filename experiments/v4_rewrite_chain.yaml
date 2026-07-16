@@ -1,0 +1,28 @@
+name: v4_rewrite_chain
+description: V3b candidates fused with the historical CWE-CAPEC-ATT&CK chain.
+input:
+  mode: benchmark
+  benchmark: cve2attack_result
+query:
+  strategy: rewrite_cache
+  cache: data/derived/rewrite_cache/{benchmark}_sec_i1.json
+  llm:
+    base_url: http://172.23.216.73:11434/api/generate
+    model: sec-i1
+    timeout_seconds: 120
+    max_retries: 3
+technique_document:
+  include_procedures: true
+  procedure_char_limit: 1500
+retrieval:
+  model: basel/ATTACK-BERT
+  top_k: 20
+  batch_size: 32
+fusion:
+  strategy: structured_chain
+  chain_file: data/derived/structured_chain/cve2technique_full.jsonl
+  cwe_xml: data/knowledge/cwe.xml
+  alpha: 0.3
+  fanout_threshold: 10
+evaluation:
+  benchmarks: [input]

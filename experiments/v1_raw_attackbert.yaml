@@ -1,0 +1,17 @@
+name: v1_raw_attackbert
+description: Raw CVE description against ATT&CK name and description.
+input:
+  mode: benchmark
+  benchmark: cve2attack_result
+query:
+  strategy: raw_description
+technique_document:
+  include_procedures: false
+retrieval:
+  model: basel/ATTACK-BERT
+  top_k: 20
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

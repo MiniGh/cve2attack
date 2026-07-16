@@ -1,0 +1,1 @@
+"""Optional candidate fusion strategies."""
