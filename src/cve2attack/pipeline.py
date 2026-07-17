@@ -189,7 +189,10 @@ def run_experiment(
         )
 
         retrieval_config = config["retrieval"]
-        embedder = SentenceTransformerEmbedder(str(retrieval_config["model"]))
+        embedder = SentenceTransformerEmbedder(
+            str(retrieval_config["model"]),
+            local_files_only=bool(retrieval_config.get("local_files_only", True)),
+        )
         key = cache_key(
             model_name=embedder.model_name,
             attack_bundle=attack_bundle,

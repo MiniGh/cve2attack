@@ -395,6 +395,7 @@ retrieval:
   model: basel/ATTACK-BERT
   top_k: 20
   batch_size: 32
+  local_files_only: true
 
 fusion:
   strategy: none
@@ -419,6 +420,7 @@ evaluation:
 | `retrieval.model` | sentence-transformers 模型名或本地模型路径。 |
 | `retrieval.top_k` | 每个 CVE 最终保留的候选数量。 |
 | `retrieval.batch_size` | CVE 和 Technique 文本编码批大小。 |
+| `retrieval.local_files_only` | 默认 `true`，只从本机 Hugging Face cache 加载模型，避免实验因网络阻塞。首次有意下载模型时才设为 `false`。 |
 | `fusion.strategy` | `none` 或 `structured_chain`。 |
 | `evaluation.benchmarks` | 要评估的 benchmark；`input` 表示使用当前 input benchmark。 |
 
@@ -668,7 +670,7 @@ data/derived/domain_mapping/CVE-<year>.jsonl
 | `--max-cves N` | 否 | 只运行排序后最前面的 N 个 CVE，适合冒烟测试。 |
 | `--benchmark NAME` | 否 | 临时覆盖 input benchmark，同时影响 rewrite cache 的 `{benchmark}` 路径和 `evaluation: [input]`。 |
 
-该命令会加载 embedding 模型。模型在本机没有缓存时，sentence-transformers 可能尝试下载模型。
+该命令会加载 embedding 模型。默认只使用本机缓存；模型缺失时会立即说明错误。只有在 YAML 中显式设置 `retrieval.local_files_only: false` 后，才允许 sentence-transformers 下载模型。
 
 V3a/V3b/V4 的 `run` 只读取现有 rewrite cache，不会自动调用 LLM 补齐缺失项；缺少 rewrite 的 CVE 会记录在 input coverage 中并跳过候选生成。
 
@@ -827,7 +829,7 @@ KEV 评测的模型输入始终是 `data/raw/cve/` 中的 CVE 描述；不要把
 
 - `runs/`、`comparisons/` 和 `data/derived/embedding_cache/` 被 Git 忽略。
 - `rewrite` 会访问实验 YAML 中配置的外部 LLM 服务。
-- `run` 可能加载或下载体积较大的 sentence-transformers 模型。
+- `run` 会加载 sentence-transformers 模型，但默认不访问网络下载；首次下载需要在实验 YAML 中显式关闭 `retrieval.local_files_only`。
 - `--max-cves` 取排序后前 N 个 CVE，不是随机采样。
 - `run` 和 `compare` 不覆盖已存在的目标目录。
 - `classify-domain` 会重新写入所有年度 domain mapping。

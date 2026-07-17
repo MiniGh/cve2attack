@@ -23,6 +23,7 @@ DEFAULTS: Dict[str, Any] = {
         "model": "basel/ATTACK-BERT",
         "top_k": 20,
         "batch_size": 32,
+        "local_files_only": True,
     },
     "fusion": {"strategy": "none"},
     "evaluation": {"benchmarks": []},
