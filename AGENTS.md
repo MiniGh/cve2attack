@@ -131,6 +131,7 @@ runs/<run_id>/
 - `rewrite`：调用兼容 Ollama 的服务生成 CVE 改写缓存。
 - `run`：执行完整候选生成和评估流程。
 - `compare`：在同一 benchmark 上重新比较一个或多个 run。
+- `import-kev`：从固定的 CTID KEV CSV 快照生成 `all`、`exploitation` 和 `nonoverlap` 三个公开 benchmark 视图。
 
 `src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
 
@@ -736,6 +737,38 @@ comparisons/<comparison_id>/
   runs/20260716_v3a_llm_rewrite
 ```
 
+### 11.7 `import-kev`：生成固定 CTID KEV benchmark
+
+```bash
+.venv/bin/python -m cve2attack import-kev \
+  [--source PATH] \
+  [--benchmark-root PATH] \
+  [--cve2attack-benchmark PATH]
+```
+
+默认原始输入为
+`data/raw/kev/kev-02.13.2025_attack-15.1-enterprise.csv`，即 CTID 在 Zenodo
+公开的 `02.13.2025` KEV 快照，ATT&CK Enterprise 版本为 `15.1`。命令会验证其
+框架版本与 ATT&CK 版本，并创建下列互不混合的 benchmark：
+
+- `ctid_kev_2025_02_13_all`：利用技术、主要影响和次要影响的并集；这是第一阶段的 KEV 主结果。
+- `ctid_kev_2025_02_13_exploitation`：只保留 `exploitation_technique`，用于检查显式漏洞利用动作。
+- `ctid_kev_2025_02_13_nonoverlap`：从 `all` 中去除 `cve2attack_result` 已包含的 CVE，作为严格外部结果。
+
+每个目录包含年度 JSONL 和 `dataset.yaml`。`techniques` 是现有顶层候选生成器
+使用的父 Technique 标签；`techniques_raw` 保存源数据中的精确 Technique 或子
+Technique；`labels_by_mapping_type` 和 `label_metadata` 保存 CTID 的语义角色与证据。
+目标目录已存在时命令会失败，避免无意覆盖冻结基准。
+
+每个 KEV `dataset.yaml` 还指定
+`data/knowledge/enterprise-attack-15.1.json`。`inspect` 与 `run` 会自动选择
+这份冻结语料并生成独立 embedding cache；CVE2ATT&CK 等其他 benchmark 仍使用
+当前的 `data/knowledge/enterprise-attack.json`。只有明确进行 ATT&CK 版本迁移
+实验时，才应在 YAML 的 `technique_document.attack_bundle` 中覆盖该选择。
+
+KEV 评测的模型输入始终是 `data/raw/cve/` 中的 CVE 描述；不要把 KEV 的
+`comments` 或 `references` 用作模型输入。
+
 ## 12. 常用使用流程
 
 ### 12.1 检查并运行已有 V3a cache
@@ -760,7 +793,25 @@ comparisons/<comparison_id>/
 .venv/bin/python -m cve2attack run experiments/v3a_llm_rewrite.yaml
 ```
 
-### 12.3 运行测试
+### 12.3 导入并运行 KEV 主基准
+
+```bash
+.venv/bin/python -m cve2attack import-kev
+
+.venv/bin/python -m cve2attack inspect \
+  experiments/v1_raw_attackbert.yaml \
+  --benchmark ctid_kev_2025_02_13_all
+
+.venv/bin/python -m cve2attack run \
+  experiments/v1_raw_attackbert.yaml \
+  --benchmark ctid_kev_2025_02_13_all
+```
+
+将 benchmark 名称分别换为 `ctid_kev_2025_02_13_exploitation` 和
+`ctid_kev_2025_02_13_nonoverlap`，即可生成两个诊断结果。对于 V3a/V3b/V4，
+必须先用同一 `--benchmark` 参数执行 `rewrite`，生成该 KEV 视图自己的 rewrite cache。
+
+### 12.4 运行测试
 
 ```bash
 .venv/bin/python -m unittest discover -s tests -v

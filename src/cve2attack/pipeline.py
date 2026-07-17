@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping
 
+import yaml
+
 from cve2attack.config import PROJECT_ROOT, load_experiment, project_path
 from cve2attack.data.loaders import (
     CVERepository,
@@ -56,6 +58,45 @@ def select_input_ids(config: Mapping[str, Any], project_root: Path) -> list[str]
         truth = benchmark_truth(project_root / "data" / "benchmarks" / benchmark)
         return sorted(truth)
     return enterprise_cve_ids(project_root / "data" / "derived" / "domain_mapping")
+
+
+def resolve_attack_bundle(config: Mapping[str, Any], project_root: Path) -> Path:
+    """Select the versioned ATT&CK corpus required by an experiment input.
+
+    A benchmark may declare ``technique_corpus.path`` in its ``dataset.yaml``.
+    This keeps a frozen benchmark's gold labels and retrieval corpus on the
+    same ATT&CK release.  An explicit experiment-level path takes precedence
+    for deliberately version-migration experiments.
+    """
+    technique_config = config.get("technique_document", {})
+    explicit_path = technique_config.get("attack_bundle")
+    if explicit_path:
+        bundle = project_path(str(explicit_path), project_root)
+    elif config["input"]["mode"] == "benchmark":
+        benchmark = str(config["input"]["benchmark"])
+        metadata_path = project_root / "data" / "benchmarks" / benchmark / "dataset.yaml"
+        corpus_path: str | None = None
+        if metadata_path.is_file():
+            with metadata_path.open("r", encoding="utf-8") as handle:
+                metadata = yaml.safe_load(handle) or {}
+            if not isinstance(metadata, Mapping):
+                raise ValueError(f"Benchmark metadata must be a mapping: {metadata_path}")
+            corpus = metadata.get("technique_corpus")
+            if isinstance(corpus, Mapping):
+                value = corpus.get("path")
+                corpus_path = str(value) if value else None
+            elif corpus:
+                corpus_path = str(corpus)
+        bundle = (
+            project_path(corpus_path, project_root)
+            if corpus_path
+            else project_root / "data" / "knowledge" / "enterprise-attack.json"
+        )
+    else:
+        bundle = project_root / "data" / "knowledge" / "enterprise-attack.json"
+    if not bundle.is_file():
+        raise FileNotFoundError(f"ATT&CK technique corpus does not exist: {bundle}")
+    return bundle
 
 
 def build_queries(
@@ -140,7 +181,7 @@ def run_experiment(
             raise RuntimeError("No query text is available for the selected CVEs")
 
         document_config = config["technique_document"]
-        attack_bundle = project_root / "data" / "knowledge" / "enterprise-attack.json"
+        attack_bundle = resolve_attack_bundle(config, project_root)
         techniques = load_technique_documents(
             attack_bundle,
             include_procedures=bool(document_config["include_procedures"]),
@@ -205,6 +246,10 @@ def run_experiment(
             experiment_name=str(config["name"]),
             metrics=benchmark_metrics,
         )
+        try:
+            technique_corpus = str(attack_bundle.relative_to(project_root))
+        except ValueError:
+            technique_corpus = str(attack_bundle)
         manifest.update(
             {
                 "status": "complete",
@@ -212,6 +257,7 @@ def run_experiment(
                 "technique_count": len(techniques),
                 "candidate_records": len(records),
                 "candidate_files": [path.name for path in written],
+                "technique_corpus": technique_corpus,
                 "embedding_cache": str(cache_path.relative_to(project_root)),
             }
         )

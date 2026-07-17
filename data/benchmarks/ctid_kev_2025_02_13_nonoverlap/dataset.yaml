@@ -1,0 +1,38 @@
+name: ctid_kev_2025_02_13_nonoverlap
+kind: benchmark
+task: cve_to_attack_technique_candidate_coverage
+source:
+  publisher: MITRE Center for Threat-Informed Defense
+  dataset: Known Exploited Vulnerabilities (KEV) ATT&CK mappings
+  landing_page: https://zenodo.org/records/16747173
+  raw_file: kev-02.13.2025_attack-15.1-enterprise.csv
+  raw_md5: 21338a56761278482dc5f169638414ca
+  raw_sha256: 8f15aab468f17f9a1d655ef2db814b0323792cfa066373a02a0a1d7f4a8f6676
+snapshot: 02.13.2025
+attack_version: '15.1'
+technique_corpus:
+  path: data/knowledge/enterprise-attack-15.1.json
+  version: '15.1'
+  source_url: https://github.com/mitre-attack/attack-stix-data/releases/download/v15.1/enterprise-attack.json
+  sha256: a57988bffe402bb3e19d92dbe80a12143e1970b814e013e080f9df2fa5a3f6bc
+input_text_policy: Use only the project's raw CVE description as model input. KEV
+  comments and references are retained as label provenance, not input text.
+label_policy:
+  evaluation_field: techniques
+  normalization: ATT&CK sub-techniques are rolled up to their parent technique.
+  raw_label_field: techniques_raw
+  mapping_type_field: labels_by_mapping_type
+view: All mapping types after excluding CVE IDs present in cve2attack_result.
+annotated_cves: 251
+record_schema:
+  cve_id: string
+  techniques: list[string] (parent-normalized ATT&CK IDs)
+  techniques_raw: list[string] (source ATT&CK IDs)
+  labels_by_mapping_type: mapping type to normalized and raw IDs
+  label_metadata: list[mapping provenance]
+  provenance: source snapshot metadata
+source_stats:
+  mapping_rows: 806
+  mapped_cves: 296
+  attack_version: '15.1'
+  framework_version: 02/13/2025

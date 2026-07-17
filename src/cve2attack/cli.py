@@ -9,11 +9,17 @@ from pathlib import Path
 from typing import Sequence
 
 from cve2attack.config import PROJECT_ROOT, load_experiment, project_path
+from cve2attack.data.kev import import_kev_benchmarks
 from cve2attack.data.loaders import CVERepository, benchmark_truth, candidate_records
 from cve2attack.domain.classifier import classify_directory
 from cve2attack.evaluation.metrics import evaluate
 from cve2attack.evaluation.report import write_comparison_report
-from cve2attack.pipeline import build_queries, run_experiment, select_input_ids
+from cve2attack.pipeline import (
+    build_queries,
+    resolve_attack_bundle,
+    run_experiment,
+    select_input_ids,
+)
 from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
@@ -30,6 +36,26 @@ def _parser() -> argparse.ArgumentParser:
     inspect.add_argument("experiment", type=Path)
     inspect.add_argument("--max-cves", type=int)
     inspect.add_argument("--benchmark")
+
+    kev = subparsers.add_parser(
+        "import-kev",
+        help="Build frozen CTID KEV benchmark views from the published CSV snapshot",
+    )
+    kev.add_argument(
+        "--source",
+        default="data/raw/kev/kev-02.13.2025_attack-15.1-enterprise.csv",
+        help="Path to the fixed CTID KEV CSV snapshot",
+    )
+    kev.add_argument(
+        "--benchmark-root",
+        default="data/benchmarks",
+        help="Directory in which the three generated benchmark views are created",
+    )
+    kev.add_argument(
+        "--cve2attack-benchmark",
+        default="data/benchmarks/cve2attack_result",
+        help="Existing CVE2ATT&CK directory used to create the strict non-overlap view",
+    )
 
     subparsers.add_parser("classify-domain", help="Rebuild yearly ATT&CK domain mappings")
 
@@ -124,11 +150,20 @@ def main(argv: Sequence[str] | None = None) -> None:
         )
         document_config = config["technique_document"]
         techniques = load_technique_documents(
-            PROJECT_ROOT / "data" / "knowledge" / "enterprise-attack.json",
+            resolve_attack_bundle(config, PROJECT_ROOT),
             include_procedures=bool(document_config["include_procedures"]),
             procedure_char_limit=int(document_config["procedure_char_limit"]),
         )
         print(json.dumps({**coverage, "technique_count": len(techniques)}, indent=2))
+        return
+
+    if args.command == "import-kev":
+        stats = import_kev_benchmarks(
+            source=project_path(args.source),
+            benchmark_root=project_path(args.benchmark_root),
+            cve2attack_benchmark=project_path(args.cve2attack_benchmark),
+        )
+        print(json.dumps(stats, ensure_ascii=False, indent=2))
         return
 
     if args.command == "classify-domain":
