@@ -25,9 +25,20 @@ class Embedder(Protocol):
 
 
 class SentenceTransformerEmbedder:
-    """Lazy sentence-transformers backend so schema/evaluation needs no Torch import."""
+    """Lazy local embedding backend shared by all candidate-retrieval experiments.
+
+    Construction is delayed until a retrieval run so validation and data
+    inspection remain lightweight. Offline flags are set before importing
+    transformers because it can otherwise start background network requests
+    even when the selected model already exists in the local cache.
+    """
 
     def __init__(self, model_name: str, *, local_files_only: bool = True):
+        print(
+            f"[retrieval] loading embedding model={model_name}; "
+            f"local_files_only={local_files_only}",
+            flush=True,
+        )
         if local_files_only:
             # transformers otherwise starts a background safetensors-conversion
             # request even when SentenceTransformer itself is offline.
@@ -43,6 +54,7 @@ class SentenceTransformerEmbedder:
                 local_files_only=local_files_only,
                 model_kwargs={"use_safetensors": False},
             )
+            print(f"[retrieval] embedding model ready={model_name}", flush=True)
         except OSError as exc:
             if local_files_only:
                 raise RuntimeError(
@@ -53,6 +65,7 @@ class SentenceTransformerEmbedder:
             raise
 
     def encode(self, texts: Sequence[str], batch_size: int) -> np.ndarray:
+        """Encode one caller-defined batch and return float32 vectors for ranking."""
         vectors = self._model.encode(
             list(texts),
             batch_size=batch_size,

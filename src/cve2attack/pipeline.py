@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Mapping
@@ -48,10 +49,12 @@ def _slug(value: str) -> str:
 
 
 def make_run_id(experiment_name: str) -> str:
+    """Create a timestamped directory name when the caller does not provide one."""
     return f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{_slug(experiment_name)}"
 
 
 def select_input_ids(config: Mapping[str, Any], project_root: Path) -> list[str]:
+    """Select the fixed evaluation cohort or all enterprise CVEs for one experiment."""
     input_config = config["input"]
     if input_config["mode"] == "benchmark":
         benchmark = str(input_config["benchmark"])
@@ -106,6 +109,7 @@ def build_queries(
     repository: CVERepository,
     project_root: Path,
 ) -> tuple[dict[str, str], dict[str, int]]:
+    """Resolve raw descriptions or cached rewrites and account for every omission."""
     strategy = config["query"]["strategy"]
     missing_description = missing_rewrite = 0
     queries: dict[str, str] = {}
@@ -143,6 +147,8 @@ def run_experiment(
     benchmark: str | None = None,
     project_root: Path = PROJECT_ROOT,
 ) -> Path:
+    """Execute candidate generation and persist a self-contained, auditable run."""
+    started_at = time.perf_counter()
     config = load_experiment(config_path)
     if benchmark is not None:
         config["input"] = {**config["input"], "mode": "benchmark", "benchmark": benchmark}
@@ -152,6 +158,15 @@ def run_experiment(
         raise FileExistsError(f"Run directory already exists: {run_dir}")
     candidate_dir = run_dir / "candidates"
     run_dir.mkdir(parents=True)
+
+    def report(message: str) -> None:
+        """Emit a flushed status line suitable for an interactive SSH terminal."""
+        print(f"[run] {message}", flush=True)
+
+    report(
+        f"starting experiment={config['name']}; run_id={run_dir.name}; "
+        f"input={config['input'].get('benchmark', config['input'].get('mode'))}"
+    )
 
     manifest: dict[str, Any] = {
         "schema_version": "1.0",
@@ -170,6 +185,7 @@ def run_experiment(
         cve_ids = select_input_ids(config, project_root)
         if max_cves is not None:
             cve_ids = cve_ids[: max(0, max_cves)]
+        report(f"selected_cves={len(cve_ids)}")
         repository = CVERepository(project_root / "data" / "raw" / "cve")
         queries, coverage = build_queries(
             config=config,
@@ -179,6 +195,11 @@ def run_experiment(
         )
         if not queries:
             raise RuntimeError("No query text is available for the selected CVEs")
+        report(
+            f"query coverage: available={coverage['query_cves']}/{coverage['selected_cves']}; "
+            f"missing_description={coverage['missing_description']}; "
+            f"missing_rewrite={coverage['missing_rewrite']}"
+        )
 
         document_config = config["technique_document"]
         attack_bundle = resolve_attack_bundle(config, project_root)
@@ -187,8 +208,16 @@ def run_experiment(
             include_procedures=bool(document_config["include_procedures"]),
             procedure_char_limit=int(document_config["procedure_char_limit"]),
         )
+        report(
+            f"ATT&CK corpus={attack_bundle}; techniques={len(techniques)}; "
+            f"include_procedures={bool(document_config['include_procedures'])}"
+        )
 
         retrieval_config = config["retrieval"]
+        report(
+            f"retrieval model={retrieval_config['model']}; top_k={retrieval_config['top_k']}; "
+            f"batch_size={retrieval_config['batch_size']}"
+        )
         embedder = SentenceTransformerEmbedder(
             str(retrieval_config["model"]),
             local_files_only=bool(retrieval_config.get("local_files_only", True)),
@@ -205,6 +234,7 @@ def run_experiment(
             techniques=techniques,
             cache_path=cache_path,
             batch_size=int(retrieval_config["batch_size"]),
+            progress=report,
         )
         records = retrieve_candidates(
             queries=queries,
@@ -213,10 +243,12 @@ def run_experiment(
             embedder=embedder,
             top_k=int(retrieval_config["top_k"]),
             batch_size=int(retrieval_config["batch_size"]),
+            progress=report,
         )
 
         fusion_config = config["fusion"]
         if fusion_config["strategy"] == "structured_chain":
+            report("applying structured-chain score fusion")
             records = fuse_records(
                 records,
                 chain_file=project_path(fusion_config["chain_file"], project_root),
@@ -227,6 +259,7 @@ def run_experiment(
             )
 
         written = write_candidate_records(records, candidate_dir)
+        report(f"candidate files written={len(written)}; path={candidate_dir}")
         benchmark_metrics: dict[str, EvaluationMetrics] = {}
         benchmark_names = list(config["evaluation"].get("benchmarks", []))
         benchmark_names = [
@@ -244,6 +277,7 @@ def run_experiment(
         (run_dir / "metrics.json").write_text(
             json.dumps(metrics_payload, ensure_ascii=False, indent=2), encoding="utf-8"
         )
+        report(f"metrics={json.dumps(metrics_payload, ensure_ascii=False)}")
         write_run_report(
             run_dir / "report.md",
             experiment_name=str(config["name"]),
@@ -266,7 +300,9 @@ def run_experiment(
         )
     except Exception as exc:
         manifest.update({"status": "failed", "error": f"{type(exc).__name__}: {exc}"})
+        report(f"failed after {int(time.perf_counter() - started_at)}s; error={type(exc).__name__}: {exc}")
         raise
     finally:
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    report(f"complete; elapsed={int(time.perf_counter() - started_at)}s; output={run_dir}")
     return run_dir
