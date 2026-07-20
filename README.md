@@ -11,6 +11,7 @@ The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `
 - `data/benchmarks/`: paper datasets with ground-truth CVE → technique mappings.
 - `data/knowledge/`: ATT&CK, CWE and CAPEC knowledge sources.
 - `data/raw/`: raw CVE records.
+- `data/raw/triage/triage_2025/`: selected public TRIAGE split, labels and reference predictions; the 773.7 MB archive is not stored in Git.
 - `data/derived/`: reproducible intermediate data and expensive rewrite caches.
 - `src/cve2attack/`: reusable pipeline, strategies and evaluation code.
 - `runs/<run_id>/`: one isolated execution, ignored by Git.
@@ -64,6 +65,23 @@ Each run writes a resolved `manifest.json`, schema-versioned candidates, metrics
 ```
 
 Every method is evaluated on the benchmark's complete fixed cohort. Missing predictions count as misses and coverage is reported separately.
+
+Import and compare on the exact 60-CVE public TRIAGE test split:
+
+```bash
+.venv/bin/python -m cve2attack import-triage
+
+.venv/bin/python -m cve2attack compare-triage \
+  --comparison-id kev_methods_vs_triage \
+  runs/kev_v1_raw_attackbert_15_1 \
+  runs/kev_v2_raw_procedures_15_1 \
+  runs/kev_v3a_llm_rewrite_15_1 \
+  runs/kev_v3b_llm_rewrite_procedures_15_1
+```
+
+The comparison reports both per-CVE macro Recall@K and TRIAGE's pooled-label
+micro Recall@K. The names stay explicit because the two values are not
+interchangeable.
 
 ## Candidate schema
 

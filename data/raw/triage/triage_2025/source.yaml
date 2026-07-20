@@ -1,0 +1,61 @@
+name: TRIAGE public replication subset
+paper:
+  title: A Systematic Approach to Predict the Impact of Cybersecurity Vulnerabilities Using LLMs
+  url: https://arxiv.org/abs/2508.18439
+replication_package:
+  url: https://zenodo.org/records/17341504
+  archive: TRIAGE.zip
+  archive_size_bytes: 773694181
+  archive_md5: d3d4a603554c3e97f13ba3e6e9dc5832
+  license: CC-BY-4.0
+attack_version: "15.1"
+expected_counts:
+  train_cves: 236
+  test_cves: 60
+  labeled_cves: 296
+  label_rows: 806
+selected_files:
+  cves_train.csv:
+    original_path: TRIAGE/data/pre_processed/cves_train.csv
+    sha256: 1600e1057e589e3c532471fc45de8bf54a070ad1e9e5b2756df9df3809549387
+  cves_test.csv:
+    original_path: TRIAGE/data/pre_processed/cves_test.csv
+    sha256: ef849ee120aaf7f27cea7f6692341ab4226c95ac8bd8edc8a141d775207843d7
+  labeled_cve_to_attack.csv:
+    original_path: TRIAGE/data/pre_processed/labeled_cve_to_attack.csv
+    sha256: b4f95504c1dd2c74be3a56d908a848012ae7296dfd3a7ebab3dcda46dcc80aea
+  reference_predictions/smet_test_all.json:
+    original_path: TRIAGE/models/uncategorized_mapping/experiments/CVET1-25/history.json
+    sha256: 56df4fa46748aa0ed21352eb32b191b14588c77f56a82902717d4697e145c064
+  reference_predictions/smet_test_no_secondary.json:
+    original_path: TRIAGE/models/uncategorized_mapping/experiments/CVET1-24/history.json
+    sha256: 060414f26284e2363d4806e610fd422391f72350e0baa3d5d903513395a01ef0
+  reference_predictions/triage_test_all.json:
+    original_path: TRIAGE/models/uncategorized_mapping/experiments/CVET1-27/history.json
+    sha256: 9a41e3134faafb31cd1a0ba42614125544a1f9d49ae3e901bbfcfc163788b96f
+  reference_predictions/triage_test_no_secondary.json:
+    original_path: TRIAGE/models/uncategorized_mapping/experiments/CVET1-26/history.json
+    sha256: 0386ae44df8eee2ba52b1b1dc6a844fcc953c6bc19fc9879c61bf8aa2a5bb326
+reported_metrics:
+  triage_2025_test_all:
+    SMET:
+      MAP: 0.19622649401764672
+      Recall@5: 0.23776223776223776
+      Recall@10: 0.3776223776223776
+      Recall@20: 0.5244755244755245
+    TRIAGE:
+      MAP: 0.5717136719101004
+      Recall@5: 0.6153846153846154
+      Recall@10: 0.6993006993006993
+      Recall@20: 0.7692307692307693
+  triage_2025_test_no_secondary:
+    SMET:
+      MAP: 0.20696455313965761
+      Recall@5: 0.2782608695652174
+      Recall@10: 0.43478260869565216
+      Recall@20: 0.591304347826087
+    TRIAGE:
+      MAP: 0.5956031468531469
+      Recall@5: 0.7043478260869566
+      Recall@10: 0.7217391304347827
+      Recall@20: 0.7652173913043478

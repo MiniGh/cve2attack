@@ -1,0 +1,31 @@
+name: triage_2025_test_all
+kind: benchmark
+task: cve_to_attack_technique_candidate_coverage
+source:
+  publisher: TRIAGE authors
+  paper: https://arxiv.org/abs/2508.18439
+  replication_package: https://zenodo.org/records/17341504
+  package_md5: d3d4a603554c3e97f13ba3e6e9dc5832
+  selected_files: data/raw/triage/triage_2025
+split:
+  policy: Exact public TRIAGE test split; 80/20 split over CVE IDs.
+  name: test
+  annotated_cves: 60
+attack_version: '15.1'
+technique_corpus:
+  path: data/knowledge/enterprise-attack-15.1.json
+  version: '15.1'
+label_policy:
+  evaluation_field: techniques
+  normalization: ATT&CK sub-techniques are rolled up to parent techniques.
+  raw_label_field: techniques_raw
+  mapping_type_field: labels_by_mapping_type
+view: All exploitation, primary-impact, and secondary-impact labels on the public
+  test split.
+record_schema:
+  cve_id: string
+  techniques: list[string] (parent-normalized ATT&CK IDs)
+  techniques_raw: list[string] (source ATT&CK IDs)
+  labels_by_mapping_type: mapping type to normalized and raw IDs
+  label_metadata: selected rows from the public label file
+  provenance: source and split metadata

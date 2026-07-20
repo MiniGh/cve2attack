@@ -11,9 +11,11 @@ from typing import Sequence
 from cve2attack.config import PROJECT_ROOT, load_experiment, project_path
 from cve2attack.data.kev import import_kev_benchmarks
 from cve2attack.data.loaders import CVERepository, benchmark_truth, candidate_records
+from cve2attack.data.triage import import_triage_benchmarks
 from cve2attack.domain.classifier import classify_directory
 from cve2attack.evaluation.metrics import evaluate
 from cve2attack.evaluation.report import write_comparison_report
+from cve2attack.evaluation.triage import compare_with_triage
 from cve2attack.pipeline import (
     build_queries,
     resolve_attack_bundle,
@@ -57,6 +59,21 @@ def _parser() -> argparse.ArgumentParser:
         help="Existing CVE2ATT&CK directory used to create the strict non-overlap view",
     )
 
+    triage_import = subparsers.add_parser(
+        "import-triage",
+        help="Build the exact public TRIAGE test views from selected replication files",
+    )
+    triage_import.add_argument(
+        "--source-dir",
+        default="data/raw/triage/triage_2025",
+        help="Directory containing the frozen TRIAGE split, labels and source metadata",
+    )
+    triage_import.add_argument(
+        "--benchmark-root",
+        default="data/benchmarks",
+        help="Directory in which the two generated TRIAGE test views are created",
+    )
+
     subparsers.add_parser("classify-domain", help="Rebuild yearly ATT&CK domain mappings")
 
     run = subparsers.add_parser("run", help="Run one experiment")
@@ -76,6 +93,18 @@ def _parser() -> argparse.ArgumentParser:
     compare.add_argument("runs", nargs="+", type=Path)
     compare.add_argument("--benchmark", required=True)
     compare.add_argument("--comparison-id")
+
+    triage_compare = subparsers.add_parser(
+        "compare-triage",
+        help="Compare completed runs with public TRIAGE and SMET predictions",
+    )
+    triage_compare.add_argument("runs", nargs="+", type=Path)
+    triage_compare.add_argument("--comparison-id")
+    triage_compare.add_argument(
+        "--source-dir",
+        default="data/raw/triage/triage_2025",
+        help="Directory containing the frozen public reference predictions",
+    )
     return parser
 
 
@@ -166,6 +195,14 @@ def main(argv: Sequence[str] | None = None) -> None:
         print(json.dumps(stats, ensure_ascii=False, indent=2))
         return
 
+    if args.command == "import-triage":
+        stats = import_triage_benchmarks(
+            source_dir=project_path(args.source_dir),
+            benchmark_root=project_path(args.benchmark_root),
+        )
+        print(json.dumps(stats, ensure_ascii=False, indent=2))
+        return
+
     if args.command == "classify-domain":
         stats = classify_directory(
             PROJECT_ROOT / "data" / "raw" / "cve",
@@ -221,6 +258,19 @@ def main(argv: Sequence[str] | None = None) -> None:
             args.runs,
             benchmark_name=args.benchmark,
             comparison_id=args.comparison_id,
+        )
+        print(path)
+        return
+
+    if args.command == "compare-triage":
+        identifier = args.comparison_id or (
+            f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_triage_public_test"
+        )
+        path = compare_with_triage(
+            args.runs,
+            output_dir=PROJECT_ROOT / "comparisons" / identifier,
+            project_root=PROJECT_ROOT,
+            source_dir=project_path(args.source_dir),
         )
         print(path)
 

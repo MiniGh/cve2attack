@@ -132,6 +132,8 @@ runs/<run_id>/
 - `run`：执行完整候选生成和评估流程。
 - `compare`：在同一 benchmark 上重新比较一个或多个 run。
 - `import-kev`：从固定的 CTID KEV CSV 快照生成 `all`、`exploitation` 和 `nonoverlap` 三个公开 benchmark 视图。
+- `import-triage`：从公开复现实验包的冻结 split 与标签生成两个 60-CVE TRIAGE 测试视图。
+- `compare-triage`：在论文原始测试 split 上，将项目 run 与公开的 TRIAGE、SMET 预测统一复评并输出逐 CVE 分歧。
 
 `src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
 
@@ -288,6 +290,13 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 `src/cve2attack/evaluation/report.py` 将单次运行或多次运行对比写成 Markdown 表格。原始数值同时保存在 `metrics.json`。
 
+`src/cve2attack/evaluation/ranking.py` 提供 TRIAGE 兼容的排名评测。它明确区分两种不能混用的 Recall：
+
+- `macro_recall_at_k`：先对每个 CVE 计算真实 Technique 覆盖率，再对固定 CVE cohort 求平均；这是项目原有 Recall 的语义。
+- `micro_recall_at_k`：将所有 CVE 的真实标签汇总后计算命中比例；这是 TRIAGE 论文表格中的 Recall@K。
+
+`src/cve2attack/evaluation/triage.py` 读取公开 reference predictions，核验其内嵌真值与冻结 benchmark 一致，并生成 MAP、Hit@K、两种 Recall、按 mapping type 的诊断和逐 CVE Top-10 分歧。
+
 ## 5. 测试结构
 
 ```text
@@ -320,6 +329,13 @@ data/benchmarks/
 ```
 
 `data_result` 与 `cve2attack_result` 来自不同论文，标注范围和策略不同。它们是两个独立 benchmark，程序不会自动合并。
+
+TRIAGE 接入后还包含两个固定测试视图：
+
+- `triage_2025_test_all`：论文公开 test split 的 60 个 CVE，使用 exploitation、primary impact、secondary impact 的并集。
+- `triage_2025_test_no_secondary`：同一批 60 个 CVE，但排除 secondary impact，复现论文的排除次要影响实验。
+
+两者都来自同一份 296-CVE CTID KEV 标签，不是新的独立人工标注集。它们的价值在于冻结了 TRIAGE 的 236/60 划分，并可与作者公开预测做完全同 cohort 的比较。
 
 每行 benchmark 数据至少包含：
 
@@ -791,6 +807,38 @@ Technique；`labels_by_mapping_type` 和 `label_metadata` 保存 CTID 的语义�
 
 KEV 评测的模型输入始终是 `data/raw/cve/` 中的 CVE 描述；不要把 KEV 的
 `comments` 或 `references` 用作模型输入。
+
+### 11.8 `import-triage`：生成 TRIAGE 固定测试视图
+
+```bash
+.venv/bin/python -m cve2attack import-triage \
+  [--source-dir PATH] \
+  [--benchmark-root PATH]
+```
+
+默认输入目录为 `data/raw/triage/triage_2025/`。该目录只保存从公开
+`TRIAGE.zip` 中选出的 split、806 条标签和四套 reference predictions，不保存
+773.7 MB 的完整压缩包。`source.yaml` 记录压缩包 MD5、原始路径、文件 SHA-256、
+预期数据量和论文报告指标。
+
+命令会验证 train/test 数量、不重叠、split 与标签一致以及两个主测试视图均有标签。目标 benchmark 已存在时不会覆盖。
+
+### 11.9 `compare-triage`：与公开预测统一复评
+
+```bash
+.venv/bin/python -m cve2attack compare-triage \
+  [--comparison-id ID] \
+  <run> [<run> ...]
+```
+
+该命令不加载模型，也不重新生成候选。它读取已有 run，在精确的 60-CVE test
+split 上与公开 SMET、TRIAGE 预测比较，输出到 `comparisons/<ID>/`：
+
+- `metrics.json`：all/no-secondary 两个视图及三个 mapping type 的完整原始指标；
+- `report.md`：MAP、Hit@K、宏平均 Recall 和论文式微平均 Recall 表格；
+- `disagreements_<run>.jsonl`：逐 CVE 的真实标签、双方 Top-10、各自命中和分歧类别。
+
+reference predictions 中保存的真值如果与生成后的 benchmark 不一致，或复算结果无法重现 `source.yaml` 记录的论文数值，命令会立即失败。
 
 ## 12. 常用使用流程
 

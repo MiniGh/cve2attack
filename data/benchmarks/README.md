@@ -46,3 +46,34 @@ ATT&CK-version migration experiment.
 For a fair candidate-generation evaluation, models must use only the project
 raw CVE description.  KEV comments and references are label provenance, not
 model input.
+
+## TRIAGE public test views
+
+`triage_2025_test_all` and `triage_2025_test_no_secondary` are generated from
+the public replication package for *A Systematic Approach to Predict the
+Impact of Cybersecurity Vulnerabilities Using LLMs*:
+
+- Paper: <https://arxiv.org/abs/2508.18439>
+- Replication package: <https://zenodo.org/records/17341504>
+- Archive MD5: `d3d4a603554c3e97f13ba3e6e9dc5832`
+- Exact split: 236 train CVEs and 60 test CVEs
+- Labels: the same 296-CVE, 806-row CTID KEV mapping snapshot used above
+
+These directories are therefore evaluation views of the CTID KEV data, not
+new independent annotations. Their purpose is to reproduce the paper's fixed
+test cohort and compare against its public SMET/TRIAGE predictions.
+
+```bash
+.venv/bin/python -m cve2attack import-triage
+
+.venv/bin/python -m cve2attack compare-triage \
+  --comparison-id kev_methods_vs_triage \
+  runs/kev_v1_raw_attackbert_15_1 \
+  runs/kev_v2_raw_procedures_15_1 \
+  runs/kev_v3a_llm_rewrite_15_1 \
+  runs/kev_v3b_llm_rewrite_procedures_15_1
+```
+
+The comparison labels pooled-label Recall@K as `micro_recall_at_k`, matching
+the TRIAGE implementation. Project-style per-CVE recall remains separately
+reported as `macro_recall_at_k`.
