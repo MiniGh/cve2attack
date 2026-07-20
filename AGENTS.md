@@ -16,7 +16,7 @@
 当前选定方案为 V3a：
 
 1. 读取 CVE 描述和 CWE 信息。
-2. 使用 `sec-i1` 将漏洞描述改写为 ATT&CK 风格的攻击者动作描述。
+2. 使用 `sec-i1-cve-rewrite:v1` 将漏洞描述改写为 ATT&CK 风格的攻击者动作描述。
 3. 使用 `basel/ATTACK-BERT` 分别编码 CVE 查询文本和 ATT&CK Technique 文本。
 4. 通过归一化向量点积计算余弦相似度。
 5. 返回相似度最高的顶层 Technique 候选。
@@ -210,6 +210,23 @@ runs/<run_id>/
 
 `src/cve2attack/rewrite/ollama.py` 是一个小型 HTTP 客户端。它向实验配置中的 generate endpoint 发送非流式请求，支持超时、重试和指数等待。
 
+当前 V3a、V3b 和 V4 共用同一个版本化改写条件：
+
+- Ollama 服务运行在 `172.23.216.73:11434`；项目代码运行在 `172.23.216.47`，只通过 HTTP 调用模型，不在代码主机保存模型权重。
+- 原始标签 `sec-i1:latest` 是从本地 GGUF 导入的 Llama 3 8B Q4 模型，其模板只有 `{{ .Prompt }}`，不会应用 system prompt，部分输入会直接返回空文本。
+- 修复后的标签是 `sec-i1-cve-rewrite:v1`，它复用原始权重，并增加 Llama 3 system/user/assistant 模板、`num_ctx=8192`、`num_predict=512`、`temperature=0` 和固定 seed。
+- 模型标签和缓存文件名都是实验条件的一部分。旧标签生成的 cache 不能与 `v1` 模板生成的 cache 混用。
+
+模型定义保存在 `models/ollama/sec-i1-cve-rewrite-v1.Modelfile`，仓库不保存权重。如果 Ollama 标签丢失，在能读取项目目录且安装了 Ollama CLI 的机器上执行：
+
+```bash
+OLLAMA_HOST=http://172.23.216.73:11434 \
+  ollama create sec-i1-cve-rewrite:v1 \
+  -f models/ollama/sec-i1-cve-rewrite-v1.Modelfile
+```
+
+`OLLAMA_HOST` 让 CLI 修改 73 上的服务，而不是本机 Ollama。执行命令时，`FROM sec-i1:latest` 必须能在该远程服务中解析；若从项目目录以外执行，应将 `-f` 改为 Modelfile 的绝对路径。
+
 ### 4.8 Technique 语料：`retrieval/technique_kb.py`
 
 `src/cve2attack/retrieval/technique_kb.py` 从 `enterprise-attack.json` 构建检索语料。
@@ -350,8 +367,8 @@ rewrite cache 示例：
 实验配置中的 `{benchmark}` 会替换为当前输入 benchmark 名称。例如：
 
 ```text
-data/derived/rewrite_cache/cve2attack_result_sec_i1.json
-data/derived/rewrite_cache/data_result_sec_i1.json
+data/derived/rewrite_cache/cve2attack_result_sec_i1_llama3_chat_v1.json
+data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json
 ```
 
 ## 7. 实验配置
@@ -364,9 +381,9 @@ data/derived/rewrite_cache/data_result_sec_i1.json
 | --- | --- | --- | --- |
 | `v1_raw_attackbert.yaml` | 原始 CVE 描述 | 名称 + 描述 | 无 |
 | `v2_raw_procedures.yaml` | 原始 CVE 描述 | 名称 + 描述 + procedures | 无 |
-| `v3a_llm_rewrite.yaml` | sec-i1 改写 | 名称 + 描述 | 无 |
-| `v3b_llm_rewrite_procedures.yaml` | sec-i1 改写 | 名称 + 描述 + procedures | 无 |
-| `v4_rewrite_chain.yaml` | sec-i1 改写 | 名称 + 描述 + procedures | structured chain |
+| `v3a_llm_rewrite.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 | 无 |
+| `v3b_llm_rewrite_procedures.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 + procedures | 无 |
+| `v4_rewrite_chain.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 + procedures | structured chain |
 
 ### 7.2 配置字段
 
@@ -380,11 +397,11 @@ input:
 
 query:
   strategy: rewrite_cache
-  cache: data/derived/rewrite_cache/{benchmark}_sec_i1.json
+  cache: data/derived/rewrite_cache/{benchmark}_sec_i1_llama3_chat_v1.json
   llm:
-    base_url: http://host:11434/api/generate
-    model: sec-i1
-    timeout_seconds: 120
+    base_url: http://172.23.216.73:11434/api/generate
+    model: sec-i1-cve-rewrite:v1
+    timeout_seconds: 300
     max_retries: 3
 
 technique_document:
@@ -632,6 +649,10 @@ data/derived/domain_mapping/CVE-<year>.jsonl
 
 默认情况下，已有且非空的改写会被保留并跳过。程序每完成 20 个请求或完成全部任务时写一次 cache，写入采用临时文件替换，降低中途损坏风险。
 
+运行时会输出已有缓存数、剩余请求数、成功/失败数、checkpoint、耗时和预计剩余时间。`failed` 同时包括请求异常和模型返回空文本；失败详情会按 CVE 输出到终端。
+
+V3a、V3b 和 V4 当前都使用 `sec-i1-cve-rewrite:v1`。不要把旧的 `*_sec_i1.json` 复制或重命名为新的 `*_sec_i1_llama3_chat_v1.json`，否则会混合两种提示模板生成的数据。
+
 `--no-cache` 与 `--max-cves` 同时使用时，最终文件只包含本次选择范围内成功生成的内容，因此不要把这种小样本命令用于需要保留的完整 cache。
 
 输出统计：
@@ -829,6 +850,7 @@ KEV 评测的模型输入始终是 `data/raw/cve/` 中的 CVE 描述；不要把
 
 - `runs/`、`comparisons/` 和 `data/derived/embedding_cache/` 被 Git 忽略。
 - `rewrite` 会访问实验 YAML 中配置的外部 LLM 服务。
+- 当前 LLM 权重位于 `172.23.216.73` 的 Ollama 服务；`172.23.216.47` 只保存项目代码、输入数据和 rewrite cache。
 - `run` 会加载 sentence-transformers 模型，但默认不访问网络下载；首次下载需要在实验 YAML 中显式关闭 `retrieval.local_files_only`。
 - `--max-cves` 取排序后前 N 个 CVE，不是随机采样。
 - `run` 和 `compare` 不覆盖已存在的目标目录。

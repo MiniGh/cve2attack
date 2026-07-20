@@ -1,15 +1,17 @@
 name: v4_rewrite_chain
-description: V3b candidates fused with the historical CWE-CAPEC-ATT&CK chain.
+description: Llama 3-templated V3b candidates fused with the historical CWE-CAPEC-ATT&CK chain.
 input:
   mode: benchmark
   benchmark: cve2attack_result
 query:
   strategy: rewrite_cache
-  cache: data/derived/rewrite_cache/{benchmark}_sec_i1.json
+  # V4 reuses the corrected V3 rewrite condition, never the legacy raw-prompt cache.
+  cache: data/derived/rewrite_cache/{benchmark}_sec_i1_llama3_chat_v1.json
   llm:
     base_url: http://172.23.216.73:11434/api/generate
-    model: sec-i1
-    timeout_seconds: 120
+    model: sec-i1-cve-rewrite:v1
+    # Includes enough headroom for a cold Ollama runner load; warm calls normally finish in seconds.
+    timeout_seconds: 300
     max_retries: 3
 technique_document:
   include_procedures: true
