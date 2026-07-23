@@ -27,10 +27,11 @@ from cve2attack.pipeline import (
 from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
+from cve2attack.stage2.pipeline import run_context_extraction
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="CVE to ATT&CK stage-1 candidate generation")
+    parser = argparse.ArgumentParser(description="CVE to ATT&CK mapping research pipeline")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate = subparsers.add_parser("validate", help="Validate an experiment definition")
@@ -155,6 +156,34 @@ def _parser() -> argparse.ArgumentParser:
         nargs="+",
         type=float,
         help="Optional positive source weights in the same order as the run paths",
+    )
+
+    graph_context = subparsers.add_parser(
+        "extract-graph-context",
+        help="Extract versioned local and upstream context from a MulVAL AttackGraph.xml",
+    )
+    graph_context.add_argument(
+        "--attack-graph",
+        required=True,
+        type=Path,
+        help="MulVAL AttackGraph.xml path; relative paths are resolved from the project root",
+    )
+    graph_context.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Output JSON path; relative paths are resolved from the project root",
+    )
+    graph_context.add_argument(
+        "--max-graph-depth",
+        type=int,
+        default=2,
+        help="Maximum upstream evidence expansion depth (default: 2)",
+    )
+    graph_context.add_argument(
+        "--force",
+        action="store_true",
+        help="Replace an existing output file instead of failing",
     )
     return parser
 
@@ -350,6 +379,23 @@ def main(argv: Sequence[str] | None = None) -> None:
             weights=args.weights,
         )
         print(path)
+        return
+
+    if args.command == "extract-graph-context":
+        attack_graph = (
+            args.attack_graph
+            if args.attack_graph.is_absolute()
+            else PROJECT_ROOT / args.attack_graph
+        )
+        output = args.output if args.output.is_absolute() else PROJECT_ROOT / args.output
+        path = run_context_extraction(
+            attack_graph,
+            output,
+            max_graph_depth=args.max_graph_depth,
+            overwrite=args.force,
+        )
+        print(path)
+        return
 
 
 if __name__ == "__main__":

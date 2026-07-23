@@ -1,10 +1,10 @@
-# CVE → ATT&CK Stage-1 项目结构与命令行说明
+# CVE → ATT&CK 映射项目结构与命令行说明
 
-本文档介绍项目的目标、代码组织、数据流、实验配置、文件格式和命令行用法。它同时面向项目使用者和需要理解代码的 Agent。
+本文档介绍项目的目标、代码组织、数据流、实验配置、文件格式和命令行用法。它同时面向项目使用者和需要理解代码的 Agent。项目现已在同一仓库中加入第二阶段攻击图上下文提取；第一阶段候选接入、图上下文重排序和最终评价仍在后续实现。
 
 ## 1. 项目目标与范围
 
-本项目实现 CVE → MITRE ATT&CK Technique 映射流程的第一阶段：根据 CVE 信息生成一个按相关性排序的 ATT&CK Technique 候选集。候选集会交给映射流程的后续阶段继续判断或筛选。
+本项目实现 CVE → MITRE ATT&CK Technique 的两阶段映射流程：第一阶段根据 CVE 信息生成按相关性排序的 Technique 候选集；第二阶段从 MulVAL 攻击图提取该 CVE 的局部条件和上游路径证据，后续据此重排第一阶段候选。
 
 项目中需要区分两种第一阶段方法：
 
@@ -95,13 +95,19 @@ runs/<run_id>/
 │   ├── fusion/
 │   │   ├── rrf.py
 │   │   └── structured_chain.py
-│   └── evaluation/
-│       ├── diagnostics.py
-│       ├── metrics.py
-│       ├── ranking.py
-│       ├── triage.py
-│       └── report.py
+│   ├── evaluation/
+│   │   ├── diagnostics.py
+│   │   ├── metrics.py
+│   │   ├── ranking.py
+│   │   ├── triage.py
+│   │   └── report.py
+│   └── stage2/
+│       ├── graph_parser.py
+│       ├── path_expander.py
+│       ├── context_extractor.py
+│       └── pipeline.py
 ├── tests/
+│   └── fixtures/mulval/AttackGraph.xml
 ├── data/
 │   ├── benchmarks/
 │   ├── knowledge/
@@ -145,6 +151,7 @@ runs/<run_id>/
 - `compare-triage`：在论文原始测试 split 上，将项目 run 与公开的 TRIAGE、SMET 预测统一复评并输出逐 CVE 分歧。
 - `diagnose-triage`：在同一 60-CVE/143-parent-label 口径下，对完整排名 run、SMET 和 TRIAGE 做候选互补性诊断。
 - `fuse-rrf`：读取多个已完成 run，仅使用候选名次执行无训练 Reciprocal Rank Fusion，并写出受控 Top-K 标准 run。
+- `extract-graph-context`：读取 MulVAL `AttackGraph.xml`，输出带版本号的局部上下文与完整上游证据分支。
 
 `src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
 
@@ -312,12 +319,24 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 `src/cve2attack/evaluation/diagnostics.py` 用于第一阶段候选源诊断。它计算 Recall@1/3/5/10/20/30/50、正确标签排名分布、两两候选交集、独有正确命中、并集 oracle，以及按 mapping type、CVE 年份、训练标签频率、CWE 数量和描述长度分组的 Micro Recall。TRIAGE 公开预测只到 Top-20，因此其 Recall@30/@50 会写为 `N/A`，不会把截断误报为零。
 
+### 4.12 第二阶段攻击图上下文：`stage2/`
+
+`src/cve2attack/stage2/` 将外部 MulVAL 生成的 `AttackGraph.xml` 转换成带版本号的上下文 JSON：
+
+- `graph_parser.py`：解析 XML，并显式把 MulVAL 原始边反转为“条件 → 规则 → 结果”。
+- `path_expander.py`：展开 OR 状态的全部 producer rules；不再任意选择第一条路径。
+- `context_extractor.py`：为每个 `vulExists` 分别生成直接的 `local_context` 和上游 `graph_context`。
+- `pipeline.py`：组织文件读写、原子输出和终端进度。
+
+攻击图生成器仍是外部组件，本仓库不依赖 `ldh_attackgraph` 父目录。固定回归输入复制在 `tests/fixtures/mulval/AttackGraph.xml`。当前上下文记录中的 `candidates` 是预留字段；下一工作包会用现有 `CandidateRecord` 填充并实现确定性重排序。详细数据契约见 `docs/stage2_graph_context.md`。
+
 ## 5. 测试结构
 
 ```text
 tests/
 ├── test_diagnostics.py
 ├── test_rrf.py
+├── test_stage2_context.py
 ├── test_schemas.py
 ├── test_retrieval.py
 ├── test_technique_kb.py
@@ -330,6 +349,7 @@ tests/
 - `test_metrics.py`：固定 benchmark cohort、缺失预测和覆盖率语义。
 - `test_diagnostics.py`：任意 cutoff、公开排名截断、正确标签 rank bin 和并集候选预算语义。
 - `test_rrf.py`：RRF 共识排序、内部来源深度、确定性 tie break 和非法权重校验。
+- `test_stage2_context.py`：MulVAL XML 解析、边方向、局部上下文、全部分支保留和文件输出契约。
 
 ## 6. 数据目录与文件格式
 
@@ -565,6 +585,7 @@ runs/<run_id>/
 
 - NumPy
 - PyYAML
+- NetworkX
 - sentence-transformers
 
 在项目根目录安装为 editable package：
@@ -960,6 +981,35 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
 ```
 
 该命令不加载 embedding 模型、不调用 Ollama，也不使用 benchmark 标签决定融合分数。标签只在候选写出后用于常规评估。
+
+### 11.12 `extract-graph-context`：提取第二阶段攻击图上下文
+
+```bash
+.venv/bin/python -m cve2attack extract-graph-context \
+  --attack-graph PATH \
+  --output PATH \
+  [--max-graph-depth N] \
+  [--force]
+```
+
+参数：
+
+| 参数 | 必需 | 默认值 | 含义 |
+| --- | --- | --- | --- |
+| `--attack-graph PATH` | 是 | — | MulVAL `AttackGraph.xml`；相对路径从项目根目录解析。 |
+| `--output PATH` | 是 | — | 上下文 JSON；相对路径从项目根目录解析。 |
+| `--max-graph-depth N` | 否 | `2` | 上游证据展开深度，必须为非负整数。 |
+| `--force` | 否 | false | 覆盖已有输出；默认遇到同名文件立即停止。 |
+
+当前样例：
+
+```bash
+.venv/bin/python -m cve2attack extract-graph-context \
+  --attack-graph tests/fixtures/mulval/AttackGraph.xml \
+  --output stage2_runs/example/contexts.json
+```
+
+该命令不加载 embedding 模型，也不调用 Ollama。输出包含图统计、每个漏洞的直接利用条件、全部上游分支以及预留的第一阶段候选字段。
 
 ## 12. 常用使用流程
 

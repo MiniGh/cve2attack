@@ -1,6 +1,10 @@
-# CVE → ATT&CK Stage-1 Candidate Generation (`new_method`)
+# CVE → ATT&CK Mapping Pipeline
 
-This branch contains the embedding-retrieval approach for the first mapping stage: generate a ranked ATT&CK technique candidate set for each CVE. It is independent from the alternative layered-LLM implementation on `main`.
+This repository contains the two-stage research pipeline. Stage 1 generates a
+ranked ATT&CK Technique candidate set for each CVE. Stage 2 extracts MulVAL
+attack-graph context that will be used to rerank those candidates. The current
+integration branch is based on the refactored `new_method` stage-1 approach;
+the alternative layered implementation remains on `main` until final integration.
 
 The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `sec-i1-cve-rewrite:v1` to rewrite a CVE description into attacker-action language, then retrieve top-level ATT&CK techniques with `basel/ATTACK-BERT` using technique name + description.
 
@@ -14,6 +18,8 @@ The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `
 - `data/raw/triage/triage_2025/`: selected public TRIAGE split, labels and reference predictions; the 773.7 MB archive is not stored in Git.
 - `data/derived/`: reproducible intermediate data and expensive rewrite caches.
 - `src/cve2attack/`: reusable pipeline, strategies and evaluation code.
+- `src/cve2attack/stage2/`: MulVAL parsing and versioned graph-context extraction.
+- `tests/fixtures/mulval/`: self-contained attack-graph regression input.
 - `runs/<run_id>/`: one isolated execution, ignored by Git.
 - `comparisons/<comparison_id>/`: comparison of multiple runs, ignored by Git.
 - `archive/`: inactive TF-IDF and pre-refactor code.
@@ -55,6 +61,20 @@ Check paths, query coverage and the Technique knowledge base without loading the
 ```
 
 Each run writes a resolved `manifest.json`, schema-versioned candidates, metrics and a report under a new directory in `runs/`. The default evaluation target is the selected input benchmark; the two paper datasets are never implicitly merged.
+
+## Extract stage-2 graph context
+
+```bash
+.venv/bin/python -m cve2attack extract-graph-context \
+  --attack-graph tests/fixtures/mulval/AttackGraph.xml \
+  --output stage2_runs/example/contexts.json \
+  --max-graph-depth 2
+```
+
+The graph producer remains external. Only `AttackGraph.xml` crosses the project
+boundary, so the package does not depend on the old parent directory or on a
+specific MulVAL installation. See `docs/stage2_graph_context.md` for the JSON
+contract and module responsibilities.
 
 ## Compare runs
 

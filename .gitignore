@@ -11,6 +11,7 @@ __pycache__/
 # Every execution is isolated here. Keep selected metrics/reports separately.
 runs/
 comparisons/
+stage2_runs/
 
 # Rebuildable and machine-specific caches.
 data/derived/embedding_cache/
