@@ -15,7 +15,9 @@ from cve2attack.data.triage import import_triage_benchmarks
 from cve2attack.domain.classifier import classify_directory
 from cve2attack.evaluation.metrics import evaluate
 from cve2attack.evaluation.report import write_comparison_report
+from cve2attack.evaluation.diagnostics import diagnose_triage_candidates
 from cve2attack.evaluation.triage import compare_with_triage
+from cve2attack.fusion.rrf import run_rrf_fusion
 from cve2attack.pipeline import (
     build_queries,
     resolve_attack_bundle,
@@ -104,6 +106,55 @@ def _parser() -> argparse.ArgumentParser:
         "--source-dir",
         default="data/raw/triage/triage_2025",
         help="Directory containing the frozen public reference predictions",
+    )
+
+    triage_diagnose = subparsers.add_parser(
+        "diagnose-triage",
+        help="Diagnose candidate complementarity on the exact public TRIAGE test split",
+    )
+    triage_diagnose.add_argument(
+        "runs",
+        nargs="+",
+        type=Path,
+        help="Full-ranking V1/V2/V3 run directories to diagnose",
+    )
+    triage_diagnose.add_argument("--comparison-id")
+    triage_diagnose.add_argument(
+        "--source-dir",
+        default="data/raw/triage/triage_2025",
+        help="Directory containing the frozen split, labels and reference predictions",
+    )
+
+    rrf = subparsers.add_parser(
+        "fuse-rrf",
+        help="Fuse completed candidate runs with label-free Reciprocal Rank Fusion",
+    )
+    rrf.add_argument("runs", nargs="+", type=Path, help="Completed source run directories")
+    rrf.add_argument("--run-id", required=True, help="Unique output directory name under runs/")
+    rrf.add_argument("--benchmark", required=True, help="Fixed benchmark cohort to fuse and evaluate")
+    rrf.add_argument(
+        "--top-k",
+        type=int,
+        default=20,
+        help="Final controlled number of candidates per CVE (default: 20)",
+    )
+    rrf.add_argument(
+        "--source-depth",
+        type=int,
+        default=50,
+        help="Maximum rank read from each source before fusion (default: 50)",
+    )
+    rrf.add_argument(
+        "--rank-constant",
+        type=float,
+        default=60.0,
+        help="Positive RRF smoothing constant (default: 60)",
+    )
+    rrf.add_argument(
+        "--weights",
+        nargs="+",
+        type=float,
+        help="Optional positive source weights in the same order as the run paths",
     )
     return parser
 
@@ -271,6 +322,32 @@ def main(argv: Sequence[str] | None = None) -> None:
             output_dir=PROJECT_ROOT / "comparisons" / identifier,
             project_root=PROJECT_ROOT,
             source_dir=project_path(args.source_dir),
+        )
+        print(path)
+        return
+
+    if args.command == "diagnose-triage":
+        identifier = args.comparison_id or (
+            f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_triage_candidate_diagnostics"
+        )
+        path = diagnose_triage_candidates(
+            args.runs,
+            output_dir=PROJECT_ROOT / "comparisons" / identifier,
+            project_root=PROJECT_ROOT,
+            source_dir=project_path(args.source_dir),
+        )
+        print(path)
+        return
+
+    if args.command == "fuse-rrf":
+        path = run_rrf_fusion(
+            args.runs,
+            run_id=args.run_id,
+            benchmark_name=args.benchmark,
+            top_k=args.top_k,
+            source_depth=args.source_depth,
+            rank_constant=args.rank_constant,
+            weights=args.weights,
         )
         print(path)
 

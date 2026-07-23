@@ -1,0 +1,25 @@
+name: v3b_llm_rewrite_procedures_fullranking
+description: Diagnostic-only full ranking using the completed V3 rewrite cache and procedures.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: rewrite_cache
+  # Reuse the completed 296-CVE cache. Running this experiment never contacts Ollama.
+  cache: data/derived/rewrite_cache/ctid_kev_2025_02_13_all_sec_i1_llama3_chat_v1.json
+  llm:
+    base_url: http://172.23.216.73:11434/api/generate
+    model: sec-i1-cve-rewrite:v1
+    timeout_seconds: 300
+    max_retries: 3
+technique_document:
+  include_procedures: true
+  procedure_char_limit: 1500
+retrieval:
+  model: basel/ATTACK-BERT
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

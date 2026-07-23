@@ -1,0 +1,18 @@
+name: v1_raw_attackbert_fullranking
+description: Diagnostic-only full ATT&CK parent-technique ranking for raw CVE descriptions.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: raw_description
+technique_document:
+  include_procedures: false
+retrieval:
+  model: basel/ATTACK-BERT
+  # Store the complete frozen ATT&CK 15.1 parent corpus so ranks 21-50 are observable.
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

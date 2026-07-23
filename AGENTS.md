@@ -64,6 +64,11 @@ runs/<run_id>/
 ├── README.md
 ├── pyproject.toml
 ├── experiments/
+│   ├── diagnostics/
+│   │   ├── v1_raw_attackbert_fullranking.yaml
+│   │   ├── v2_raw_procedures_fullranking.yaml
+│   │   ├── v3a_llm_rewrite_fullranking.yaml
+│   │   └── v3b_llm_rewrite_procedures_fullranking.yaml
 │   ├── v1_raw_attackbert.yaml
 │   ├── v2_raw_procedures.yaml
 │   ├── v3a_llm_rewrite.yaml
@@ -88,9 +93,13 @@ runs/<run_id>/
 │   │   ├── generator.py
 │   │   └── technique_kb.py
 │   ├── fusion/
+│   │   ├── rrf.py
 │   │   └── structured_chain.py
 │   └── evaluation/
+│       ├── diagnostics.py
 │       ├── metrics.py
+│       ├── ranking.py
+│       ├── triage.py
 │       └── report.py
 ├── tests/
 ├── data/
@@ -134,6 +143,8 @@ runs/<run_id>/
 - `import-kev`：从固定的 CTID KEV CSV 快照生成 `all`、`exploitation` 和 `nonoverlap` 三个公开 benchmark 视图。
 - `import-triage`：从公开复现实验包的冻结 split 与标签生成两个 60-CVE TRIAGE 测试视图。
 - `compare-triage`：在论文原始测试 split 上，将项目 run 与公开的 TRIAGE、SMET 预测统一复评并输出逐 CVE 分歧。
+- `diagnose-triage`：在同一 60-CVE/143-parent-label 口径下，对完整排名 run、SMET 和 TRIAGE 做候选互补性诊断。
+- `fuse-rrf`：读取多个已完成 run，仅使用候选名次执行无训练 Reciprocal Rank Fusion，并写出受控 Top-K 标准 run。
 
 `src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
 
@@ -278,6 +289,8 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 融合后的候选来源可以同时包含 `embedding` 和 `structured_chain`，元数据中包含 `chain_score`。
 
+`src/cve2attack/fusion/rrf.py` 实现多个已完成 run 的 Reciprocal Rank Fusion。它不比较原始相似度，而对每个来源名次累加 `weight / (rank_constant + rank)`。`source_depth` 控制每路参与融合的内部排名深度，`top_k` 控制最终交给下游阶段的候选预算。输出仍使用统一 `CandidateRecord`，并在每个候选的 metadata 中记录来源名次和逐来源贡献；run manifest 会保存全部参数、输入路径、输入 experiment、Git commit 和 resolved config。
+
 ### 4.11 评估与报告：`evaluation/`
 
 `src/cve2attack/evaluation/metrics.py` 在 benchmark 的完整 CVE 集合上计算：
@@ -297,10 +310,14 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 `src/cve2attack/evaluation/triage.py` 读取公开 reference predictions，核验其内嵌真值与冻结 benchmark 一致，并生成 MAP、Hit@K、两种 Recall、按 mapping type 的诊断和逐 CVE Top-10 分歧。
 
+`src/cve2attack/evaluation/diagnostics.py` 用于第一阶段候选源诊断。它计算 Recall@1/3/5/10/20/30/50、正确标签排名分布、两两候选交集、独有正确命中、并集 oracle，以及按 mapping type、CVE 年份、训练标签频率、CWE 数量和描述长度分组的 Micro Recall。TRIAGE 公开预测只到 Top-20，因此其 Recall@30/@50 会写为 `N/A`，不会把截断误报为零。
+
 ## 5. 测试结构
 
 ```text
 tests/
+├── test_diagnostics.py
+├── test_rrf.py
 ├── test_schemas.py
 ├── test_retrieval.py
 ├── test_technique_kb.py
@@ -311,6 +328,8 @@ tests/
 - `test_retrieval.py`：使用假 Embedder 验证候选排序和结构。
 - `test_technique_kb.py`：父 Technique 筛选与 procedure 文本开关。
 - `test_metrics.py`：固定 benchmark cohort、缺失预测和覆盖率语义。
+- `test_diagnostics.py`：任意 cutoff、公开排名截断、正确标签 rank bin 和并集候选预算语义。
+- `test_rrf.py`：RRF 共识排序、内部来源深度、确定性 tie break 和非法权重校验。
 
 ## 6. 数据目录与文件格式
 
@@ -400,6 +419,8 @@ data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json
 | `v3a_llm_rewrite.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 | 无 |
 | `v3b_llm_rewrite_procedures.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 + procedures | 无 |
 | `v4_rewrite_chain.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 + procedures | structured chain |
+
+`experiments/diagnostics/` 中的四份 `*_fullranking.yaml` 不是新方法，而是 V1/V2/V3a/V3b 的诊断运行条件：输入固定为 `triage_2025_test_all`，`retrieval.top_k=202`，保存 ATT&CK 15.1 全部父 Technique 的排序。这样才能区分“正确标签在 21–50 位”和“正确标签在所有实用 Top-50 候选之外”。V3 诊断配置直接复用已经完成的 296-CVE rewrite cache，执行 `run` 时不会调用 Ollama。
 
 ### 7.2 配置字段
 
@@ -839,6 +860,106 @@ split 上与公开 SMET、TRIAGE 预测比较，输出到 `comparisons/<ID>/`：
 - `disagreements_<run>.jsonl`：逐 CVE 的真实标签、双方 Top-10、各自命中和分歧类别。
 
 reference predictions 中保存的真值如果与生成后的 benchmark 不一致，或复算结果无法重现 `source.yaml` 记录的论文数值，命令会立即失败。
+
+### 11.10 `diagnose-triage`：候选互补性与失败类型诊断
+
+```bash
+.venv/bin/python -m cve2attack diagnose-triage \
+  [--comparison-id ID] \
+  [--source-dir PATH] \
+  <full-ranking-run> [<full-ranking-run> ...]
+```
+
+参数：
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `full-ranking-run` | 是 | 一个或多个已完成的完整排名 run。标准诊断应传入 V1、V2、V3a、V3b 四个 `top_k=202` run。 |
+| `--comparison-id ID` | 否 | 指定 `comparisons/ID/`；默认使用时间戳。目标目录已经存在时不会覆盖。 |
+| `--source-dir PATH` | 否 | TRIAGE split、标签和公开参考预测目录；默认 `data/raw/triage/triage_2025`。 |
+
+命令固定使用 `triage_2025_test_all` 的 60 个 CVE 和 143 个父 Technique 标签。它不会加载嵌入模型、生成候选或调用 Ollama，只读取现有 run 和公开预测。运行期间会依次输出来源覆盖率、存储排名范围、曲线计算、互补性计算和报告写入进度。
+
+输出目录：
+
+```text
+comparisons/<comparison_id>/
+├── diagnostics.json
+├── label_ranks.jsonl
+├── practical_failure_labels.jsonl
+└── report.md
+```
+
+- `diagnostics.json`：完整 Recall 曲线、来源可观测深度、rank 分布、两两交集、独有命中、并集 oracle 和全部分组结果。
+- `label_ranks.jsonl`：每个真实父标签一行，包含各来源排名、mapping type、年份、训练标签频率、CWE 和描述长度特征。
+- `practical_failure_labels.jsonl`：按项目四路的最佳排名将标签分为 Top-20、21–50、50 以后或未排名，便于逐例检查。
+- `report.md`：核心曲线、主要失败判断和分组表格。
+
+并集 oracle 将每个来源自己的 Top-K 取并集，实际候选数通常大于 K；报告会同时给出平均/最大并集大小，因此不能把它当作受控 Recall@K。TRIAGE 公开历史最多到 20 位，它的 Recall@30/@50 必须保持 `N/A`。
+
+标准运行方式：
+
+```bash
+.venv/bin/python -m cve2attack run \
+  experiments/diagnostics/v1_raw_attackbert_fullranking.yaml \
+  --run-id triage_diag_v1_fullranking
+
+# 对 v2、v3a、v3b 的 fullranking 配置分别运行后：
+.venv/bin/python -m cve2attack diagnose-triage \
+  --comparison-id triage_candidate_complementarity \
+  runs/triage_diag_v1_fullranking \
+  runs/triage_diag_v2_fullranking \
+  runs/triage_diag_v3a_fullranking \
+  runs/triage_diag_v3b_fullranking
+```
+
+### 11.11 `fuse-rrf`：无训练的候选排名融合
+
+```bash
+.venv/bin/python -m cve2attack fuse-rrf \
+  --run-id ID \
+  --benchmark NAME \
+  [--top-k N] \
+  [--source-depth N] \
+  [--rank-constant FLOAT] \
+  [--weights W1 W2 ...] \
+  <run> <run> [<run> ...]
+```
+
+参数：
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `run` | 是 | 两个或更多已完成的候选 run。命令会要求每个 run 完整覆盖指定 benchmark，并至少保存到 `source-depth`。 |
+| `--run-id ID` | 是 | 新的标准输出目录 `runs/ID/`。已经存在时不会覆盖。 |
+| `--benchmark NAME` | 是 | 固定融合 cohort 和评估真值，例如 `triage_2025_test_all`。 |
+| `--top-k N` | 否 | 最终候选预算，默认 20。 |
+| `--source-depth N` | 否 | 每个输入来源最多读取到的名次，默认 50。它是内部检索池深度，不等于最终候选数。 |
+| `--rank-constant FLOAT` | 否 | RRF 平滑常数，必须为正数，默认 60。 |
+| `--weights W1 W2 ...` | 否 | 按 run 参数顺序提供的正权重；省略时所有来源权重均为 1。权重数量必须与 run 数相同。 |
+
+计算公式：
+
+```text
+RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
+```
+
+没有进入某来源 `source-depth` 的 Technique 在该来源贡献为 0。最终按 RRF 分数排序并严格截取 `top-k`；同分时依次使用最佳来源名次、来源票数和 Technique ID 做不依赖标签的确定性 tie break。
+
+标准无调参基线示例：
+
+```bash
+.venv/bin/python -m cve2attack fuse-rrf \
+  --run-id triage_rrf_v1_v3a_d50_k60_top20 \
+  --benchmark triage_2025_test_all \
+  --top-k 20 \
+  --source-depth 50 \
+  --rank-constant 60 \
+  runs/triage_diag_v1_fullranking \
+  runs/triage_diag_v3a_fullranking
+```
+
+该命令不加载 embedding 模型、不调用 Ollama，也不使用 benchmark 标签决定融合分数。标签只在候选写出后用于常规评估。
 
 ## 12. 常用使用流程
 

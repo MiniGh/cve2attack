@@ -11,3 +11,40 @@ The figures below are historical results preserved from the original branch. The
 | V4 | LLM rewrite | name + description + procedures | structured-chain fusion | R@10 39.61%, R@20 52.87% |
 
 The alternative layered-LLM method on `main` is another first-stage method and is outside this refactor.
+
+## 2026-07-23: fixed-parameter RRF baseline on the TRIAGE public test split
+
+This experiment uses the exact 60-CVE / 143-parent-label `triage_2025_test_all` view.  No labels were used to choose weights or tune the RRF constant: every source has weight 1, the standard fixed `rank_constant=60` is used, and the final candidate budget is always Top-20.  Source depths 20 and 50 are reported as a diagnostic of whether ranks 21-50 can be recovered.
+
+| Method | Source depth | Micro R@5 | Micro R@10 | Micro R@20 |
+|---|---:|---:|---:|---:|
+| V1 | full ranking | 18.18% | 23.78% | 37.76% |
+| V3a | full ranking | 13.99% | 20.28% | 35.66% |
+| V3b | full ranking | 15.38% | 20.98% | 34.97% |
+| RRF V1 + V3a | 20 | 15.38% | 20.98% | 38.46% |
+| RRF V1 + V3a | 50 | 14.69% | 20.28% | **39.86%** |
+| RRF V1 + V3b | 20 | 14.69% | 21.68% | 37.06% |
+| RRF V1 + V3b | 50 | 14.69% | 21.68% | 39.16% |
+| RRF V1 + V2 + V3a + V3b | 20 | 15.38% | 21.68% | 37.76% |
+| RRF V1 + V2 + V3a + V3b | 50 | 13.99% | 21.68% | **39.86%** |
+| SMET public prediction | public history | 23.78% | 37.76% | 52.45% |
+
+The simplest selected RRF baseline is `V1 + V3a`, source depth 50.  It raises Micro Recall@20 from V1's 37.76% (54/143 labels) to 39.86% (57/143), while Micro Recall@5 and @10 decline.  Relative to V1 Top-20 it gains nine labels and loses six: RRF promotes candidates that have moderate ranks in both sources, but can demote a correct V1-only candidate when the rewrite source ranks it poorly.
+
+At Recall@20, the selected baseline changes mapping-type coverage as follows:
+
+| Mapping type | V1 | RRF V1 + V3a depth 50 |
+|---|---:|---:|
+| exploitation technique | 37.70% | 42.62% |
+| primary impact | 50.00% | 48.15% |
+| secondary impact | 13.79% | 17.24% |
+
+The four-source depth-50 variant reaches the same overall 39.86%, with exploitation/primary/secondary Recall@20 of 40.98%/48.15%/20.69%.  Because V1/V2 and V3a/V3b are highly redundant, the extra sources do not improve the overall score over the two-source baseline.
+
+Interpretation: RRF is retained as the label-free controlled-budget fusion baseline, but it realizes only 3 of the 15 additional label hits available in the project Top-20 union oracle (48.25%).  It therefore does not remove the need for a genuinely different action-level retrieval source.  The next method should first raise practical candidate coverage; RRF can then fuse that new source into a final Top-20.
+
+Artifacts:
+
+- selected run: `runs/triage_rrf_v1_v3a_d50_k60_top20/`
+- four-source ablation: `runs/triage_rrf_all4_d50_k60_top20/`
+- unified comparison: `comparisons/triage_rrf_baseline_k60_equal_weights/`
