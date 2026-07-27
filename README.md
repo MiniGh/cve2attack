@@ -6,6 +6,10 @@ attack-graph context that will be used to rerank those candidates. The current
 integration branch is based on the refactored `new_method` stage-1 approach;
 the alternative layered implementation remains on `main` until final integration.
 
+Start with `STAGE2_PLAN.md` for the thesis-scope roadmap, work-package acceptance
+criteria, leakage safeguards and Git/worktree rules. The lower-level graph JSON
+contract is documented separately in `docs/stage2_graph_context.md`.
+
 The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `sec-i1-cve-rewrite:v1` to rewrite a CVE description into attacker-action language, then retrieve top-level ATT&CK techniques with `basel/ATTACK-BERT` using technique name + description.
 
 ## Layout
@@ -20,6 +24,7 @@ The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `
 - `src/cve2attack/`: reusable pipeline, strategies and evaluation code.
 - `src/cve2attack/stage2/`: MulVAL parsing and versioned graph-context extraction.
 - `tests/fixtures/mulval/`: self-contained attack-graph regression input.
+- `STAGE2_PLAN.md`: stage-2 roadmap, acceptance checklist and next task.
 - `runs/<run_id>/`: one isolated execution, ignored by Git.
 - `comparisons/<comparison_id>/`: comparison of multiple runs, ignored by Git.
 - `archive/`: inactive TF-IDF and pre-refactor code.

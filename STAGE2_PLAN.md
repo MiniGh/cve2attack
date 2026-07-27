@@ -1,0 +1,321 @@
+# 第二阶段行动指南：攻击图上下文映射
+
+本文档是第二阶段的总路线和验收清单。进入
+`feat/full-pipeline-stage2` 分支后，应先读本文，再根据具体任务阅读
+`docs/stage2_graph_context.md` 和代码注释。
+
+第二阶段当前坚持“先完成毕设闭环，再增加论文增强项”。没有完成本文第 4 节的
+必做工作前，不接入 LLM、GNN 或大规模全图优化。
+
+## 1. 研究目标和边界
+
+第一阶段为每个 CVE 生成受控的 ATT&CK Technique Top-K 候选。第二阶段利用攻击图
+中的环境上下文，对同一批候选重新排序，从而回答：
+
+> 同一个 CVE 出现在不同攻击位置、前置权限和后续结果中时，图上下文能否把更符合
+> 当前攻击过程的 Technique 提到更靠前的位置？
+
+第二阶段的核心输入：
+
+1. 第一阶段标准 `CandidateRecord`，通常为 Top-20。
+2. MulVAL `AttackGraph.xml`。
+
+核心输出：
+
+1. 每个图中 CVE 的局部条件和上游路径证据。
+2. 原候选名次、上下文分数和重排后名次。
+3. “第一阶段原始排名 vs 图上下文重排”的统一评价报告。
+
+当前不负责：
+
+- 重新生成第一阶段候选。
+- 训练新的文本模型或图神经网络。
+- 修改 MulVAL、XSB 或攻击图生成器。
+- 为整个公开 CVE 空间人工建立新标签集。
+
+攻击图生成项目保持外部独立。本仓库只通过 `AttackGraph.xml` 接收结果。
+
+## 2. 当前已经完成的内容
+
+| 状态 | 内容 | 位置 |
+| --- | --- | --- |
+| 已完成 | 从 `AttackGraph.xml` 解析 NetworkX 有向图 | `stage2/graph_parser.py` |
+| 已完成 | 显式反转为“条件 → 规则 → 结果”方向 | `stage2/graph_parser.py` |
+| 已完成 | 识别所有 `vulExists` 节点 | `stage2/context_extractor.py` |
+| 已完成 | 分离 `local_context` 与 `graph_context` | `stage2/context_extractor.py` |
+| 已完成 | 保留全部上游 producer rules，不任意取第一条 | `stage2/path_expander.py` |
+| 已完成 | 标记当前利用边界、循环和深度截断 | `stage2/path_expander.py` |
+| 已完成 | 版本化 JSON、原子写入和终端进度 | `stage2/pipeline.py` |
+| 已完成 | 44 节点、52 边、2 CVE 的固定回归样例 | `tests/fixtures/mulval/` |
+| 未完成 | 接入第一阶段 `CandidateRecord` | 工作包 1 |
+| 未完成 | 确定性上下文重排序 | 工作包 2 |
+| 未完成 | 闭环场景与前后对比评价 | 工作包 3 |
+| 未完成 | 可复现实验报告 | 工作包 4 |
+
+现有提取命令：
+
+```bash
+.venv/bin/python -m cve2attack extract-graph-context \
+  --attack-graph tests/fixtures/mulval/AttackGraph.xml \
+  --output stage2_runs/example/contexts.json \
+  --max-graph-depth 2
+```
+
+详细参数和 JSON 字段见 `docs/stage2_graph_context.md`。
+
+## 3. 最终最小闭环
+
+```text
+第一阶段已完成 run
+└── runs/<stage1_run>/candidates/*.jsonl
+                    │
+                    ├──────────────┐
+                    ▼              ▼
+             CandidateRecord   AttackGraph.xml
+                    │              │
+                    └──────┬───────┘
+                           ▼
+                 CVE ID 对齐与输入校验
+                           │
+                           ▼
+                 确定性图上下文重排序
+                           │
+                           ▼
+                  stage2_runs/<run_id>/
+                  ├── manifest.json
+                  ├── contexts.json
+                  ├── reranked_candidates.jsonl
+                  ├── metrics.json
+                  └── report.md
+```
+
+闭环的主要对照只有两组：
+
+- Baseline：第一阶段候选的原始排名。
+- Stage 2：候选集合不变，仅使用图上下文重新排序。
+
+候选集合保持不变非常重要。否则无法区分提升来自第一阶段召回，还是来自第二阶段
+上下文判断。
+
+## 4. 必做工作包和验收标准
+
+### 工作包 1：接入第一阶段候选
+
+目标：把图中的 CVE 与第一阶段 `CandidateRecord` 一一对齐，形成正式第二阶段输入。
+
+计划实现：
+
+- 新增 `src/cve2attack/stage2/candidate_joiner.py`。
+- 复用 `src/cve2attack/schemas.py`，不得建立不兼容的候选格式。
+- 支持读取标准 run 目录中的年度候选 JSONL。
+- 将历史 `CAN-...` 规范为 `CVE-...` 后再连接。
+- 明确报告 matched、missing candidate、missing graph context 和 duplicate CVE。
+- 新增命令行 `build-stage2-input`，输出运行进度和统计。
+
+验收标准：
+
+- [ ] 固定样例可以接入一个小型 Top-20 候选文件。
+- [ ] 每个匹配 CVE 同时包含 context 和原始有序 candidates。
+- [ ] 缺失或重复输入不会被静默忽略。
+- [ ] 候选 ID、原始分数、来源和 metadata 不丢失。
+- [ ] 单元测试覆盖标准格式、历史 CAN ID、缺失候选和重复记录。
+
+### 工作包 2：确定性上下文重排序基线
+
+目标：先证明图上下文在不训练模型的情况下能够改变并解释候选顺序。
+
+计划实现：
+
+- 新增 `src/cve2attack/stage2/reranker.py`。
+- 保留第一阶段原始 rank 和 score。
+- 从图中提取可解释特征，例如：
+  - 攻击者是否从外部网络进入；
+  - 当前动作是跨主机还是同主机；
+  - 是否依赖已有代码执行、账户或权限；
+  - 后果是代码执行、权限变化、文件访问还是网络可达；
+  - 当前节点处于初始进入、横向移动还是本地后续动作。
+- 为每个候选记录各特征贡献和最终上下文分数。
+- 分数相同时使用原始名次和 Technique ID 做确定性 tie break。
+
+首个基线不训练权重。规则和权重必须写在版本化配置中，不能根据测试标签逐例修改。
+
+验收标准：
+
+- [ ] 相同输入多次运行得到完全相同的排名。
+- [ ] 候选数量和候选集合与第一阶段一致。
+- [ ] 每个名次变化都有机器可读的分数明细和文字理由。
+- [ ] 支持关闭单个上下文特征做消融。
+- [ ] 测试覆盖外部进入、横向移动和本地权限三个合成场景。
+
+### 工作包 3：毕设闭环场景和统一评价
+
+目标：回答第二阶段是否比第一阶段原始 Top-1 更适合当前攻击图上下文。
+
+最小场景集：
+
+1. 外部攻击者直接利用公开服务。
+2. 已控制一台主机后跨主机横向移动。
+3. 已在本机获得低权限后进行本地权限提升。
+
+优先使用公开 benchmark 中已有标签的 CVE，不为评价结果临时创造新标签。每个场景都
+保存攻击图输入、第一阶段候选 run、预期标签来源和生成命令。
+
+统一报告：
+
+- Stage-1 Top-1 命中率。
+- Stage-2 Top-1 命中率。
+- Stage-1 与 Stage-2 的 Top-3、MRR。
+- 正确标签上升、下降、不变的 CVE 数量。
+- 因第一阶段 Top-20 不含正确标签而无法挽救的数量。
+- 每个场景单独结果，不只报告混合平均值。
+
+验收标准：
+
+- [ ] 至少三个场景可以从命令行端到端重现。
+- [ ] 原始排名与重排结果使用完全相同的候选集合。
+- [ ] 报告同时展示提升案例和退化案例。
+- [ ] 不把 Top-20 召回不足错误归因于第二阶段。
+- [ ] 测试和评价命令都不需要调用 LLM。
+
+### 工作包 4：运行目录、报告和文档收口
+
+目标：让毕设实验可以由其他人或 Agent 独立复现。
+
+计划实现：
+
+- 每次运行写入独立 `stage2_runs/<run_id>/`，默认不覆盖。
+- `manifest.json` 保存 Git commit、输入攻击图哈希、第一阶段 run、配置和状态。
+- `metrics.json` 保存原始数值，`report.md` 保存可读表格和案例。
+- 更新 `AGENTS.md`、`README.md` 和本指南中的最终命令。
+
+验收标准：
+
+- [ ] 从干净 checkout 按文档可以重现样例和报告。
+- [ ] 全部第一、第二阶段快速测试通过。
+- [ ] 失败运行留下可诊断的 manifest，不产生看似完成的半成品。
+- [ ] 结果目录不进入 Git，实验配置和固定测试输入进入 Git。
+
+## 5. 目标数据契约
+
+上下文提取记录已经包含预留的 `candidates` 数组。工作包 1 接入后，每个 CVE 的
+核心结构保持为：
+
+```json
+{
+  "schema_version": "1.0",
+  "cve_id": "CVE-2021-XXXX",
+  "local_context": {},
+  "graph_context": {},
+  "candidates": [
+    {
+      "technique_id": "T1190",
+      "score": 0.61,
+      "sources": ["embedding"],
+      "metadata": {}
+    }
+  ]
+}
+```
+
+重排结果不能覆盖原始字段，应增加：
+
+```json
+{
+  "original_rank": 4,
+  "original_score": 0.61,
+  "context_score": 0.35,
+  "final_score": 0.72,
+  "reranked_rank": 1,
+  "context_evidence": []
+}
+```
+
+具体 schema 在实现前用单元测试固定。后续修改字段时必须升级版本或保持向后兼容。
+
+## 6. 评价循环和标签泄漏防线
+
+攻击图生成过程可能根据 CVE 描述、CWE 或默认规则产生
+`remoteExploit`、`localExploit`、`privEscalation` 等字段。如果重排序直接使用这些
+字段，再用相同来源构建的 CVE → ATT&CK 标签评价，可能形成循环证据。
+
+因此结果至少分成两组：
+
+1. `topology_only`：只使用主机关系、端口、已有状态、跨主机路径和结果节点。
+2. `with_target_semantics`：额外使用 exploit type 和 expected impact，作为消融结果。
+
+论文主张优先建立在 `topology_only` 上。`with_target_semantics` 只能说明加入目标语义
+后的变化，不能被描述为完全独立的图证据。
+
+同样禁止：
+
+- 使用 benchmark 真实 Technique 调整单个 CVE 的规则或权重。
+- 把攻击图生成器的默认 `remoteExploit + privEscalation` 当成人工真值。
+- 只展示提升样例而删除退化样例。
+- 将第一阶段没有召回正确答案的案例计为重排序模型可以解决的问题。
+
+## 7. 暂缓的论文增强项
+
+完成四个必做工作包后，才按证据决定是否增加：
+
+- LLM 对 Top-20 候选做上下文判断。
+- 学习排序权重。
+- GNN 或路径编码模型。
+- 更多攻击图和更深路径。
+- 与其他第二阶段方法进行大规模比较。
+
+增加条件：确定性基线已经稳定、评价数据足够、增强项能回答明确研究问题。不能只因
+方法复杂或“看起来像论文”而加入。
+
+## 8. Git 和 worktree 规则
+
+当前两个工作目录属于同一个 Git 仓库：
+
+| 工作目录 | 分支 | 用途 |
+| --- | --- | --- |
+| `~/Code/cve2attack` | `refactor/new-method-stage1` | 第一阶段继续实验 |
+| `~/Code/cve2attack-stage2` | `feat/full-pipeline-stage2` | 第二阶段和完整流程整合 |
+
+执行第二阶段任务时只修改 `~/Code/cve2attack-stage2`。不要切换第一阶段工作树的
+分支，不要移动或清理它的 rewrite cache。
+
+如果第一阶段分支产生新提交：
+
+1. 先确认两个 worktree 都没有未提交源码修改。
+2. 在第二阶段分支合并 `refactor/new-method-stage1`。
+3. 解决公共文件冲突，重点检查 `schemas.py`、`cli.py`、`pyproject.toml` 和文档。
+4. 运行全部测试后再继续第二阶段开发。
+
+最终合并到 `main` 前，先在完整整合分支保留并验证 `main` 中的旧分层第一阶段方法，
+不能用新方法直接覆盖它。
+
+旧仓库 `/home/ghdemi/Code/ldh_attackgraph/mapInGraph` 暂时只作为历史参考。新代码验证
+完成前不删除；后续只添加“已迁移”说明，不在两个仓库同时维护实现。
+
+## 9. 文件修改导航
+
+| 要修改的功能 | 主要文件 |
+| --- | --- |
+| XML 节点、边或方向解析 | `src/cve2attack/stage2/graph_parser.py` |
+| 上游分支、循环和边界行为 | `src/cve2attack/stage2/path_expander.py` |
+| local/graph context 字段 | `src/cve2attack/stage2/context_extractor.py` |
+| 上下文输出与进度 | `src/cve2attack/stage2/pipeline.py` |
+| 第一阶段候选格式 | `src/cve2attack/schemas.py` |
+| 第一、第二阶段连接 | 计划新增 `stage2/candidate_joiner.py` |
+| 上下文重排序 | 计划新增 `stage2/reranker.py` |
+| 命令行参数 | `src/cve2attack/cli.py` |
+| 固定图回归 | `tests/test_stage2_context.py`、`tests/fixtures/mulval/` |
+| 第二阶段结构和格式说明 | `docs/stage2_graph_context.md` |
+| 总体进度和下一步 | 本文档 `STAGE2_PLAN.md` |
+
+## 10. 下一次开发从哪里开始
+
+下一工作包是“接入第一阶段候选”，执行顺序固定为：
+
+1. 读取 `CandidateRecord` 和 run 目录格式。
+2. 定义 joined record 的单元测试和最小样例。
+3. 实现 CVE ID 对齐、覆盖统计和严格错误检查。
+4. 增加 `build-stage2-input` 命令和进度输出。
+5. 用现有两个 CVE 的 MulVAL 样例完成冒烟测试。
+6. 完整测试通过后单独提交。
+
+工作包 1 完成前，不开始设计 LLM prompt，也不调重排序权重。
