@@ -27,7 +27,7 @@ from cve2attack.pipeline import (
 from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
-from cve2attack.stage2.pipeline import run_context_extraction
+from cve2attack.stage2.pipeline import run_context_extraction, run_stage2_experiment
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -184,6 +184,46 @@ def _parser() -> argparse.ArgumentParser:
         "--force",
         action="store_true",
         help="Replace an existing output file instead of failing",
+    )
+
+    stage2_run = subparsers.add_parser(
+        "run-stage2",
+        help="Join stage-1 candidates with one attack graph and run topology-only reranking",
+    )
+    stage2_run.add_argument(
+        "--stage1-run",
+        required=True,
+        type=Path,
+        help="Completed stage-1 run directory containing candidate JSONL files",
+    )
+    stage2_run.add_argument(
+        "--attack-graph",
+        required=True,
+        type=Path,
+        help="MulVAL AttackGraph.xml path",
+    )
+    stage2_run.add_argument(
+        "--benchmark",
+        required=True,
+        help="Benchmark directory name under data/benchmarks used only for after-the-fact evaluation",
+    )
+    stage2_run.add_argument("--run-id", required=True, help="Unique directory name under output-root")
+    stage2_run.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("stage2_runs"),
+        help="Stage-2 output root (default: stage2_runs)",
+    )
+    stage2_run.add_argument(
+        "--scenario-kind",
+        default="synthetic_topology_smoke",
+        help="Provenance label written to the manifest and report",
+    )
+    stage2_run.add_argument(
+        "--max-graph-depth",
+        type=int,
+        default=2,
+        help="Maximum upstream evidence expansion depth (default: 2)",
     )
     return parser
 
@@ -393,6 +433,31 @@ def main(argv: Sequence[str] | None = None) -> None:
             output,
             max_graph_depth=args.max_graph_depth,
             overwrite=args.force,
+        )
+        print(path)
+        return
+
+    if args.command == "run-stage2":
+        stage1_run = (
+            args.stage1_run if args.stage1_run.is_absolute() else PROJECT_ROOT / args.stage1_run
+        )
+        attack_graph = (
+            args.attack_graph
+            if args.attack_graph.is_absolute()
+            else PROJECT_ROOT / args.attack_graph
+        )
+        output_root = (
+            args.output_root if args.output_root.is_absolute() else PROJECT_ROOT / args.output_root
+        )
+        path = run_stage2_experiment(
+            stage1_run=stage1_run,
+            attack_graph_path=attack_graph,
+            benchmark_dir=PROJECT_ROOT / "data" / "benchmarks" / args.benchmark,
+            output_root=output_root,
+            run_id=args.run_id,
+            project_root=PROJECT_ROOT,
+            scenario_kind=args.scenario_kind,
+            max_graph_depth=args.max_graph_depth,
         )
         print(path)
         return

@@ -81,6 +81,23 @@ boundary, so the package does not depend on the old parent directory or on a
 specific MulVAL installation. See `docs/stage2_graph_context.md` for the JSON
 contract and module responsibilities.
 
+Run the first stage-1 -> graph context -> deterministic reranking smoke loop:
+
+```bash
+PYTHONPATH=src ../cve2attack/.venv/bin/python -m cve2attack run-stage2 \
+  --stage1-run /home/ghdemi/Code/cve2attack/runs/triage_rrf_v1_v3a_d50_k60_top20 \
+  --attack-graph tests/fixtures/stage2/public_facing/AttackGraph.xml \
+  --benchmark triage_2025_test_all \
+  --run-id cve_2023_20887_public_facing_smoke \
+  --scenario-kind synthetic_public_facing_smoke
+```
+
+This fixture uses a real CVE, real stage-1 Top-20 candidates and public TRIAGE
+labels, but its network topology is synthetic. It validates the engineering
+loop and must not be presented as independent aggregate accuracy evidence.
+Each run writes contexts, joined records, reranked records, metrics, a manifest
+and a readable report under `stage2_runs/<run_id>/`.
+
 ## Compare runs
 
 ```bash

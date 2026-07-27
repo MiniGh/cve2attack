@@ -17,6 +17,7 @@ from cve2attack.stage2.graph_parser import (
     reverse_for_analysis,
     summarize_graph,
 )
+from cve2attack.stage2.pipeline import run_stage2_experiment
 
 __all__ = [
     "CONTEXT_SCHEMA_VERSION",
@@ -26,4 +27,5 @@ __all__ = [
     "parse_xml_to_graph",
     "reverse_for_analysis",
     "summarize_graph",
+    "run_stage2_experiment",
 ]

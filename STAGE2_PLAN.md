@@ -47,9 +47,9 @@
 | 已完成 | 标记当前利用边界、循环和深度截断 | `stage2/path_expander.py` |
 | 已完成 | 版本化 JSON、原子写入和终端进度 | `stage2/pipeline.py` |
 | 已完成 | 44 节点、52 边、2 CVE 的固定回归样例 | `tests/fixtures/mulval/` |
-| 未完成 | 接入第一阶段 `CandidateRecord` | 工作包 1 |
-| 未完成 | 确定性上下文重排序 | 工作包 2 |
-| 未完成 | 闭环场景与前后对比评价 | 工作包 3 |
+| 已完成（最小闭环） | 接入第一阶段 `CandidateRecord`，报告缺失、未解析和重复输入 | `stage2/candidate_joiner.py` |
+| 已完成（v1 基线） | topology-only 确定性重排序，候选集合和原始分数不变 | `stage2/reranker.py` |
+| 进行中 | 已完成一个合成公开服务场景；横向移动和本地提权场景待补 | 工作包 3 |
 | 未完成 | 可复现实验报告 | 工作包 4 |
 
 现有提取命令：
@@ -99,34 +99,34 @@
 
 ## 4. 必做工作包和验收标准
 
-### 工作包 1：接入第一阶段候选
+### 工作包 1：接入第一阶段候选（最小闭环已完成）
 
 目标：把图中的 CVE 与第一阶段 `CandidateRecord` 一一对齐，形成正式第二阶段输入。
 
 计划实现：
 
-- 新增 `src/cve2attack/stage2/candidate_joiner.py`。
+- 已新增 `src/cve2attack/stage2/candidate_joiner.py`。
 - 复用 `src/cve2attack/schemas.py`，不得建立不兼容的候选格式。
 - 支持读取标准 run 目录中的年度候选 JSONL。
 - 将历史 `CAN-...` 规范为 `CVE-...` 后再连接。
 - 明确报告 matched、missing candidate、missing graph context 和 duplicate CVE。
-- 新增命令行 `build-stage2-input`，输出运行进度和统计。
+- 当前由 `run-stage2` 在完整流程内调用并输出统计；只有出现独立复用需求时才拆出 `build-stage2-input`。
 
 验收标准：
 
-- [ ] 固定样例可以接入一个小型 Top-20 候选文件。
-- [ ] 每个匹配 CVE 同时包含 context 和原始有序 candidates。
-- [ ] 缺失或重复输入不会被静默忽略。
-- [ ] 候选 ID、原始分数、来源和 metadata 不丢失。
-- [ ] 单元测试覆盖标准格式、历史 CAN ID、缺失候选和重复记录。
+- [x] 固定样例可以接入一个小型候选文件，真实冒烟使用完整 Top-20。
+- [x] 每个匹配 CVE 同时包含 context 和原始有序 candidates。
+- [x] 缺失、未解析或重复输入不会被静默忽略。
+- [x] 候选 ID、原始分数、来源和 metadata 不丢失。
+- [x] 测试覆盖标准格式、历史 CAN 规范化、缺失候选和重复记录。
 
-### 工作包 2：确定性上下文重排序基线
+### 工作包 2：确定性上下文重排序基线（v1 已完成）
 
 目标：先证明图上下文在不训练模型的情况下能够改变并解释候选顺序。
 
 计划实现：
 
-- 新增 `src/cve2attack/stage2/reranker.py`。
+- 已新增 `src/cve2attack/stage2/reranker.py`，规则集版本为 `topology-rule-priority-v1`。
 - 保留第一阶段原始 rank 和 score。
 - 从图中提取可解释特征，例如：
   - 攻击者是否从外部网络进入；
@@ -141,11 +141,11 @@
 
 验收标准：
 
-- [ ] 相同输入多次运行得到完全相同的排名。
-- [ ] 候选数量和候选集合与第一阶段一致。
-- [ ] 每个名次变化都有机器可读的分数明细和文字理由。
+- [x] 相同输入多次运行得到完全相同的排名。
+- [x] 候选数量和候选集合与第一阶段一致，原始 score 不覆盖。
+- [x] 每个名次变化都有机器可读的原名次、新名次、规则、证据和理由。
 - [ ] 支持关闭单个上下文特征做消融。
-- [ ] 测试覆盖外部进入、横向移动和本地权限三个合成场景。
+- [x] 单元测试覆盖外部进入、横向移动和本地权限三类拓扑规则。
 
 ### 工作包 3：毕设闭环场景和统一评价
 
@@ -176,6 +176,17 @@
 - [ ] 报告同时展示提升案例和退化案例。
 - [ ] 不把 Top-20 召回不足错误归因于第二阶段。
 - [ ] 测试和评价命令都不需要调用 LLM。
+
+当前已完成第一条工程纵向闭环：
+
+- CVE：`CVE-2023-20887`。
+- 第一阶段输入：`triage_rrf_v1_v3a_d50_k60_top20` 的真实 Top-20。
+- 标签：公开 `triage_2025_test_all` 中的 `T1059`、`T1190`。
+- 图：`tests/fixtures/stage2/public_facing/AttackGraph.xml`，明确标记为合成公开服务拓扑。
+- 行为：`public_facing_service` 只依据互联网入口、目标网络服务和主机关系优先 `T1190`。
+
+该案例用于工程验收，不进入独立总体准确率主张。横向移动和本地提权还需要各自的
+完整攻击图、真实 CVE 候选和公开标签。
 
 ### 工作包 4：运行目录、报告和文档收口
 
@@ -300,8 +311,9 @@
 | local/graph context 字段 | `src/cve2attack/stage2/context_extractor.py` |
 | 上下文输出与进度 | `src/cve2attack/stage2/pipeline.py` |
 | 第一阶段候选格式 | `src/cve2attack/schemas.py` |
-| 第一、第二阶段连接 | 计划新增 `stage2/candidate_joiner.py` |
-| 上下文重排序 | 计划新增 `stage2/reranker.py` |
+| 第一、第二阶段连接 | `src/cve2attack/stage2/candidate_joiner.py` |
+| 上下文重排序 | `src/cve2attack/stage2/reranker.py` |
+| 重排前后评价 | `src/cve2attack/stage2/evaluation.py` |
 | 命令行参数 | `src/cve2attack/cli.py` |
 | 固定图回归 | `tests/test_stage2_context.py`、`tests/fixtures/mulval/` |
 | 第二阶段结构和格式说明 | `docs/stage2_graph_context.md` |
@@ -309,13 +321,14 @@
 
 ## 10. 下一次开发从哪里开始
 
-下一工作包是“接入第一阶段候选”，执行顺序固定为：
+候选接入和第一条公开服务纵向闭环已经完成。下一步是把上下文提取与重排验证扩展到
+剩余两个场景，执行顺序为：
 
-1. 读取 `CandidateRecord` 和 run 目录格式。
-2. 定义 joined record 的单元测试和最小样例。
-3. 实现 CVE ID 对齐、覆盖统计和严格错误检查。
-4. 增加 `build-stage2-input` 命令和进度输出。
-5. 用现有两个 CVE 的 MulVAL 样例完成冒烟测试。
-6. 完整测试通过后单独提交。
+1. 从公开 benchmark 和已有 Top-20 run 中各选择一个横向移动、本地提权真实 CVE。
+2. 为两者构造并明确标记合成拓扑，写出预期 local/graph context。
+3. 增加攻击图级回归，而不仅是手写字典的规则单元测试。
+4. 分别运行 `run-stage2`，检查候选集合、前后名次、退化案例和解释证据。
+5. 加入 `no_context / local_context / full_graph_context` 消融开关。
+6. 三场景通过后再汇总毕设闭环报告。
 
-工作包 1 完成前，不开始设计 LLM prompt，也不调重排序权重。
+三场景和消融完成前，不开始设计 LLM prompt，也不根据测试标签调重排序规则。

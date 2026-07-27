@@ -1,0 +1,17 @@
+scenario_id: cve_2023_20887_public_facing_smoke
+scenario_kind: synthetic_public_facing_smoke
+cve_id: CVE-2023-20887
+target_product: VMware Aria Operations for Networks
+source_description: >-
+  The tracked CVE record describes command injection reachable with network
+  access and resulting in remote code execution.
+topology_intent: >-
+  A synthetic internet-origin connection reaches the target network service.
+  The graph is an engineering fixture, not an observed production network.
+expected_topology_rule: public_facing_service
+expected_priority_technique: T1190
+label_source: data/benchmarks/triage_2025_test_all
+stage1_source: runs/triage_rrf_v1_v3a_d50_k60_top20
+claim_boundary: >-
+  This fixture validates joining, deterministic behavior and reporting. It
+  must not be included as independent aggregate evidence for paper accuracy.

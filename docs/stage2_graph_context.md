@@ -78,7 +78,31 @@ MulVAL 中 `vulExists` 是利用规则的一个前提，不是攻击事件节点
 - `vulnerability_id_raw`：攻击图中的原始漏洞标识。
 - `local_context`：目标主机、服务、利用类型、影响、直接前提、规则和后果。
 - `graph_context`：直接前提的全部上游证据分支。
-- `candidates`：预留给下一工作包接入第一阶段 `CandidateRecord`，当前为空数组。
+- `candidates`：单独执行 `extract-graph-context` 时为空；`run-stage2` 会填入第一阶段 `CandidateRecord`。
 
 `exploit_type` 和 `expected_impact` 来自攻击图生成时的漏洞语义。在最终实验中需要
 与纯拓扑上下文分别做消融，避免把由 CVE 描述生成的标签重新当作独立证据。
+
+## 最小闭环
+
+`run-stage2` 会读取一个已有第一阶段 run，用规范化 CVE ID 填充 `candidates`，然后
+执行 `topology-rule-priority-v1`。该规则集当前识别：
+
+- `public_facing_service` → 优先 `T1190`；
+- `lateral_remote_service` → 优先 `T1210`；
+- `local_privilege_transition` → 优先 `T1068`。
+
+这些规则只读取拓扑事实，不读取 `exploit_type`、`expected_impact` 或 benchmark 标签。
+匹配候选被移到非匹配候选之前，两组内部都保留第一阶段顺序。原候选 `score` 不覆盖，
+原名次、新名次、规则和证据写入 `metadata.stage2`。
+
+当前固定公开服务场景位于：
+
+```text
+tests/fixtures/stage2/public_facing/
+├── AttackGraph.xml
+└── scenario.yaml
+```
+
+它使用真实 `CVE-2023-20887`，但拓扑是工程合成输入；只能验证链路，不能直接作为
+独立实验准确率证据。

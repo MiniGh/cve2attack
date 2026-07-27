@@ -105,9 +105,12 @@ runs/<run_id>/
 │   │   ├── triage.py
 │   │   └── report.py
 │   └── stage2/
+│       ├── candidate_joiner.py
+│       ├── evaluation.py
 │       ├── graph_parser.py
 │       ├── path_expander.py
 │       ├── context_extractor.py
+│       ├── reranker.py
 │       └── pipeline.py
 ├── tests/
 │   └── fixtures/mulval/AttackGraph.xml
@@ -156,6 +159,7 @@ runs/<run_id>/
 - `diagnose-triage`：在同一 60-CVE/143-parent-label 口径下，对完整排名 run、SMET 和 TRIAGE 做候选互补性诊断。
 - `fuse-rrf`：读取多个已完成 run，仅使用候选名次执行无训练 Reciprocal Rank Fusion，并写出受控 Top-K 标准 run。
 - `extract-graph-context`：读取 MulVAL `AttackGraph.xml`，输出带版本号的局部上下文与完整上游证据分支。
+- `run-stage2`：读取已有第一阶段 run 和一张攻击图，连接 `CandidateRecord`、执行 topology-only 确定性重排序并输出前后评价。
 
 `src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
 
@@ -331,8 +335,11 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 - `path_expander.py`：展开 OR 状态的全部 producer rules；不再任意选择第一条路径。
 - `context_extractor.py`：为每个 `vulExists` 分别生成直接的 `local_context` 和上游 `graph_context`。
 - `pipeline.py`：组织文件读写、原子输出和终端进度。
+- `candidate_joiner.py`：按规范化 CVE ID 连接第一阶段候选与图上下文，并报告缺失、未解析和重复输入。
+- `reranker.py`：实现不使用目标语义字段和标签的 `topology-rule-priority-v1` 基线。
+- `evaluation.py`：在候选集合不变的前提下比较 Top-1/3/5、MRR 和正确标签名次。
 
-攻击图生成器仍是外部组件，本仓库不依赖 `ldh_attackgraph` 父目录。固定回归输入复制在 `tests/fixtures/mulval/AttackGraph.xml`。当前上下文记录中的 `candidates` 是预留字段；下一工作包会用现有 `CandidateRecord` 填充并实现确定性重排序。详细数据契约见 `docs/stage2_graph_context.md`。
+攻击图生成器仍是外部组件，本仓库不依赖 `ldh_attackgraph` 父目录。原 MulVAL 固定回归输入复制在 `tests/fixtures/mulval/AttackGraph.xml`；最小闭环场景位于 `tests/fixtures/stage2/`。单独提取上下文时 `candidates` 为空，`run-stage2` 会用现有 `CandidateRecord` 填充并执行确定性重排序。详细数据契约见 `docs/stage2_graph_context.md`。
 
 ## 5. 测试结构
 
@@ -341,6 +348,7 @@ tests/
 ├── test_diagnostics.py
 ├── test_rrf.py
 ├── test_stage2_context.py
+├── test_stage2_closed_loop.py
 ├── test_schemas.py
 ├── test_retrieval.py
 ├── test_technique_kb.py
@@ -354,6 +362,7 @@ tests/
 - `test_diagnostics.py`：任意 cutoff、公开排名截断、正确标签 rank bin 和并集候选预算语义。
 - `test_rrf.py`：RRF 共识排序、内部来源深度、确定性 tie break 和非法权重校验。
 - `test_stage2_context.py`：MulVAL XML 解析、边方向、局部上下文、全部分支保留和文件输出契约。
+- `test_stage2_closed_loop.py`：候选接入、缺失/重复检查、三类 topology-only 规则、候选集合不变和端到端输出。
 
 ## 6. 数据目录与文件格式
 
@@ -1013,7 +1022,64 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
   --output stage2_runs/example/contexts.json
 ```
 
-该命令不加载 embedding 模型，也不调用 Ollama。输出包含图统计、每个漏洞的直接利用条件、全部上游分支以及预留的第一阶段候选字段。
+该命令不加载 embedding 模型，也不调用 Ollama。输出包含图统计、每个漏洞的直接利用条件和全部上游分支；候选字段保持为空，等待 `run-stage2` 接入第一阶段结果。
+
+### 11.13 `run-stage2`：运行第一、第二阶段最小闭环
+
+```bash
+PYTHONPATH=src ../cve2attack/.venv/bin/python -m cve2attack run-stage2 \
+  --stage1-run PATH \
+  --attack-graph PATH \
+  --benchmark NAME \
+  --run-id ID \
+  [--output-root PATH] \
+  [--scenario-kind NAME] \
+  [--max-graph-depth N]
+```
+
+参数：
+
+| 参数 | 必需 | 默认值 | 含义 |
+| --- | --- | --- | --- |
+| `--stage1-run PATH` | 是 | — | 已完成的第一阶段 run；可包含 `candidates/` 子目录或根目录年度 JSONL。 |
+| `--attack-graph PATH` | 是 | — | 本次场景的 MulVAL `AttackGraph.xml`。 |
+| `--benchmark NAME` | 是 | — | `data/benchmarks/` 下的公开标签目录，只在候选写出后用于评价。 |
+| `--run-id ID` | 是 | — | `output-root` 下的新目录名；只能是单个安全目录名且不能重复。 |
+| `--output-root PATH` | 否 | `stage2_runs` | 第二阶段运行根目录。 |
+| `--scenario-kind NAME` | 否 | `synthetic_topology_smoke` | 写入 manifest/report 的场景来源标识。 |
+| `--max-graph-depth N` | 否 | `2` | 上游图证据展开深度。 |
+
+流程会依次输出上下文提取、候选加载、CVE 连接、规则重排、公开标签评价和 manifest
+收口进度。它拒绝未完成的第一阶段 run、空 benchmark、零个可评价 CVE 和已存在的
+输出目录。候选集合保持不变，`score` 保留第一阶段值；重排名次和证据写入 candidate
+metadata 的 `stage2` 字段。
+
+当前工程冒烟示例：
+
+```bash
+PYTHONPATH=src ../cve2attack/.venv/bin/python -m cve2attack run-stage2 \
+  --stage1-run /home/ghdemi/Code/cve2attack/runs/triage_rrf_v1_v3a_d50_k60_top20 \
+  --attack-graph tests/fixtures/stage2/public_facing/AttackGraph.xml \
+  --benchmark triage_2025_test_all \
+  --run-id cve_2023_20887_public_facing_smoke \
+  --scenario-kind synthetic_public_facing_smoke
+```
+
+该场景使用真实 CVE、真实第一阶段候选和公开标签，但攻击图拓扑是人工合成的，只用于
+证明链路、确定性行为和报告正确，不能作为独立总体准确率证据。
+
+输出目录：
+
+```text
+stage2_runs/<run_id>/
+├── manifest.json
+├── contexts.json
+├── join_stats.json
+├── joined_records.jsonl
+├── reranked_records.jsonl
+├── metrics.json
+└── report.md
+```
 
 ## 12. 常用使用流程
 
