@@ -1,0 +1,102 @@
+schema_version: "1.0"
+updated_at: "2026-07-27"
+
+sources:
+  attackmate:
+    status: partially_available
+    upstream_repository:
+      url: https://github.com/ait-testbed/attackmate
+      commit: d2edd8bfbb4d18bf4788f222022fe8c73d8fb58f
+      license: GPL-3.0
+      local_path: attackmate/repository
+      acquisition: shallow_clone_over_ssh
+    evaluation_dataset:
+      url: https://zenodo.org/records/19810174
+      doi: 10.5281/zenodo.19810174
+      version: v4
+      license: CC-BY-4.0
+      status: not_downloaded_network_restricted
+      expected_archives:
+        - name: playbooks.zip
+          size: 7.0_kB
+          md5: 6a1dd5cf1a89d85915065124ab8ee08a
+        - name: attackbed.zip
+          size: 10.0_kB
+          md5: 9d10fe2fcb07a764e0115ceb119628aa
+    repository_summary:
+      yaml_examples: 13
+      attack_annotated_steps: 35
+      distinct_technique_ids: 30
+      explicit_cve_ids:
+        - CVE-2012-1823
+    candidate_cases:
+      - cve_id: CVE-2012-1823
+        example: examples/webserv.yml
+        cve_link_type: explicit_in_playbook
+        attackmate_techniques: [T1190, T1059.004]
+        data_result_techniques: [T1059]
+        relation_after_parent_normalization: partial_overlap
+        stage1_rrf_60_status: missing
+      - cve_id: CVE-2010-3856
+        example: examples/http-put_example.yml
+        cve_link_type: inferred_from_named_metasploit_module_and_verified_with_nvd
+        metasploit_module: exploit/linux/local/glibc_ld_audit_dso_load_priv_esc
+        attackmate_techniques: [T1068]
+        data_result_techniques: [T1068, T1548, T1574]
+        relation_after_parent_normalization: partial_overlap
+        stage1_rrf_60_status: missing
+      - cve_id: CVE-2010-2075
+        example: examples/upgrade_to_meterpreter.yml
+        cve_link_type: inferred_from_named_metasploit_module_and_verified_with_nvd
+        metasploit_module: exploit/unix/irc/unreal_ircd_3281_backdoor
+        attackmate_techniques: [T1190, T1059.004, T1195.002]
+        data_result_techniques: [T1059]
+        relation_after_parent_normalization: partial_overlap
+        stage1_rrf_60_status: missing
+      - cve_id: CVE-2011-2523
+        example: examples/include.yml
+        cve_link_type: inferred_from_named_metasploit_module_and_verified_with_nvd
+        metasploit_module: exploit/unix/ftp/vsftpd_234_backdoor
+        attackmate_techniques: [T1190, T1195.002, T1059.004]
+        data_result_techniques: [T1205]
+        relation_after_parent_normalization: conflict
+        stage1_rrf_60_status: missing
+    suitability:
+      usable_now_for:
+        - controlled_scenario_seed
+        - annotation_disagreement_analysis
+        - public_facing_and_local_privilege_context_tests
+      not_sufficient_for:
+        - final_external_benchmark
+        - vulnerability_driven_lateral_movement_evaluation
+        - direct_mulval_regression_without_conversion
+
+  mantis:
+    status: authentication_required
+    portal_url: https://app.mantis-platform.io/
+    documentation_url: https://mantis-platform.io/blog/free-access-datasets.html
+    acquisition: user_registration_and_authenticated_download
+    local_path: mantis/downloads
+    documented_export_fields:
+      - manifest_with_attack_tactics_and_techniques
+      - topology_yaml
+      - asset_json
+      - attack_graph
+      - redteam_reports_attacks_json
+      - redteam_reports_sessions_json
+      - logs_and_pcaps
+    unknown_until_download:
+      - cve_identifiers
+      - cve_to_attack_step_alignment
+      - mulval_conversion_cost
+    suitability: promising_but_unverified
+
+overall_assessment:
+  enough_to_begin_conversion: true
+  enough_for_final_external_evaluation: false
+  blocking_next_input: one_small_authenticated_mantis_dataset
+  next_actions:
+    - obtain_the_smallest_available_mantis_attack_or_scenario_zip
+    - inventory_cve_and_attack_step_fields_without_loading_pcaps
+    - generate_stage1_candidates_for_the_four_attackmate_cves
+    - convert_only_cases_with_independent_cve_and_attack_labels

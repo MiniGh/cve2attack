@@ -1,0 +1,8 @@
+# Third-party archives and extracted repositories are reproducible inputs, not
+# project source. Keep their provenance in source_inventory.yaml instead of
+# committing copies with different upstream licenses or large binary logs.
+*/raw/
+*/extracted/
+*/repository/
+*/downloads/
+*.zip
