@@ -1,0 +1,27 @@
+name: v5c_raw_action_rank_rrf
+description: Raw CVE description against individual ATT&CK actions, aggregated by fixed rank RRF.
+input:
+  mode: benchmark
+  benchmark: cve2attack_result
+query:
+  strategy: raw_description
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  min_chars: 20
+  max_chars: 1200
+  # Strict leave-one-CVE-out; direct procedure references are only audited,
+  # never used to score the same CVE.
+  exclude_query_cve_actions: true
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: rank_rrf
+  aggregation_top_m: 3
+  rank_constant: 60
+  top_k: 20
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

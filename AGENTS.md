@@ -13,7 +13,12 @@
 
 两者是第一阶段的两种独立实现，不是前后相接的两个阶段。本文档描述的是重构后的 `new_method` 方法。
 
-当前选定方案为 V3a：
+V3a 曾是重构时选定的主方案；动作级方法出现前，TRIAGE 同口径诊断显示 V1 是最强
+单路 Top-20 基线。当前探索结果中，严格 leave-one-CVE-out 的 V5c 动作级检索达到
+Micro Recall@20 60.14%，V3a 保留为查询视角和消融项。该结果仍需多 benchmark 验证；
+当前研究判断、下一工作包和验收标准见根目录 `STAGE1_PLAN.md`。
+
+V3a 的处理流程为：
 
 1. 读取 CVE 描述和 CWE 信息。
 2. 使用 `sec-i1-cve-rewrite:v1` 将漏洞描述改写为 ATT&CK 风格的攻击者动作描述。
@@ -62,6 +67,7 @@ runs/<run_id>/
 .
 ├── AGENTS.md
 ├── README.md
+├── STAGE1_PLAN.md
 ├── pyproject.toml
 ├── experiments/
 │   ├── diagnostics/
@@ -90,6 +96,8 @@ runs/<run_id>/
 │   │   └── pipeline.py
 │   ├── retrieval/
 │   │   ├── embedder.py
+│   │   ├── action_generator.py
+│   │   ├── action_kb.py
 │   │   ├── generator.py
 │   │   └── technique_kb.py
 │   ├── fusion/
@@ -97,6 +105,7 @@ runs/<run_id>/
 │   │   └── structured_chain.py
 │   └── evaluation/
 │       ├── diagnostics.py
+│       ├── action_overlap.py
 │       ├── metrics.py
 │       ├── ranking.py
 │       ├── triage.py
@@ -117,6 +126,7 @@ runs/<run_id>/
 
 - `AGENTS.md`：项目结构和命令行参考，也就是本文档。
 - `README.md`：较简短的项目介绍和快速运行示例。
+- `STAGE1_PLAN.md`：第一阶段当前研究路线、工作包、实验边界和验收标准。
 - `pyproject.toml`：Python 包信息、依赖、可执行命令入口和测试配置。
 - `experiments/`：可复现的实验定义。这里只保存方法和参数，不保存实验结果。
 - `src/cve2attack/`：当前生效的项目代码。
@@ -145,6 +155,7 @@ runs/<run_id>/
 - `compare-triage`：在论文原始测试 split 上，将项目 run 与公开的 TRIAGE、SMET 预测统一复评并输出逐 CVE 分歧。
 - `diagnose-triage`：在同一 60-CVE/143-parent-label 口径下，对完整排名 run、SMET 和 TRIAGE 做候选互补性诊断。
 - `fuse-rrf`：读取多个已完成 run，仅使用候选名次执行无训练 Reciprocal Rank Fusion，并写出受控 Top-K 标准 run。
+- `audit-action-overlap`：审计某 benchmark CVE 与 ATT&CK procedure 文本中的直接编号重叠，不执行候选检索。
 
 `src/cve2attack/__main__.py` 使项目可以通过 `python -m cve2attack` 启动。安装项目后，也可以使用 `cve2attack-stage1` 命令，两种入口的功能相同。
 
@@ -155,13 +166,15 @@ runs/<run_id>/
 - 确定项目根目录 `PROJECT_ROOT`。
 - 定义实验配置的默认值 `DEFAULTS`。
 - 读取 YAML 并递归合并默认配置。
-- 校验 input、query 和 fusion 的 strategy 名称。
+- 校验 input、query、retrieval corpus、动作聚合和 fusion 的 strategy 名称。
 - 将配置中的相对路径解析为项目根目录下的路径。
 
 当前支持：
 
 - `input.mode`：`benchmark`、`full_enterprise`。
 - `query.strategy`：`raw_description`、`rewrite_cache`。
+- `retrieval.corpus`：`technique`、`action`。
+- `retrieval.aggregation`：动作语料支持 `max`、`rank_rrf`。
 - `fusion.strategy`：`none`、`structured_chain`。
 
 ### 4.3 流程编排：`pipeline.py`
@@ -274,7 +287,29 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 候选元数据会保存 Technique 名称和 tactics，候选来源标记为 `embedding`。
 
-### 4.10 结构化链融合：`fusion/structured_chain.py`
+### 4.10 动作级语料与检索：`retrieval/action_kb.py`、`action_generator.py`
+
+`action_kb.py` 将 ATT&CK 15.1 中每个父 Technique 描述、子技术描述和 `uses`
+relationship procedure 保存为独立 `ActionDocument`。子技术在检索后上卷到父 Technique；
+重复动作按规范化文本去重，但会合并所有原始 CVE/CAN 编号，以保证查询级排除完整。
+所有索引文本中的精确漏洞编号都替换为 `[VULNERABILITY]`。
+
+`action_generator.py` 复用 ATTACK-BERT 和批处理接口，维护独立、版本化且原子写入的 action
+embedding cache。它支持两种无训练 Technique 聚合：
+
+- `max`：Technique 分数取其最佳 action 相似度。
+- `rank_rrf`：按全 action 排名，对同一 Technique 最多累加前 `aggregation_top_m` 个
+  `1 / (rank_constant + action_rank)`。
+
+正式 V5 配置必须设置 `exclude_query_cve_actions: true`。每个查询会排除原始文本曾提及
+该 CVE 的全部 action；候选 metadata 保留最佳相似度、语料 action 数和可追溯 action
+证据，`CandidateRecord.metadata` 记录本查询实际排除数。语料构建、首次 embedding 和查询
+批处理均输出完成量、批次、耗时和 ETA。
+
+`evaluation/action_overlap.py` 只审计直接 CVE 重叠并写入 `comparisons/`，用于判断 procedure
+语料与 benchmark 是否存在显式交叉；它不参与候选打分。
+
+### 4.11 结构化链融合：`fusion/structured_chain.py`
 
 该模块实现 V4 使用的历史 CWE → CAPEC → ATT&CK 融合方法。
 
@@ -291,7 +326,7 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 `src/cve2attack/fusion/rrf.py` 实现多个已完成 run 的 Reciprocal Rank Fusion。它不比较原始相似度，而对每个来源名次累加 `weight / (rank_constant + rank)`。`source_depth` 控制每路参与融合的内部排名深度，`top_k` 控制最终交给下游阶段的候选预算。输出仍使用统一 `CandidateRecord`，并在每个候选的 metadata 中记录来源名次和逐来源贡献；run manifest 会保存全部参数、输入路径、输入 experiment、Git commit 和 resolved config。
 
-### 4.11 评估与报告：`evaluation/`
+### 4.12 评估与报告：`evaluation/`
 
 `src/cve2attack/evaluation/metrics.py` 在 benchmark 的完整 CVE 集合上计算：
 
@@ -319,12 +354,16 @@ tests/
 ├── test_diagnostics.py
 ├── test_rrf.py
 ├── test_schemas.py
+├── test_action_overlap.py
+├── test_action_retrieval.py
 ├── test_retrieval.py
 ├── test_technique_kb.py
 └── test_metrics.py
 ```
 
 - `test_schemas.py`：规范候选输出和历史格式兼容。
+- `test_action_retrieval.py`：动作文本清洗、子技术上卷、重复 action、LOO 排除、聚合和确定性排序。
+- `test_action_overlap.py`：ATT&CK procedure 与 benchmark 的直接 CVE/真值对重叠统计。
 - `test_retrieval.py`：使用假 Embedder 验证候选排序和结构。
 - `test_technique_kb.py`：父 Technique 筛选与 procedure 文本开关。
 - `test_metrics.py`：固定 benchmark cohort、缺失预测和覆盖率语义。
@@ -419,8 +458,16 @@ data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json
 | `v3a_llm_rewrite.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 | 无 |
 | `v3b_llm_rewrite_procedures.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 + procedures | 无 |
 | `v4_rewrite_chain.yaml` | sec-i1 Llama 3 模板 v1 改写 | 名称 + 描述 + procedures | structured chain |
+| `v5a_raw_action_max.yaml` | 原始 CVE 描述 | 独立 descriptions + procedures | action `max`，严格 LOO |
+| `v5b_rewrite_action_max.yaml` | sec-i1 改写 | 独立 descriptions + procedures | action `max`，严格 LOO |
+| `v5c_raw_action_rank_rrf.yaml` | 原始 CVE 描述 | 独立 descriptions + procedures | action Top-3 rank-RRF，严格 LOO |
+| `v5d_rewrite_action_rank_rrf.yaml` | sec-i1 改写 | 独立 descriptions + procedures | action Top-3 rank-RRF，严格 LOO |
 
 `experiments/diagnostics/` 中的四份 `*_fullranking.yaml` 不是新方法，而是 V1/V2/V3a/V3b 的诊断运行条件：输入固定为 `triage_2025_test_all`，`retrieval.top_k=202`，保存 ATT&CK 15.1 全部父 Technique 的排序。这样才能区分“正确标签在 21–50 位”和“正确标签在所有实用 Top-50 候选之外”。V3 诊断配置直接复用已经完成的 296-CVE rewrite cache，执行 `run` 时不会调用 Ollama。
+
+V5 诊断配置分三组：V5a–V5d 是未做查询级排除的泄漏敏感性消融；V5e–V5h 是只使用
+父/子技术描述、不含 procedure 的对照；V5i–V5l 是正式解释使用的严格 LOO 完整排名。
+根目录 V5a–V5d 正式 Top-20 配置则全部默认严格 LOO，不应与诊断目录中同前缀的消融混淆。
 
 ### 7.2 配置字段
 
@@ -445,8 +492,19 @@ technique_document:
   include_procedures: false
   procedure_char_limit: 1500
 
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  min_chars: 20
+  max_chars: 1200
+  exclude_query_cve_actions: true
+
 retrieval:
   model: basel/ATTACK-BERT
+  corpus: technique
+  aggregation: max
+  aggregation_top_m: 3
+  rank_constant: 60
   top_k: 20
   batch_size: 32
   local_files_only: true
@@ -471,7 +529,15 @@ evaluation:
 | `query.llm.*` | `rewrite` 命令使用的服务地址、模型、单次请求超时和最大尝试次数。 |
 | `technique_document.include_procedures` | 是否把 ATT&CK procedure examples 加入 Technique 文本。 |
 | `procedure_char_limit` | 每个 Technique 最多保留多少个 procedure 字符；小于等于 0 表示不截断。 |
+| `action_document.include_descriptions` | action corpus 是否包含父 Technique 和子技术描述。 |
+| `action_document.include_procedures` | action corpus 是否包含独立 ATT&CK `uses` relationship procedure。 |
+| `action_document.min_chars` / `max_chars` | action 清洗后的最短/最长字符数；`max_chars=0` 表示不截断。 |
+| `action_document.exclude_query_cve_actions` | 是否对每个查询排除原文曾提及该 CVE 的 action；正式 procedure 实验必须为 `true`。 |
 | `retrieval.model` | sentence-transformers 模型名或本地模型路径。 |
+| `retrieval.corpus` | `technique` 使用每个父 Technique 一份文档；`action` 使用细粒度动作语料。 |
+| `retrieval.aggregation` | action corpus 的父 Technique 聚合：`max` 或 `rank_rrf`。 |
+| `retrieval.aggregation_top_m` | `rank_rrf` 时每个 Technique 最多累加的 action 数。 |
+| `retrieval.rank_constant` | action rank-RRF 的正平滑常数。 |
 | `retrieval.top_k` | 每个 CVE 最终保留的候选数量。 |
 | `retrieval.batch_size` | CVE 和 Technique 文本编码批大小。 |
 | `retrieval.local_files_only` | 默认 `true`，只从本机 Hugging Face cache 加载模型，避免实验因网络阻塞。首次有意下载模型时才设为 `false`。 |
@@ -519,7 +585,9 @@ V4 还使用：
 - `technique_id`：顶层 ATT&CK Technique ID。
 - `score`：检索相似度或融合后的分数。
 - `sources`：分数来源，例如 `embedding`、`structured_chain`。
-- `metadata`：Technique 名称、tactics、chain score 等附加信息。
+- `metadata`：Technique 名称、tactics、chain score 等附加信息。动作级候选还保存
+  `aggregation`、`best_action_similarity`、`corpus_action_count` 和 `action_evidence`；
+  record 级 metadata 保存 `excluded_query_cve_actions`。
 
 每次 `run` 创建独立目录：
 
@@ -630,7 +698,9 @@ Valid experiment: v3a_llm_rewrite
 | `--max-cves N` | 否 | 只检查排序后最前面的 N 个 CVE；不指定时检查完整输入集合。 |
 | `--benchmark NAME` | 否 | 临时把输入切换到 `data/benchmarks/NAME/`，不修改 YAML。 |
 
-该命令会检查 CVE 选择、原始描述或 rewrite 覆盖，并读取 ATT&CK 知识库统计 Technique 数量。它不会加载 embedding 模型，也不会创建 run。
+该命令会检查 CVE 选择、原始描述或 rewrite 覆盖，并读取 ATT&CK 知识库。Technique corpus
+报告父 Technique 数；action corpus 还报告 action 总数、父 Technique 数、各 action 类型数量
+和含漏洞编号的 action 数。它不会加载 embedding 模型，也不会创建 run。
 
 输出字段：
 
@@ -641,6 +711,9 @@ Valid experiment: v3a_llm_rewrite
 | `missing_description` | raw description 策略下缺少描述的数量。 |
 | `missing_rewrite` | rewrite cache 策略下缺少改写的数量。 |
 | `technique_count` | 检索语料中的顶层、有效 Technique 数量。 |
+| `action_count` | action corpus 中去重后的独立动作数；仅 `retrieval.corpus=action`。 |
+| `action_types` | parent/sub-technique description 与 procedure 的分别数量。 |
+| `actions_with_vulnerability_ids` | 原文包含 CVE/CAN 编号、运行时可执行查询级排除的 action 数。 |
 
 示例：
 
@@ -961,6 +1034,23 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
 
 该命令不加载 embedding 模型、不调用 Ollama，也不使用 benchmark 标签决定融合分数。标签只在候选写出后用于常规评估。
 
+### 11.12 `audit-action-overlap`：审计 procedure 的直接 CVE 重叠
+
+```bash
+.venv/bin/python -m cve2attack audit-action-overlap \
+  --benchmark NAME \
+  [--comparison-id ID]
+```
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `--benchmark NAME` | 是 | 要与 ATT&CK procedure 原文比对的 `data/benchmarks/NAME/`。 |
+| `--comparison-id ID` | 否 | 输出目录 `comparisons/ID/`；省略时使用时间戳。已存在时不覆盖。 |
+
+命令读取当前固定 ATT&CK bundle，提取 `uses` relationship 原文中的 CVE/CAN 编号，并报告
+benchmark 中被直接提及的 CVE、直接真值对及其标签比例。输出包含 `summary.json`、
+`overlaps.jsonl` 和 `report.md`。这只是泄漏审计，不会生成候选或加载 embedding 模型。
+
 ## 12. 常用使用流程
 
 ### 12.1 检查并运行已有 V3a cache
@@ -1003,7 +1093,18 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
 `ctid_kev_2025_02_13_nonoverlap`，即可生成两个诊断结果。对于 V3a/V3b/V4，
 必须先用同一 `--benchmark` 参数执行 `rewrite`，生成该 KEV 视图自己的 rewrite cache。
 
-### 12.4 运行测试
+### 12.4 运行严格动作级 Top-20
+
+```bash
+.venv/bin/python -m cve2attack validate experiments/v5c_raw_action_rank_rrf.yaml
+.venv/bin/python -m cve2attack inspect experiments/v5c_raw_action_rank_rrf.yaml
+.venv/bin/python -m cve2attack run experiments/v5c_raw_action_rank_rrf.yaml
+```
+
+首次运行需要编码约 1.4 万条 action；CPU 主机可能耗时较长。成功后会复用
+`data/derived/embedding_cache/actions_*.npz`，同一语料和模型的后续运行只编码查询。
+
+### 12.5 运行测试
 
 ```bash
 .venv/bin/python -m unittest discover -s tests -v

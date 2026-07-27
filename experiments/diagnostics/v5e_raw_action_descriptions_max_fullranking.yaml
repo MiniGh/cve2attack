@@ -1,0 +1,23 @@
+name: v5e_raw_action_descriptions_max_fullranking
+description: Leakage-control full ranking using only ATT&CK parent and sub-technique descriptions with raw CVE queries.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: raw_description
+action_document:
+  include_descriptions: true
+  # Excluding procedures removes CVE-specific ATT&CK examples from this control corpus.
+  include_procedures: false
+  min_chars: 20
+  max_chars: 1200
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: max
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

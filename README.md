@@ -2,10 +2,13 @@
 
 This branch contains the embedding-retrieval approach for the first mapping stage: generate a ranked ATT&CK technique candidate set for each CVE. It is independent from the alternative layered-LLM implementation on `main`.
 
-The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `sec-i1-cve-rewrite:v1` to rewrite a CVE description into attacker-action language, then retrieve top-level ATT&CK techniques with `basel/ATTACK-BERT` using technique name + description.
+V3a was the method selected during the initial refactor, but the frozen TRIAGE comparison showed V1 as the strongest pre-V5 single-source Top-20 baseline. V3a remains an important query-view ablation rather than a preselected final method. The current research roadmap and acceptance gates are maintained in `STAGE1_PLAN.md`.
+
+The current strongest exploratory label-free Stage-1 method is V5c: it embeds individual ATT&CK descriptions, sub-technique descriptions and procedure actions, then rolls the Top-3 action ranks back to parent Techniques. Its strict leave-one-CVE-out evaluation reaches Micro Recall@20 60.14% on the public 60-CVE TRIAGE test view (V1 37.76%, SMET 52.45%, supervised TRIAGE 76.92%). Multi-benchmark confirmation remains the next work package.
 
 ## Layout
 
+- `STAGE1_PLAN.md`: current Stage-1 roadmap, evidence, work packages and acceptance criteria.
 - `experiments/`: versioned method definitions; no generated results.
 - `models/ollama/`: versioned Ollama templates and runtime parameters; no model weights.
 - `data/benchmarks/`: paper datasets with ground-truth CVE → technique mappings.
@@ -37,6 +40,21 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 ```bash
 .venv/bin/python -m cve2attack rewrite experiments/v3a_llm_rewrite.yaml --workers 2 --max-cves 20
 .venv/bin/python -m cve2attack run experiments/v3a_llm_rewrite.yaml --max-cves 20
+```
+
+Run the strict action-level Top-20 method (the first action embedding-cache build is expensive; later runs reuse it):
+
+```bash
+.venv/bin/python -m cve2attack inspect experiments/v5c_raw_action_rank_rrf.yaml
+.venv/bin/python -m cve2attack run experiments/v5c_raw_action_rank_rrf.yaml
+```
+
+`exclude_query_cve_actions: true` is mandatory in formal V5 runs: a procedure that originally names the query CVE is excluded even though CVE/CAN identifiers are also masked in the indexed text. Direct corpus/benchmark overlap can be audited separately:
+
+```bash
+.venv/bin/python -m cve2attack audit-action-overlap \
+  --benchmark triage_2025_test_all \
+  --comparison-id triage_action_procedure_overlap_audit
 ```
 
 Run the same method on either independent paper benchmark without copying the experiment definition:

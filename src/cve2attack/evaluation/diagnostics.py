@@ -58,6 +58,23 @@ def _run_name(run_dir: Path) -> str:
     return str(manifest.get("experiment") or manifest.get("run_id") or run_dir.name)
 
 
+def _require_complete_coverage(
+    predictions: Mapping[str, Sequence[str]],
+    cohort: Iterable[str],
+    *,
+    source_name: str,
+) -> None:
+    """Fail early when a full-ranking diagnostic source omits cohort CVEs."""
+    missing = [cve_id for cve_id in cohort if not predictions.get(cve_id)]
+    if not missing:
+        return
+    examples = ", ".join(missing[:3])
+    raise ValueError(
+        f"Diagnostic source {source_name!r} does not fully cover the TRIAGE test "
+        f"cohort: missing {len(missing)} CVEs (examples: {examples})"
+    )
+
+
 def _canonical_candidates(ranked: Sequence[str], cutoff: int) -> list[str]:
     """Return unique valid parent IDs from the first ``cutoff`` stored ranks.
 
@@ -515,6 +532,7 @@ def diagnose_triage_candidates(
             f"stored_rank_range={min(stored_lengths)}-{max(stored_lengths)}",
             flush=True,
         )
+        _require_complete_coverage(rankings[name], truth, source_name=name)
 
     print("[diagnose] loading and validating public SMET/TRIAGE histories", flush=True)
     reference_dir = source_dir / "reference_predictions"
@@ -707,7 +725,7 @@ def diagnose_triage_candidates(
             "",
             "## Top-20 complementarity",
             "",
-            "Unique correct hits below are labels found by one project source and by none of the other three project sources.",
+            "Unique correct hits below are labels found by one project source and by none of the other project sources.",
             "",
             "| Project source | Unique correct labels |",
             "|---|---:|",

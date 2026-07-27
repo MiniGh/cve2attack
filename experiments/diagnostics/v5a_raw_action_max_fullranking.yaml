@@ -1,0 +1,24 @@
+name: v5a_raw_action_max_fullranking
+description: Diagnostic full parent-Technique ranking for raw CVE queries against individual ATT&CK actions.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: raw_description
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  min_chars: 20
+  max_chars: 1200
+  # Preliminary knowledge-enhanced condition; strict leave-one-CVE-out variants are V5i-V5l.
+  exclude_query_cve_actions: false
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: max
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

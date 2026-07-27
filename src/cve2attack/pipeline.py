@@ -23,6 +23,12 @@ from cve2attack.data.loaders import (
 from cve2attack.evaluation.metrics import EvaluationMetrics, evaluate
 from cve2attack.evaluation.report import write_run_report
 from cve2attack.fusion.structured_chain import fuse_records
+from cve2attack.retrieval.action_generator import (
+    action_cache_key,
+    load_or_create_action_embeddings,
+    retrieve_action_candidates,
+)
+from cve2attack.retrieval.action_kb import action_corpus_stats, load_action_documents
 from cve2attack.retrieval.embedder import SentenceTransformerEmbedder
 from cve2attack.retrieval.generator import (
     cache_key,
@@ -201,50 +207,110 @@ def run_experiment(
             f"missing_rewrite={coverage['missing_rewrite']}"
         )
 
-        document_config = config["technique_document"]
         attack_bundle = resolve_attack_bundle(config, project_root)
-        techniques = load_technique_documents(
-            attack_bundle,
-            include_procedures=bool(document_config["include_procedures"]),
-            procedure_char_limit=int(document_config["procedure_char_limit"]),
-        )
-        report(
-            f"ATT&CK corpus={attack_bundle}; techniques={len(techniques)}; "
-            f"include_procedures={bool(document_config['include_procedures'])}"
-        )
-
         retrieval_config = config["retrieval"]
         report(
-            f"retrieval model={retrieval_config['model']}; top_k={retrieval_config['top_k']}; "
-            f"batch_size={retrieval_config['batch_size']}"
+            f"retrieval model={retrieval_config['model']}; corpus={retrieval_config['corpus']}; "
+            f"top_k={retrieval_config['top_k']}; batch_size={retrieval_config['batch_size']}"
         )
         embedder = SentenceTransformerEmbedder(
             str(retrieval_config["model"]),
             local_files_only=bool(retrieval_config.get("local_files_only", True)),
         )
-        key = cache_key(
-            model_name=embedder.model_name,
-            attack_bundle=attack_bundle,
-            include_procedures=bool(document_config["include_procedures"]),
-            procedure_char_limit=int(document_config["procedure_char_limit"]),
-        )
-        cache_path = project_root / "data" / "derived" / "embedding_cache" / f"techniques_{key}.npz"
-        embeddings = load_or_create_technique_embeddings(
-            embedder=embedder,
-            techniques=techniques,
-            cache_path=cache_path,
-            batch_size=int(retrieval_config["batch_size"]),
-            progress=report,
-        )
-        records = retrieve_candidates(
-            queries=queries,
-            techniques=techniques,
-            technique_embeddings=embeddings,
-            embedder=embedder,
-            top_k=int(retrieval_config["top_k"]),
-            batch_size=int(retrieval_config["batch_size"]),
-            progress=report,
-        )
+        retrieval_document_count: int
+        if retrieval_config["corpus"] == "action":
+            action_config = config["action_document"]
+            actions = load_action_documents(
+                attack_bundle,
+                include_descriptions=bool(action_config["include_descriptions"]),
+                include_procedures=bool(action_config["include_procedures"]),
+                min_chars=int(action_config["min_chars"]),
+                max_chars=int(action_config["max_chars"]),
+            )
+            corpus_stats = action_corpus_stats(actions)
+            technique_count = int(corpus_stats["technique_count"])
+            retrieval_document_count = len(actions)
+            report(
+                f"ATT&CK action corpus={attack_bundle}; actions={len(actions)}; "
+                f"techniques={technique_count}; action_types={corpus_stats['action_types']}"
+            )
+            key = action_cache_key(
+                model_name=embedder.model_name,
+                attack_bundle=attack_bundle,
+                include_descriptions=bool(action_config["include_descriptions"]),
+                include_procedures=bool(action_config["include_procedures"]),
+                min_chars=int(action_config["min_chars"]),
+                max_chars=int(action_config["max_chars"]),
+            )
+            cache_path = (
+                project_root / "data" / "derived" / "embedding_cache" / f"actions_{key}.npz"
+            )
+            embeddings = load_or_create_action_embeddings(
+                embedder=embedder,
+                actions=actions,
+                cache_path=cache_path,
+                batch_size=int(retrieval_config["batch_size"]),
+                progress=report,
+            )
+            records = retrieve_action_candidates(
+                queries=queries,
+                actions=actions,
+                action_embeddings=embeddings,
+                embedder=embedder,
+                top_k=int(retrieval_config["top_k"]),
+                batch_size=int(retrieval_config["batch_size"]),
+                aggregation=str(retrieval_config["aggregation"]),
+                aggregation_top_m=int(retrieval_config["aggregation_top_m"]),
+                rank_constant=float(retrieval_config["rank_constant"]),
+                evidence_limit=int(retrieval_config["evidence_limit"]),
+                evidence_text_limit=int(retrieval_config["evidence_text_limit"]),
+                exclude_query_cve_actions=bool(
+                    action_config["exclude_query_cve_actions"]
+                ),
+                progress=report,
+            )
+        else:
+            document_config = config["technique_document"]
+            techniques = load_technique_documents(
+                attack_bundle,
+                include_procedures=bool(document_config["include_procedures"]),
+                procedure_char_limit=int(document_config["procedure_char_limit"]),
+            )
+            technique_count = len(techniques)
+            retrieval_document_count = len(techniques)
+            report(
+                f"ATT&CK technique corpus={attack_bundle}; techniques={len(techniques)}; "
+                f"include_procedures={bool(document_config['include_procedures'])}"
+            )
+            key = cache_key(
+                model_name=embedder.model_name,
+                attack_bundle=attack_bundle,
+                include_procedures=bool(document_config["include_procedures"]),
+                procedure_char_limit=int(document_config["procedure_char_limit"]),
+            )
+            cache_path = (
+                project_root
+                / "data"
+                / "derived"
+                / "embedding_cache"
+                / f"techniques_{key}.npz"
+            )
+            embeddings = load_or_create_technique_embeddings(
+                embedder=embedder,
+                techniques=techniques,
+                cache_path=cache_path,
+                batch_size=int(retrieval_config["batch_size"]),
+                progress=report,
+            )
+            records = retrieve_candidates(
+                queries=queries,
+                techniques=techniques,
+                technique_embeddings=embeddings,
+                embedder=embedder,
+                top_k=int(retrieval_config["top_k"]),
+                batch_size=int(retrieval_config["batch_size"]),
+                progress=report,
+            )
 
         fusion_config = config["fusion"]
         if fusion_config["strategy"] == "structured_chain":
@@ -291,7 +357,9 @@ def run_experiment(
             {
                 "status": "complete",
                 "input_coverage": coverage,
-                "technique_count": len(techniques),
+                "technique_count": technique_count,
+                "retrieval_corpus": retrieval_config["corpus"],
+                "retrieval_document_count": retrieval_document_count,
                 "candidate_records": len(records),
                 "candidate_files": [path.name for path in written],
                 "technique_corpus": technique_corpus,

@@ -3,6 +3,7 @@
 import unittest
 
 from cve2attack.evaluation.diagnostics import (
+    _require_complete_coverage,
     practical_failure_diagnosis,
     rank_distribution,
     recall_curve,
@@ -11,6 +12,14 @@ from cve2attack.evaluation.diagnostics import (
 
 
 class CandidateDiagnosticTests(unittest.TestCase):
+    def test_incomplete_project_source_fails_before_metric_generation(self):
+        with self.assertRaisesRegex(ValueError, "missing 1 CVEs"):
+            _require_complete_coverage(
+                {"CVE-2024-1": ["T1001"]},
+                ["CVE-2024-1", "CVE-2024-2"],
+                source_name="wrong-run",
+            )
+
     def test_recall_curve_marks_points_beyond_publication_limit_unavailable(self):
         truth = {"CVE-2024-1": {"T1001", "T1002"}}
         predictions = {"CVE-2024-1": ["", "T1001", "T1002"]}

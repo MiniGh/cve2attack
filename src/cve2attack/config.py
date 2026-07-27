@@ -19,11 +19,24 @@ DEFAULTS: Dict[str, Any] = {
         "include_procedures": False,
         "procedure_char_limit": 1500,
     },
+    "action_document": {
+        "include_descriptions": True,
+        "include_procedures": True,
+        "min_chars": 20,
+        "max_chars": 1200,
+        "exclude_query_cve_actions": True,
+    },
     "retrieval": {
         "model": "basel/ATTACK-BERT",
+        "corpus": "technique",
         "top_k": 20,
         "batch_size": 32,
         "local_files_only": True,
+        "aggregation": "max",
+        "aggregation_top_m": 3,
+        "rank_constant": 60.0,
+        "evidence_limit": 3,
+        "evidence_text_limit": 400,
     },
     "fusion": {"strategy": "none"},
     "evaluation": {"benchmarks": []},
@@ -58,6 +71,17 @@ def load_experiment(path: Path) -> Dict[str, Any]:
     query_strategy = config["query"].get("strategy")
     if query_strategy not in {"raw_description", "rewrite_cache"}:
         raise ValueError(f"Unsupported query.strategy: {query_strategy}")
+
+    retrieval_corpus = config["retrieval"].get("corpus")
+    if retrieval_corpus not in {"technique", "action"}:
+        raise ValueError(f"Unsupported retrieval.corpus: {retrieval_corpus}")
+    action_aggregation = config["retrieval"].get("aggregation")
+    if action_aggregation not in {"max", "rank_rrf"}:
+        raise ValueError(f"Unsupported retrieval.aggregation: {action_aggregation}")
+    if int(config["retrieval"].get("aggregation_top_m", 0)) <= 0:
+        raise ValueError("retrieval.aggregation_top_m must be positive")
+    if float(config["retrieval"].get("rank_constant", 0)) <= 0:
+        raise ValueError("retrieval.rank_constant must be positive")
 
     fusion_strategy = config["fusion"].get("strategy")
     if fusion_strategy not in {"none", "structured_chain"}:

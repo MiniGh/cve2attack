@@ -17,6 +17,7 @@ from cve2attack.evaluation.metrics import evaluate
 from cve2attack.evaluation.report import write_comparison_report
 from cve2attack.evaluation.diagnostics import diagnose_triage_candidates
 from cve2attack.evaluation.triage import compare_with_triage
+from cve2attack.evaluation.action_overlap import write_action_overlap_audit
 from cve2attack.fusion.rrf import run_rrf_fusion
 from cve2attack.pipeline import (
     build_queries,
@@ -24,6 +25,7 @@ from cve2attack.pipeline import (
     run_experiment,
     select_input_ids,
 )
+from cve2attack.retrieval.action_kb import action_corpus_stats, load_action_documents
 from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
@@ -118,12 +120,20 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         help="Full-ranking V1/V2/V3 run directories to diagnose",
     )
+
     triage_diagnose.add_argument("--comparison-id")
     triage_diagnose.add_argument(
         "--source-dir",
         default="data/raw/triage/triage_2025",
         help="Directory containing the frozen split, labels and reference predictions",
     )
+
+    action_audit = subparsers.add_parser(
+        "audit-action-overlap",
+        help="Audit exact benchmark CVEs referenced by ATT&CK procedure examples",
+    )
+    action_audit.add_argument("--benchmark", required=True)
+    action_audit.add_argument("--comparison-id")
 
     rrf = subparsers.add_parser(
         "fuse-rrf",
@@ -228,13 +238,29 @@ def main(argv: Sequence[str] | None = None) -> None:
             repository=CVERepository(PROJECT_ROOT / "data" / "raw" / "cve"),
             project_root=PROJECT_ROOT,
         )
-        document_config = config["technique_document"]
-        techniques = load_technique_documents(
-            resolve_attack_bundle(config, PROJECT_ROOT),
-            include_procedures=bool(document_config["include_procedures"]),
-            procedure_char_limit=int(document_config["procedure_char_limit"]),
-        )
-        print(json.dumps({**coverage, "technique_count": len(techniques)}, indent=2))
+        attack_bundle = resolve_attack_bundle(config, PROJECT_ROOT)
+        if config["retrieval"]["corpus"] == "action":
+            action_config = config["action_document"]
+            actions = load_action_documents(
+                attack_bundle,
+                include_descriptions=bool(action_config["include_descriptions"]),
+                include_procedures=bool(action_config["include_procedures"]),
+                min_chars=int(action_config["min_chars"]),
+                max_chars=int(action_config["max_chars"]),
+            )
+            corpus_details = {"retrieval_corpus": "action", **action_corpus_stats(actions)}
+        else:
+            document_config = config["technique_document"]
+            techniques = load_technique_documents(
+                attack_bundle,
+                include_procedures=bool(document_config["include_procedures"]),
+                procedure_char_limit=int(document_config["procedure_char_limit"]),
+            )
+            corpus_details = {
+                "retrieval_corpus": "technique",
+                "technique_count": len(techniques),
+            }
+        print(json.dumps({**coverage, **corpus_details}, indent=2))
         return
 
     if args.command == "import-kev":
@@ -244,6 +270,27 @@ def main(argv: Sequence[str] | None = None) -> None:
             cve2attack_benchmark=project_path(args.cve2attack_benchmark),
         )
         print(json.dumps(stats, ensure_ascii=False, indent=2))
+        return
+
+    if args.command == "audit-action-overlap":
+        benchmark_dir = PROJECT_ROOT / "data" / "benchmarks" / args.benchmark
+        if not benchmark_dir.is_dir():
+            raise SystemExit(f"Benchmark does not exist: {benchmark_dir}")
+        identifier = args.comparison_id or (
+            f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{args.benchmark}_action_overlap"
+        )
+        path = write_action_overlap_audit(
+            attack_bundle=resolve_attack_bundle(
+                {
+                    "input": {"mode": "benchmark", "benchmark": args.benchmark},
+                    "technique_document": {},
+                },
+                PROJECT_ROOT,
+            ),
+            benchmark_dir=benchmark_dir,
+            output_dir=PROJECT_ROOT / "comparisons" / identifier,
+        )
+        print(path)
         return
 
     if args.command == "import-triage":

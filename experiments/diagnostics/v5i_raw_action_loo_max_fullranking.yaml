@@ -1,0 +1,23 @@
+name: v5i_raw_action_loo_max_fullranking
+description: Full action ranking with raw queries and leave-one-CVE-out procedure filtering, aggregated by max.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: raw_description
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  min_chars: 20
+  max_chars: 1200
+  exclude_query_cve_actions: true
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: max
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]
