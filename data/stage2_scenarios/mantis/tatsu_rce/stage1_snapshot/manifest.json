@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "run_id": "mantis_tatsu_from_stage2_mantis_v3a_top20",
+  "status": "imported",
+  "source_run_id": "stage2_mantis_v3a_top20",
+  "source_experiment": "v3a_llm_rewrite",
+  "source_git_commit": "8af99437f1a071d24815023c4775fc80d3a49d22",
+  "source_candidate_file": "runs/stage2_mantis_v3a_top20/candidates/CVE-2021.jsonl",
+  "selection": "Exact CandidateRecord for CVE-2021-25094; candidate order and scores are unchanged.",
+  "candidate_records": 1
+}

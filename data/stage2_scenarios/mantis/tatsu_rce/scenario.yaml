@@ -1,0 +1,62 @@
+schema_version: "1.0"
+scenario_id: mantis_tatsu_rce_cve_2021_25094
+scenario_kind: trace_derived_public_facing
+cve_id: CVE-2021-25094
+
+source:
+  provider: M&NTIS
+  dataset_id: 099967fe-c11a-4bee-b4cc-916d96af5f3b
+  archive_sha256: 10093bb162808fa2c5ed66cff033d40d51dcdfa42520f775c2d33a20dc05ab40
+  manifest: data/stage2_sources/mantis/extracted/tatsu_rce/manifest.json
+  attack_report: >-
+    data/stage2_sources/mantis/extracted/tatsu_rce/redteam_reports/
+    23949fb7-31ac-412c-89b8-830b22b5aefa/attacks/
+    07f4a352-6d8c-4b36-b2ff-b1bb6cfca1c8/attacks.json
+  attack_step_id: 17
+  predecessor_step_ids: [8, 9, 11]
+  cve_resolution:
+    method: explicit_manifest_cve_and_exploit_ioc
+    note: >-
+      Both manifest.scenario.cve and attack step 17 identify CVE-2021-25094.
+
+context:
+  # The DIRECT worker targets the public web service without a prior session.
+  initial_facts:
+    - attackerLocated(internet)
+
+  network_access:
+    source_host: internet
+    target_host: TARGET
+    protocol: tcp
+    port: "80"
+
+  target_service:
+    host: TARGET
+    name: wordpress_tatsu
+    protocol: tcp
+    port: "80"
+    account: www-data
+
+  vulnerability:
+    host: TARGET
+    service: wordpress_tatsu
+    exploit_type: remoteExploit
+    expected_impact: codeExecution
+
+  consequences:
+    - execCode(TARGET,www-data)
+
+  exploit_rule: RULE 1 (trace-derived Tatsu Builder remote code execution)
+  access_rule: RULE 2 (internet reaches public WordPress service)
+  normalization_notes:
+    - TARGET and TCP port 80 come from the topology and attack report.
+    - The www-data shell is the attack-session output recorded before the exploit step completes.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1190
+  label_source: M&NTIS manifest.scenario.mitre_data
+  evaluation_only: true
+  note: >-
+    M&NTIS labels the CVE-specific worker as Exploit Public-Facing Application.

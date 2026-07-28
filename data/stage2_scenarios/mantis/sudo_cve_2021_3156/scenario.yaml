@@ -1,0 +1,49 @@
+schema_version: "1.0"
+scenario_id: mantis_sudo_cve_2021_3156
+scenario_kind: trace_derived_local_privilege
+cve_id: CVE-2021-3156
+
+source:
+  provider: M&NTIS
+  dataset_id: d188aad5-a524-4255-82d3-5adab98715e1
+  archive_sha256: 80ed0b6e06788643572b7571feb9e477fed2c8ded826ce9a3ae3d9e4314bf7b7
+  manifest: data/stage2_sources/mantis/extracted/sudo_cve_2021_3156/manifest.json
+  attack_report: >-
+    data/stage2_sources/mantis/extracted/sudo_cve_2021_3156/redteam_reports/
+    c78da317-6ca8-4e9c-a1f0-da352725fef3/attacks/
+    c7848003-0328-4b99-a590-35a88a8762e5/attacks.json
+  attack_step_id: 17
+  predecessor_step_ids: [35]
+  cve_resolution:
+    method: explicit_manifest_cve_and_exploit_ioc
+    note: >-
+      The manifest, worker name and exploit IOC identify CVE-2021-3156.
+
+context:
+  # The exploit starts from an existing non-root shell on TARGET.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  vulnerability:
+    host: TARGET
+    service: sudo
+    exploit_type: localExploit
+    expected_impact: privilegeEscalation
+
+  consequences:
+    - execCode(TARGET,root)
+
+  exploit_rule: RULE 1 (trace-derived sudo local privilege escalation)
+  normalization_notes:
+    - Step 17 starts from the adurand user shell created by predecessor activity 35.
+    - Step 17 outputs a new root shell on the same TARGET host.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1548.003
+  label_source: M&NTIS manifest.scenario.mitre_data
+  evaluation_only: true
+  note: >-
+    M&NTIS labels the worker as Sudo and Sudo Caching. Standard evaluation
+    rolls this sub-technique up to parent Technique T1548.

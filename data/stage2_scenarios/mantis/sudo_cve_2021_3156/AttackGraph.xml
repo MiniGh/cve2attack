@@ -1,0 +1,42 @@
+<attack_graph>
+  <arcs>
+    <arc>
+      <src>1</src>
+      <dst>2</dst>
+    </arc>
+    <arc>
+      <src>2</src>
+      <dst>3</dst>
+    </arc>
+    <arc>
+      <src>2</src>
+      <dst>4</dst>
+    </arc>
+  </arcs>
+  <vertices>
+    <vertex>
+      <id>1</id>
+      <fact>execCode(TARGET,root)</fact>
+      <metric>0</metric>
+      <type>OR</type>
+    </vertex>
+    <vertex>
+      <id>2</id>
+      <fact>RULE 1 (trace-derived sudo local privilege escalation)</fact>
+      <metric>0</metric>
+      <type>AND</type>
+    </vertex>
+    <vertex>
+      <id>3</id>
+      <fact>execCode(TARGET,user)</fact>
+      <metric>1</metric>
+      <type>LEAF</type>
+    </vertex>
+    <vertex>
+      <id>4</id>
+      <fact>vulExists(TARGET,'CVE-2021-3156',sudo,localExploit,privilegeEscalation)</fact>
+      <metric>1</metric>
+      <type>LEAF</type>
+    </vertex>
+  </vertices>
+</attack_graph>

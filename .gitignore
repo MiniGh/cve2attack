@@ -15,6 +15,7 @@ stage2_runs/
 
 # Rebuildable and machine-specific caches.
 data/derived/embedding_cache/
+data/derived/rewrite_cache/
 
 # Historical local material retained outside the active pipeline.
 archive/local_bak/
