@@ -4,7 +4,7 @@ This branch contains the embedding-retrieval approach for the first mapping stag
 
 V3a was the method selected during the initial refactor, but the frozen TRIAGE comparison showed V1 as the strongest pre-V5 single-source Top-20 baseline. V3a remains an important query-view ablation rather than a preselected final method. The current research roadmap and acceptance gates are maintained in `STAGE1_PLAN.md`.
 
-The current strongest label-free Stage-1 method is V5c: it embeds individual ATT&CK descriptions, sub-technique descriptions and procedure actions, then rolls the Top-3 action ranks back to parent Techniques. Its strict leave-one-CVE-out evaluation reaches Micro Recall@20 60.14% on the public 60-CVE TRIAGE test view (V1 37.76%, SMET 52.45%, supervised TRIAGE 76.92%). The frozen-parameter method also improves over V1 on `cve2attack_result`, all three KEV views and a label-independent 2,000-CVE `data_result` sample. Procedure-count bias, corpus ablations and case analysis remain before the Stage-1 method is frozen for the paper.
+The frozen label-free Stage-1 method is V5c: it embeds individual ATT&CK descriptions, sub-technique descriptions and procedure actions, then rolls the Top-3 action ranks back to parent Techniques. Its strict leave-one-CVE-out evaluation reaches Micro Recall@20 60.14% on the public 60-CVE TRIAGE test view (V1 37.76%, SMET 52.45%, supervised TRIAGE 76.92%). The same frozen method improves over V1 on `cve2attack_result`, all three KEV views and a label-independent 2,000-CVE `data_result` sample. Corpus ablations show that procedures provide nearly all of the gain; procedure-count exposure bias is documented as a limitation. Stage 1 is frozen and complete for handoff to the graph-context Stage 2.
 
 ## Layout
 
@@ -75,6 +75,10 @@ Cross-benchmark validation uses the same frozen ATT&CK 15.1 corpus for V1 and V5
 The committed `data_result_hash_sample_2000` cohort was selected from the 286,461-record
 `data_result` benchmark using only a seeded SHA-256 ordering of CVE IDs. It is a reproducibility
 and scale check, not a replacement for an independently curated authoritative benchmark.
+
+The final frozen-method audit is reproducible with `diagnose-action-final`. Its ignored runtime
+artifacts live under `comparisons/triage_stage1_v5c_final_audit/`; the permanent result summary and
+method decision are recorded in `STAGE1_PLAN.md` and `docs/experiment_history.md`.
 
 Rewrite caches use the selected benchmark name and prompt-template version. For example, `--benchmark data_result` with V3a reads or generates `data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json`. Legacy `*_sec_i1.json` caches were generated with an invalid raw-prompt template and must not be mixed with the v1 cache.
 

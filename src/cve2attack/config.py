@@ -8,6 +8,8 @@ from typing import Any, Dict, Mapping
 
 import yaml
 
+from cve2attack.retrieval.action_kb import ACTION_SOURCE_TYPES
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -22,6 +24,7 @@ DEFAULTS: Dict[str, Any] = {
     "action_document": {
         "include_descriptions": True,
         "include_procedures": True,
+        "source_types": None,
         "min_chars": 20,
         "max_chars": 1200,
         "exclude_query_cve_actions": True,
@@ -82,6 +85,15 @@ def load_experiment(path: Path) -> Dict[str, Any]:
         raise ValueError("retrieval.aggregation_top_m must be positive")
     if float(config["retrieval"].get("rank_constant", 0)) <= 0:
         raise ValueError("retrieval.rank_constant must be positive")
+    source_types = config["action_document"].get("source_types")
+    if source_types is not None:
+        if not isinstance(source_types, list) or not source_types:
+            raise ValueError("action_document.source_types must be a non-empty list")
+        unknown_types = set(source_types) - ACTION_SOURCE_TYPES
+        if unknown_types:
+            raise ValueError(
+                f"Unsupported action_document.source_types: {sorted(unknown_types)}"
+            )
 
     fusion_strategy = config["fusion"].get("strategy")
     if fusion_strategy not in {"none", "structured_chain"}:

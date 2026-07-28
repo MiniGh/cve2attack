@@ -21,6 +21,7 @@ def action_cache_key(
     attack_bundle: Path,
     include_descriptions: bool,
     include_procedures: bool,
+    source_types: Sequence[str] | None = None,
     min_chars: int,
     max_chars: int,
 ) -> str:
@@ -39,6 +40,11 @@ def action_cache_key(
     ):
         digest.update(value.encode("utf-8"))
         digest.update(b"\0")
+    # Keep the historical cache key unchanged when no fine-grained filter is
+    # requested, so the frozen full V5c corpus reuses its existing embeddings.
+    if source_types is not None:
+        digest.update(",".join(sorted(source_types)).encode("utf-8"))
+        digest.update(b"\0")
     return digest.hexdigest()[:16]
 
 
@@ -48,6 +54,7 @@ def load_or_create_action_embeddings(
     actions: Sequence[ActionDocument],
     cache_path: Path,
     batch_size: int,
+    superset_cache_paths: Sequence[Path] = (),
     progress: ProgressReporter | None = None,
 ) -> np.ndarray:
     """Load a compatible action cache or encode and atomically create one."""
@@ -61,7 +68,41 @@ def load_or_create_action_embeddings(
                 return embeddings
         _report(progress, f"action cache is incompatible; rebuilding path={cache_path}")
     else:
-        _report(progress, f"action cache miss; encoding actions={len(actions)}")
+        _report(progress, f"action cache miss; resolving vectors for actions={len(actions)}")
+
+    # Fine-grained corpus ablations are exact subsets of the frozen full V5c
+    # corpus. Their vectors can therefore be selected by action ID from the
+    # model- and corpus-keyed full cache without re-encoding thousands of
+    # unchanged texts. The exact subset is persisted under its own cache key.
+    for superset_path in superset_cache_paths:
+        if not superset_path.exists() or superset_path == cache_path:
+            continue
+        with np.load(superset_path, allow_pickle=False) as loaded:
+            superset_ids = [str(item) for item in loaded["action_ids"].tolist()]
+            superset_embeddings = np.asarray(loaded["embeddings"], dtype=np.float32)
+        indices = {action_id: index for index, action_id in enumerate(superset_ids)}
+        if not all(action_id in indices for action_id in expected_ids):
+            continue
+        embeddings = np.vstack(
+            [superset_embeddings[indices[action_id]] for action_id in expected_ids]
+        )
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = cache_path.with_suffix(cache_path.suffix + ".tmp")
+        with temporary.open("wb") as handle:
+            np.savez_compressed(
+                handle,
+                embeddings=embeddings.astype(np.float32),
+                action_ids=np.asarray(expected_ids, dtype=str),
+            )
+        temporary.replace(cache_path)
+        _report(
+            progress,
+            f"action cache sliced from compatible full corpus; actions={len(actions)}; "
+            f"source={superset_path}; path={cache_path}",
+        )
+        return embeddings
+
+    _report(progress, f"no compatible action cache; encoding actions={len(actions)}")
 
     started_at = time.perf_counter()
     vectors: list[np.ndarray] = []

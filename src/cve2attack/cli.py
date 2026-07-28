@@ -15,6 +15,7 @@ from cve2attack.data.sampling import sample_benchmark
 from cve2attack.data.triage import import_triage_benchmarks
 from cve2attack.domain.classifier import classify_directory
 from cve2attack.evaluation.metrics import evaluate
+from cve2attack.evaluation.action_final import write_action_final_audit
 from cve2attack.evaluation.paired import paired_recall_comparison
 from cve2attack.evaluation.report import write_comparison_report
 from cve2attack.evaluation.diagnostics import diagnose_triage_candidates
@@ -145,6 +146,22 @@ def _parser() -> argparse.ArgumentParser:
     )
     action_audit.add_argument("--benchmark", required=True)
     action_audit.add_argument("--comparison-id")
+
+    action_final = subparsers.add_parser(
+        "diagnose-action-final",
+        help="Finalize V5c with corpus ablations, procedure-bias and case diagnostics",
+    )
+    action_final.add_argument("--benchmark", default="triage_2025_test_all")
+    action_final.add_argument(
+        "--attack-bundle", default="data/knowledge/enterprise-attack-15.1.json"
+    )
+    action_final.add_argument("--v1-run", required=True, type=Path)
+    action_final.add_argument("--parent-run", required=True, type=Path)
+    action_final.add_argument("--subtechnique-run", required=True, type=Path)
+    action_final.add_argument("--descriptions-run", required=True, type=Path)
+    action_final.add_argument("--procedure-run", required=True, type=Path)
+    action_final.add_argument("--full-run", required=True, type=Path)
+    action_final.add_argument("--comparison-id", required=True)
 
     rrf = subparsers.add_parser(
         "fuse-rrf",
@@ -293,6 +310,7 @@ def main(argv: Sequence[str] | None = None) -> None:
                 attack_bundle,
                 include_descriptions=bool(action_config["include_descriptions"]),
                 include_procedures=bool(action_config["include_procedures"]),
+                source_types=action_config.get("source_types"),
                 min_chars=int(action_config["min_chars"]),
                 max_chars=int(action_config["max_chars"]),
             )
@@ -337,6 +355,29 @@ def main(argv: Sequence[str] | None = None) -> None:
             ),
             benchmark_dir=benchmark_dir,
             output_dir=PROJECT_ROOT / "comparisons" / identifier,
+        )
+        print(path)
+        return
+
+    if args.command == "diagnose-action-final":
+        def run_path(value: Path) -> Path:
+            """Resolve named run arguments without changing absolute paths."""
+            return value if value.is_absolute() else PROJECT_ROOT / value
+
+        print("[action-final] starting frozen V5c final audit", flush=True)
+        path = write_action_final_audit(
+            attack_bundle=project_path(args.attack_bundle),
+            benchmark_dir=PROJECT_ROOT / "data" / "benchmarks" / args.benchmark,
+            run_dirs={
+                "v1": run_path(args.v1_run),
+                "parent": run_path(args.parent_run),
+                "subtechnique": run_path(args.subtechnique_run),
+                "descriptions": run_path(args.descriptions_run),
+                "procedure": run_path(args.procedure_run),
+                "full": run_path(args.full_run),
+            },
+            output_dir=PROJECT_ROOT / "comparisons" / args.comparison_id,
+            progress=lambda message: print(f"[action-final] {message}", flush=True),
         )
         print(path)
         return

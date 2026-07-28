@@ -137,3 +137,46 @@ Paired reports:
 - `comparisons/multibench_final_kev_exploitation_v1_vs_v5c_paired/`
 - `comparisons/multibench_final_kev_nonoverlap_v1_vs_v5c_paired/`
 - `comparisons/multibench_final_data_sample2000_v1_vs_v5c_paired/`
+
+## 2026-07-28: final V5c corpus, bias and case audit
+
+The final audit keeps the frozen TRIAGE cohort and all retrieval parameters unchanged. The only
+ablation variable is which ATT&CK action source types are present. All procedure conditions retain
+query-specific leave-one-CVE-out exclusion.
+
+| Corpus | Micro R@5 | Micro R@10 | Micro R@20 | Macro R@20 |
+|---|---:|---:|---:|---:|
+| V1 parent Technique document | 18.18% | 23.78% | 37.76% | 39.43% |
+| V5 parent descriptions only | 11.89% | 18.88% | 34.97% | 36.74% |
+| V5 sub-technique descriptions only | 11.19% | 21.68% | 31.47% | 30.67% |
+| V5 parent + sub-technique descriptions | 11.89% | 22.38% | 30.77% | 30.43% |
+| V5 procedures only, strict LOO | **34.97%** | **46.15%** | **61.54%** | **64.06%** |
+| **Formal V5c all actions, strict LOO** | 32.87% | 44.06% | 60.14% | 61.98% |
+
+Procedures provide nearly all of the action-level improvement; splitting parent and sub-technique
+descriptions is not sufficient. Procedure-only is slightly stronger on this frozen test, but this
+was learned from a post-selection ablation. It therefore remains an explanatory result and does
+not replace formal V5c, whose complete corpus was selected before and validated across all other
+benchmarks.
+
+Procedure coverage is a material limitation. Across 202 parent Techniques, procedure count has
+Spearman rho 0.596 with V5c Top-20 exposure and rho 0.593 with false-positive exposure. Its rho
+with per-Technique label Recall@20 is 0.314 among labeled Techniques. These are descriptive rather
+than causal estimates, but they show that procedure-rich Techniques are systematically easier to
+surface and must be disclosed in the paper.
+
+The 143 true labels split into 37 V5c-only Top-20 gains, 49 retained V1/V5c hits, 5 V1 hits lost by
+V5c, 19 unresolved labels at ranks 21-50 and 33 unresolved labels beyond rank 50. Every row records
+the exact V1/V5c rank and V5c action evidence.
+
+Artifacts:
+
+- parent descriptions: `runs/triage_final_v5c_parent_description_fullranking/`
+- sub-technique descriptions: `runs/triage_final_v5c_subtechnique_description_fullranking/`
+- procedures: `runs/triage_final_v5c_procedure_fullranking/`
+- final audit: `comparisons/triage_stage1_v5c_final_audit/`
+
+Decision: Stage 1 is frozen and complete. The formal downstream input remains strict-LOO V5c
+Top-20. Further V3 prompt tuning, test-set weight search, post-hoc promotion of procedure-only, and
+automatic supervised reranking are out of scope unless a new independent benchmark or Stage-2
+end-to-end bottleneck analysis justifies reopening Stage 1.

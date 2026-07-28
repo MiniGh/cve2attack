@@ -20,6 +20,9 @@ from cve2attack.schemas import parent_technique_id
 
 
 ACTION_CORPUS_VERSION = "1.0"
+ACTION_SOURCE_TYPES = frozenset(
+    {"technique_description", "subtechnique_description", "procedure"}
+)
 _CITATION_PATTERN = re.compile(r"\s*\(Citation:[^)]+\)", flags=re.IGNORECASE)
 _CVE_PATTERN = re.compile(r"\b(?:CVE|CAN)-\d{4}-\d{4,}\b", flags=re.IGNORECASE)
 
@@ -86,16 +89,34 @@ def load_action_documents(
     *,
     include_descriptions: bool = True,
     include_procedures: bool = True,
+    source_types: Sequence[str] | None = None,
     min_chars: int = 20,
     max_chars: int = 1200,
 ) -> list[ActionDocument]:
-    """Load description and procedure actions mapped to active parent Techniques."""
+    """Load selected ATT&CK action types mapped to active parent Techniques.
+
+    ``include_descriptions`` and ``include_procedures`` preserve the original
+    coarse switches. ``source_types`` is an optional stricter filter used by
+    corpus ablations; omitting it keeps every source enabled by the coarse
+    switches and therefore preserves all existing V5 configurations.
+    """
     if not include_descriptions and not include_procedures:
         raise ValueError("Action corpus must include descriptions, procedures, or both")
     if min_chars < 0:
         raise ValueError("action_document.min_chars must be non-negative")
     if max_chars < 0:
         raise ValueError("action_document.max_chars must be non-negative")
+    requested_types = ACTION_SOURCE_TYPES if source_types is None else frozenset(source_types)
+    unknown_types = requested_types - ACTION_SOURCE_TYPES
+    if unknown_types:
+        raise ValueError(f"Unsupported action source types: {sorted(unknown_types)}")
+    enabled_types = set(requested_types)
+    if not include_descriptions:
+        enabled_types -= {"technique_description", "subtechnique_description"}
+    if not include_procedures:
+        enabled_types.discard("procedure")
+    if not enabled_types:
+        raise ValueError("Action corpus source-type filters select no documents")
 
     with attack_bundle.open("r", encoding="utf-8") as handle:
         bundle = json.load(handle)
@@ -133,6 +154,8 @@ def load_action_documents(
         raw_text: str,
         source_name: str | None = None,
     ) -> None:
+        if source_type not in enabled_types:
+            return
         pattern = patterns.get(target_stix_id)
         if pattern is None:
             return

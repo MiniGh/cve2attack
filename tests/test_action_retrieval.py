@@ -9,6 +9,7 @@ import numpy as np
 
 from cve2attack.retrieval.action_generator import (
     aggregate_action_scores,
+    load_or_create_action_embeddings,
     retrieve_action_candidates,
 )
 from cve2attack.retrieval.action_kb import (
@@ -107,6 +108,50 @@ class ActionKnowledgeBaseTests(unittest.TestCase):
         self.assertNotIn("CVE-", " ".join(item.text for item in actions))
         self.assertNotIn("CAN-", " ".join(item.text for item in actions))
 
+    def test_source_type_filter_supports_exact_corpus_ablations(self):
+        bundle = {
+            "objects": [
+                {
+                    "type": "attack-pattern",
+                    "id": "attack-pattern--parent",
+                    "name": "Parent",
+                    "description": "Parent behavior that is long enough.",
+                    "external_references": [
+                        {"source_name": "mitre-attack", "external_id": "T1000"}
+                    ],
+                },
+                {
+                    "type": "attack-pattern",
+                    "id": "attack-pattern--child",
+                    "name": "Child",
+                    "description": "Child behavior that is long enough.",
+                    "x_mitre_is_subtechnique": True,
+                    "external_references": [
+                        {"source_name": "mitre-attack", "external_id": "T1000.001"}
+                    ],
+                },
+                {
+                    "type": "relationship",
+                    "id": "relationship--one",
+                    "relationship_type": "uses",
+                    "target_ref": "attack-pattern--child",
+                    "description": "Actor executes a sufficiently long procedure example.",
+                },
+            ]
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "attack.json"
+            path.write_text(json.dumps(bundle), encoding="utf-8")
+            parent_only = load_action_documents(
+                path, source_types=["technique_description"], min_chars=5
+            )
+            procedure_only = load_action_documents(
+                path, source_types=["procedure"], min_chars=5
+            )
+
+        self.assertEqual({item.source_type for item in parent_only}, {"technique_description"})
+        self.assertEqual({item.source_type for item in procedure_only}, {"procedure"})
+
 
 class ActionRetrievalTests(unittest.TestCase):
     def setUp(self):
@@ -177,6 +222,30 @@ class ActionRetrievalTests(unittest.TestCase):
         )
         self.assertEqual([item.technique_id for item in records[0].candidates], ["T2000"])
         self.assertEqual(records[0].metadata["excluded_query_cve_actions"], 1)
+
+    def test_subset_cache_is_sliced_from_a_compatible_full_corpus(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            superset_path = root / "full.npz"
+            subset_path = root / "subset.npz"
+            np.savez_compressed(
+                superset_path,
+                action_ids=np.asarray(["a", "b", "c"], dtype=str),
+                embeddings=np.asarray(
+                    [[1.0, 0.0], [0.5, 0.5], [0.0, 1.0]], dtype=np.float32
+                ),
+            )
+            embeddings = load_or_create_action_embeddings(
+                embedder=FakeEmbedder(),
+                actions=[self.actions[0], self.actions[2]],
+                cache_path=subset_path,
+                batch_size=2,
+                superset_cache_paths=[superset_path],
+            )
+
+        np.testing.assert_allclose(
+            embeddings, np.asarray([[1.0, 0.0], [0.0, 1.0]], dtype=np.float32)
+        )
 
 
 if __name__ == "__main__":

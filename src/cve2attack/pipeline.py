@@ -224,6 +224,7 @@ def run_experiment(
                 attack_bundle,
                 include_descriptions=bool(action_config["include_descriptions"]),
                 include_procedures=bool(action_config["include_procedures"]),
+                source_types=action_config.get("source_types"),
                 min_chars=int(action_config["min_chars"]),
                 max_chars=int(action_config["max_chars"]),
             )
@@ -239,17 +240,40 @@ def run_experiment(
                 attack_bundle=attack_bundle,
                 include_descriptions=bool(action_config["include_descriptions"]),
                 include_procedures=bool(action_config["include_procedures"]),
+                source_types=action_config.get("source_types"),
                 min_chars=int(action_config["min_chars"]),
                 max_chars=int(action_config["max_chars"]),
             )
             cache_path = (
                 project_root / "data" / "derived" / "embedding_cache" / f"actions_{key}.npz"
             )
+            superset_cache_paths: list[Path] = []
+            if action_config.get("source_types") is not None:
+                # All source-type ablations are subsets of the unchanged full
+                # V5c corpus. Its cache key validates model, bundle and text
+                # rules before action_generator slices vectors by action ID.
+                superset_key = action_cache_key(
+                    model_name=embedder.model_name,
+                    attack_bundle=attack_bundle,
+                    include_descriptions=bool(action_config["include_descriptions"]),
+                    include_procedures=bool(action_config["include_procedures"]),
+                    source_types=None,
+                    min_chars=int(action_config["min_chars"]),
+                    max_chars=int(action_config["max_chars"]),
+                )
+                superset_cache_paths.append(
+                    project_root
+                    / "data"
+                    / "derived"
+                    / "embedding_cache"
+                    / f"actions_{superset_key}.npz"
+                )
             embeddings = load_or_create_action_embeddings(
                 embedder=embedder,
                 actions=actions,
                 cache_path=cache_path,
                 batch_size=int(retrieval_config["batch_size"]),
+                superset_cache_paths=superset_cache_paths,
                 progress=report,
             )
             records = retrieve_action_candidates(

@@ -47,8 +47,8 @@
 | 已完成 | 动作级描述、子技术和 procedure 检索来源 | `retrieval/action_kb.py`、`action_generator.py` |
 | 已完成 | 动作级来源互补性、直接 CVE 重叠和严格 LOO 诊断 | 工作包 2 |
 | 基线已完成 | 动作级来源与 V1 的固定等权受控融合 | 工作包 3；简单 RRF 退化，暂不选用 |
-| 条件执行 | 使用公开训练 split 的轻量 reranker | 工作包 4 |
-| 核心验证已完成 | V1/V5c 冻结参数多基准验证与配对置信区间 | 工作包 5；论文总表、偏置消融和案例仍待完成 |
+| 未触发并关闭 | 使用公开训练 split 的轻量 reranker | 工作包 4；仅在阶段二证明需要时重开 |
+| 已完成并冻结 | V1/V5c 多基准验证、语料消融、偏置与逐例诊断 | 工作包 5；阶段一可交付阶段二 |
 
 ## 3. 已有证据与当前判断
 
@@ -102,6 +102,23 @@
 
 这里使用项目的逐 CVE Macro Recall；TRIAGE 上方的 60.14% 是论文口径的 pooled-label
 Micro Recall，二者不能直接混用。所有六个视图的 ΔR@20 置信区间均完全高于零。
+
+冻结前语料消融表明，动作级增益主要来自 ATT&CK procedure，而不是把父/子技术描述拆成
+短文本：
+
+| 冻结参数语料 | Micro R@10 | Micro R@20 |
+| --- | ---: | ---: |
+| 父 Technique 描述 | 18.88% | 34.97% |
+| 子技术描述 | 21.68% | 31.47% |
+| 父描述 + 子技术描述 | 22.38% | 30.77% |
+| procedure-only，严格 LOO | 46.15% | 61.54% |
+| **正式 V5c 全动作，严格 LOO** | **44.06%** | **60.14%** |
+
+procedure-only 是查看冻结测试结果后得到的消融结论，因此不能事后替换已完成多基准验证的
+正式 V5c。202 个父 Technique 上，procedure 数量与 V5c Top-20 暴露的 Spearman 相关为
+0.596，与误报暴露为 0.593；这是论文必须披露的语料覆盖偏置。逐标签比较得到 37 个 V5c
+新命中、49 个共同命中、5 个 V1 命中退化、19 个仍在 21–50 位、33 个仍在 Top-50 外，
+均已保存可追溯 action evidence。
 
 当前不再把 V3a 视为已经胜出的最终方案。V3a 是有价值的查询视角和消融项；V1 是
 TRIAGE 同口径下最强的现有单路 Top-20 基线。
@@ -204,7 +221,7 @@ V5a–V5d full-ranking 运行只保留为泄漏敏感性消融。
 - 新来源提高 oracle，但受控 Top-20 未提高：进入工作包 3，问题主要在融合排序。
 - 新来源自身和融合结果均提高：冻结该来源定义，再做多基准验证。
 
-### 工作包 3：受控 Top-20 融合
+### 工作包 3：受控 Top-20 融合（已完成）
 
 状态：固定 `rank_constant=60`、`source_depth=50`、等权且不调参的基线已完成。V1+V5k
 与 V1+V5e+V5k 均显著低于 V5k 单路，因此当前正式 label-free 候选输出使用 V5k 单路
@@ -226,13 +243,16 @@ Technique 级原始名次。每个最终候选必须保存逐来源贡献。
 
 验收标准：
 
-- [ ] 最终每个 CVE 恰好不超过 20 个候选，候选去重且顺序确定。
-- [ ] manifest 保存全部输入 run、Git commit、语料版本、权重和深度参数。
-- [ ] 同时报告 V1、动作级单路、旧 RRF、新融合和 union oracle。
-- [ ] 主结果不是在冻结 test split 上搜索大量参数后的最优点。
-- [ ] 提升和退化案例都进入报告。
+- [x] 最终每个 CVE 恰好不超过 20 个候选，候选去重且顺序确定。
+- [x] manifest 保存全部输入 run、Git commit、语料版本、权重和深度参数。
+- [x] 同时报告 V1、动作级单路、旧 RRF、受控融合和 union oracle。
+- [x] 主结果不是在冻结 test split 上搜索大量参数后的最优点。
+- [x] 提升和退化案例都进入报告。
 
 ### 工作包 4：条件执行的 label-efficient reranker
+
+状态：未触发并关闭。冻结 V5c 已经在所有独立评测视图稳定提升，当前没有必要为了追平
+监督 TRIAGE 而增加训练组件；只有阶段二端到端结果证明 Top-20 排序仍是主要瓶颈时才重开。
 
 只有满足以下条件才执行：动作级加入后，正确标签明显进入候选池，但 label-free 方法仍
 无法稳定将它们排入 Top-20 或 Top-10。
@@ -255,7 +275,7 @@ Technique 级原始名次。每个最终候选必须保存逐来源贡献。
 - [ ] 与相同候选池的无训练融合比较，不能把候选覆盖变化算作 reranker 提升。
 - [ ] 报告训练标签频率分组，特别关注 rare/unseen Technique。
 
-### 工作包 5：多基准收口与论文报告
+### 工作包 5：多基准收口与论文报告（已完成）
 
 最终报告按用途分层：
 
@@ -366,20 +386,21 @@ rewrite cache。
 4. 检查 `git diff --check` 和提交差异。
 5. 只有用户明确要求时才 push。
 
-## 10. 下一次开发从哪里开始
+## 10. 阶段一冻结结论与后续边界
 
-冻结参数的多基准验证已经完成。下一工作包固定为“偏置、语料贡献和失败案例诊断”，
-执行顺序如下：
+阶段一已于 2026-07-28 完成冻结。正式交付为
+`experiments/v5c_raw_action_rank_rrf.yaml` 生成的严格 LOO、固定 Top-20 `CandidateRecord`：
 
-1. 保持正式 `experiments/v5c_raw_action_rank_rrf.yaml` 的严格 LOO Top-20 参数不变，
-   不根据任何测试标签修改 `aggregation_top_m=3` 或 `rank_constant=60`。
-2. 量化每个父 Technique 的 procedure 数量与 V5c 排名、命中和误报之间的关系，判断
-   Top-3 action 累加是否系统性偏向 procedure 丰富的 Technique。
-3. 在同一冻结 benchmark 上做预先定义的 parent description、sub-technique description、
-   procedure 三类语料消融；只解释各类公开知识的贡献，不搜索测试集最优组合。
-4. 逐例检查 V5c 新增命中和退化案例，特别是 secondary impact、medium/rare label 与
-   TRIAGE 中仍在 Top-50 外的标签，并保存可追溯 action evidence。
-5. 完成偏置与案例报告后冻结 V5c 语料版本和第一阶段论文表格；若仍需 reranker，只使用
-   TRIAGE 公开 236-CVE train split 开发，60-CVE test 不再参与选择。
+- 查询：原始 CVE 描述。
+- 知识语料：ATT&CK Enterprise 15.1 父描述、子技术描述与 procedure action。
+- 模型：`basel/ATTACK-BERT`。
+- 聚合：每个父 Technique 最多 Top-3 action 的 rank-RRF，`rank_constant=60`。
+- 泄漏防线：屏蔽 CVE/CAN ID，并对每个查询排除原文提及该 CVE 的 action。
+- 候选预算：正式输出 Top-20；完整 202-Technique 排名只用于诊断。
 
-这一工作包不继续修改 V3 prompt，也不在冻结 test split 上搜索动作聚合参数或融合权重。
+第一阶段不再继续调 V3 prompt、在冻结 test 上搜索融合权重、把 procedure-only 消融事后
+替换成主方法，或默认启动监督 reranker。后续默认工作转入第二阶段攻击图上下文筛选。
+
+只有出现以下新证据时才重新开启阶段一：新增独立人工 benchmark、预先注册的新语料/模型
+比较，或第二阶段证明 Top-20 候选覆盖是端到端性能的主要瓶颈。重新开启必须创建新实验
+配置和新报告，不能覆盖当前冻结 run，也必须继续披露 procedure 数量偏置。
