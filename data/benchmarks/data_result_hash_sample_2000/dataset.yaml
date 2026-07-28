@@ -1,0 +1,20 @@
+name: data_result_hash_sample_2000
+kind: benchmark
+task: cve_to_attack_technique
+source: independent paper dataset
+citation: null
+format: yearly_jsonl
+years: 1999-2025
+annotated_cves: 2000
+record_schema:
+  cve_id: string
+  techniques: list[string]
+notes: Deterministic supplementary sample of data_result; membership uses CVE IDs
+  only and does not establish label authority.
+derived_from: data_result
+sampling:
+  method: smallest_sha256(seed + NUL + cve_id)
+  seed: stage1-v5-multibench-20260727
+  source_records: 286461
+  sample_size: 2000
+  label_independent: true

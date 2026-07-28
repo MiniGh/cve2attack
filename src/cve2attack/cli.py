@@ -11,9 +11,11 @@ from typing import Sequence
 from cve2attack.config import PROJECT_ROOT, load_experiment, project_path
 from cve2attack.data.kev import import_kev_benchmarks
 from cve2attack.data.loaders import CVERepository, benchmark_truth, candidate_records
+from cve2attack.data.sampling import sample_benchmark
 from cve2attack.data.triage import import_triage_benchmarks
 from cve2attack.domain.classifier import classify_directory
 from cve2attack.evaluation.metrics import evaluate
+from cve2attack.evaluation.paired import paired_recall_comparison
 from cve2attack.evaluation.report import write_comparison_report
 from cve2attack.evaluation.diagnostics import diagnose_triage_candidates
 from cve2attack.evaluation.triage import compare_with_triage
@@ -77,6 +79,15 @@ def _parser() -> argparse.ArgumentParser:
         default="data/benchmarks",
         help="Directory in which the two generated TRIAGE test views are created",
     )
+
+    sample = subparsers.add_parser(
+        "sample-benchmark",
+        help="Create a frozen label-independent hash sample of a large benchmark",
+    )
+    sample.add_argument("--source", required=True, help="Source benchmark name")
+    sample.add_argument("--output", required=True, help="New benchmark name")
+    sample.add_argument("--size", required=True, type=int, help="Number of CVEs to retain")
+    sample.add_argument("--seed", required=True, help="Versioned deterministic sampling seed")
 
     subparsers.add_parser("classify-domain", help="Rebuild yearly ATT&CK domain mappings")
 
@@ -191,20 +202,39 @@ def compare_runs(
         raise RuntimeError(f"Benchmark has no records: {benchmark_name}")
 
     rows = {}
+    records_by_run = {}
     for raw_path in run_dirs:
         run_dir = raw_path if raw_path.is_absolute() else project_root / raw_path
-        rows[_run_name(run_dir)] = evaluate(candidate_records(run_dir), truth)
+        name = _run_name(run_dir)
+        records = candidate_records(run_dir)
+        rows[name] = evaluate(records, truth)
+        records_by_run[name] = records
 
-    identifier = comparison_id or f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{benchmark_name}"
-    output_dir = project_root / "comparisons" / identifier
-    if output_dir.exists():
-        raise FileExistsError(f"Comparison directory already exists: {output_dir}")
-    output_dir.mkdir(parents=True)
     payload = {
         "benchmark": benchmark_name,
         "cohort_size": len(truth),
         "runs": {name: metrics.to_dict() for name, metrics in rows.items()},
     }
+    paired = None
+    if len(records_by_run) == 2:
+        left_name, right_name = records_by_run
+        paired = paired_recall_comparison(
+            records_by_run[left_name],
+            records_by_run[right_name],
+            truth,
+            left_name=left_name,
+            right_name=right_name,
+        )
+        payload["paired_recall_delta"] = paired
+
+    # Perform all potentially expensive bootstrap work before creating the
+    # immutable output directory. An interrupted SSH session then cannot leave
+    # behind an empty comparison that blocks a safe retry.
+    identifier = comparison_id or f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{benchmark_name}"
+    output_dir = project_root / "comparisons" / identifier
+    if output_dir.exists():
+        raise FileExistsError(f"Comparison directory already exists: {output_dir}")
+    output_dir.mkdir(parents=True)
     (output_dir / "metrics.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -214,6 +244,24 @@ def compare_runs(
     write_comparison_report(
         output_dir / "report.md", benchmark_name=benchmark_name, rows=rows
     )
+    if paired is not None:
+        with (output_dir / "report.md").open("a", encoding="utf-8") as handle:
+            handle.write(
+                "\n## Paired CVE-level recall delta\n\n"
+                f"Positive values mean `{paired['right']}` outperforms `{paired['left']}`. "
+                f"Intervals use {paired['bootstrap_iterations']:,} paired bootstrap samples "
+                f"with seed {paired['seed']}.\n\n"
+                "| Cutoff | Delta | 95% CI | Improved CVEs | Same | Worse |\n"
+                "|---:|---:|---:|---:|---:|---:|\n"
+            )
+            for cutoff in (10, 20):
+                point = paired["cutoffs"][str(cutoff)]
+                handle.write(
+                    f"| {cutoff} | {point['delta']:.2%} | "
+                    f"[{point['ci95_low']:.2%}, {point['ci95_high']:.2%}] | "
+                    f"{point['improved_cves']} | {point['same_cves']} | "
+                    f"{point['worse_cves']} |\n"
+                )
     return output_dir
 
 
@@ -297,6 +345,17 @@ def main(argv: Sequence[str] | None = None) -> None:
         stats = import_triage_benchmarks(
             source_dir=project_path(args.source_dir),
             benchmark_root=project_path(args.benchmark_root),
+        )
+        print(json.dumps(stats, ensure_ascii=False, indent=2))
+        return
+
+    if args.command == "sample-benchmark":
+        benchmark_root = PROJECT_ROOT / "data" / "benchmarks"
+        stats = sample_benchmark(
+            source_dir=benchmark_root / args.source,
+            output_dir=benchmark_root / args.output,
+            sample_size=args.size,
+            seed=args.seed,
         )
         print(json.dumps(stats, ensure_ascii=False, indent=2))
         return

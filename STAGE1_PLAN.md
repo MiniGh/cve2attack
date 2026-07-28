@@ -48,7 +48,7 @@
 | 已完成 | 动作级来源互补性、直接 CVE 重叠和严格 LOO 诊断 | 工作包 2 |
 | 基线已完成 | 动作级来源与 V1 的固定等权受控融合 | 工作包 3；简单 RRF 退化，暂不选用 |
 | 条件执行 | 使用公开训练 split 的轻量 reranker | 工作包 4 |
-| 未完成 | 第一阶段最终多基准报告和论文表格 | 工作包 5 |
+| 核心验证已完成 | V1/V5c 冻结参数多基准验证与配对置信区间 | 工作包 5；论文总表、偏置消融和案例仍待完成 |
 
 ## 3. 已有证据与当前判断
 
@@ -82,8 +82,26 @@
 2. 固定参数等权 RRF 会稀释强动作级排序：V1+V5k 只有 48.25%，加入 V5e 后为 46.15%。
    这两个负结果必须保留，不再围绕冻结测试集搜索权重。
 3. 剩余 25 个 21–50 位标签仍属于排序问题；21 个 Top-50 外标签仍属于候选覆盖问题。
-4. 下一步先冻结严格 LOO 的动作语料和聚合定义，并做多 benchmark 验证与 procedure 数量偏置
-   诊断；只有证据表明有必要时，才在公开 236-CVE 训练 split 上开发融合或 reranker。
+4. 冻结参数多 benchmark 验证已经表明增益不局限于 TRIAGE；下一步量化 procedure 数量偏置、
+   做父描述/子技术描述/procedure 语料消融并检查新增命中与退化案例。
+5. 只有上述诊断证明固定 V5c 仍存在可学习的系统性排序问题时，才在公开 236-CVE 训练 split
+   上开发融合或 reranker。
+
+冻结参数的配对 Macro Recall 结果如下。`data_result` 只运行以 CVE ID 做标签无关 SHA-256
+抽样的 2,000-CVE 固定子集；由于该数据集缺少可核实引文且标签疑似自动生成，它只作为
+规模与一致性补充证据。
+
+| Benchmark | CVEs | V1 R@10 / R@20 | V5c R@10 / R@20 | ΔR@20（95% CI） |
+| --- | ---: | ---: | ---: | ---: |
+| TRIAGE test all | 60 | 26.40% / 39.43% | 45.49% / 61.98% | +22.55 [14.10, 31.32] pp |
+| `cve2attack_result` | 1,661 | 35.44% / 47.83% | 44.83% / 58.53% | +10.70 [8.96, 12.47] pp |
+| KEV all | 296 | 22.77% / 35.41% | 45.91% / 60.51% | +25.10 [21.12, 29.05] pp |
+| KEV exploitation | 284 | 22.50% / 35.14% | 46.09% / 60.42% | +25.28 [21.34, 29.35] pp |
+| KEV nonoverlap | 251 | 24.91% / 36.52% | 46.10% / 61.43% | +24.90 [20.59, 29.24] pp |
+| `data_result` hash sample | 2,000 | 61.30% / 73.75% | 77.07% / 85.11% | +11.36 [9.79, 12.96] pp |
+
+这里使用项目的逐 CVE Macro Recall；TRIAGE 上方的 60.14% 是论文口径的 pooled-label
+Micro Recall，二者不能直接混用。所有六个视图的 ΔR@20 置信区间均完全高于零。
 
 当前不再把 V3a 视为已经胜出的最终方案。V3a 是有价值的查询视角和消融项；V1 是
 TRIAGE 同口径下最强的现有单路 Top-20 基线。
@@ -245,7 +263,8 @@ Technique 级原始名次。每个最终候选必须保存逐来源贡献。
 2. `triage_2025_test_no_secondary`：排除 secondary impact 的语义消融。
 3. `ctid_kev_2025_02_13_exploitation`：专门检查第一阶段最直接负责的利用动作。
 4. `ctid_kev_2025_02_13_nonoverlap`：与旧 `cve2attack_result` 去重后的严格外部视图。
-5. `data_result` 与 `cve2attack_result`：两个历史论文数据集，分别报告，不合并。
+5. `cve2attack_result`：完整历史论文数据集；`data_result_hash_sample_2000`：从
+   `data_result` 标签无关抽样的补充规模验证，不能冒充权威人工标注主基准。
 
 统一指标：
 
@@ -349,17 +368,18 @@ rewrite cache。
 
 ## 10. 下一次开发从哪里开始
 
-下一工作包固定为“冻结动作级定义并做多基准验证”，执行顺序如下：
+冻结参数的多基准验证已经完成。下一工作包固定为“偏置、语料贡献和失败案例诊断”，
+执行顺序如下：
 
-1. 以正式 `experiments/v5c_raw_action_rank_rrf.yaml` 为严格 LOO Top-20 配置，不再根据
-   60-CVE test 标签修改 `aggregation_top_m=3` 或 `rank_constant=60`。
-2. 在 `data_result`、`cve2attack_result` 和 KEV 的 all/exploitation/nonoverlap 视图分别运行，
-   检查提升是否跨数据来源成立，而不是 TRIAGE 切片特例。
-3. 量化每个 Technique 的 procedure 数量与 V5c 排名/命中之间的关系，明确 Top-3 action
-   累加是否偏向 procedure 丰富或训练标签高频的 Technique。
+1. 保持正式 `experiments/v5c_raw_action_rank_rrf.yaml` 的严格 LOO Top-20 参数不变，
+   不根据任何测试标签修改 `aggregation_top_m=3` 或 `rank_constant=60`。
+2. 量化每个父 Technique 的 procedure 数量与 V5c 排名、命中和误报之间的关系，判断
+   Top-3 action 累加是否系统性偏向 procedure 丰富的 Technique。
+3. 在同一冻结 benchmark 上做预先定义的 parent description、sub-technique description、
+   procedure 三类语料消融；只解释各类公开知识的贡献，不搜索测试集最优组合。
 4. 逐例检查 V5c 新增命中和退化案例，特别是 secondary impact、medium/rare label 与
-   仍在 Top-50 外的 21 个标签。
-5. 多基准结果稳定后冻结 V5c 语料版本；若仍需融合，只用公开 236-CVE 训练 split 开发
-   evidence-aware 方法，60-CVE test 仅做一次最终评价。
+   TRIAGE 中仍在 Top-50 外的标签，并保存可追溯 action evidence。
+5. 完成偏置与案例报告后冻结 V5c 语料版本和第一阶段论文表格；若仍需 reranker，只使用
+   TRIAGE 公开 236-CVE train split 开发，60-CVE test 不再参与选择。
 
 这一工作包不继续修改 V3 prompt，也不在冻结 test split 上搜索动作聚合参数或融合权重。

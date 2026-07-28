@@ -15,7 +15,8 @@
 
 V3a 曾是重构时选定的主方案；动作级方法出现前，TRIAGE 同口径诊断显示 V1 是最强
 单路 Top-20 基线。当前探索结果中，严格 leave-one-CVE-out 的 V5c 动作级检索达到
-Micro Recall@20 60.14%，V3a 保留为查询视角和消融项。该结果仍需多 benchmark 验证；
+Micro Recall@20 60.14%，V3a 保留为查询视角和消融项。冻结参数的 V5c 已在
+`cve2attack_result`、KEV 三视图和标签无关的 2,000-CVE `data_result` 样本上稳定优于 V1；
 当前研究判断、下一工作包和验收标准见根目录 `STAGE1_PLAN.md`。
 
 V3a 的处理流程为：
@@ -75,6 +76,9 @@ runs/<run_id>/
 │   │   ├── v2_raw_procedures_fullranking.yaml
 │   │   ├── v3a_llm_rewrite_fullranking.yaml
 │   │   └── v3b_llm_rewrite_procedures_fullranking.yaml
+│   ├── validation/
+│   │   ├── v1_raw_attackbert_attack15_1.yaml
+│   │   └── v5c_raw_action_rank_rrf_attack15_1.yaml
 │   ├── v1_raw_attackbert.yaml
 │   ├── v2_raw_procedures.yaml
 │   ├── v3a_llm_rewrite.yaml
@@ -88,7 +92,8 @@ runs/<run_id>/
 │   ├── pipeline.py
 │   ├── schemas.py
 │   ├── data/
-│   │   └── loaders.py
+│   │   ├── loaders.py
+│   │   └── sampling.py
 │   ├── domain/
 │   │   └── classifier.py
 │   ├── rewrite/
@@ -107,6 +112,7 @@ runs/<run_id>/
 │       ├── diagnostics.py
 │       ├── action_overlap.py
 │       ├── metrics.py
+│       ├── paired.py
 │       ├── ranking.py
 │       ├── triage.py
 │       └── report.py
@@ -152,6 +158,7 @@ runs/<run_id>/
 - `compare`：在同一 benchmark 上重新比较一个或多个 run。
 - `import-kev`：从固定的 CTID KEV CSV 快照生成 `all`、`exploitation` 和 `nonoverlap` 三个公开 benchmark 视图。
 - `import-triage`：从公开复现实验包的冻结 split 与标签生成两个 60-CVE TRIAGE 测试视图。
+- `sample-benchmark`：只根据 CVE ID 和固定 seed，从大型 benchmark 生成可复现、标签无关的冻结样本。
 - `compare-triage`：在论文原始测试 split 上，将项目 run 与公开的 TRIAGE、SMET 预测统一复评并输出逐 CVE 分歧。
 - `diagnose-triage`：在同一 60-CVE/143-parent-label 口径下，对完整排名 run、SMET 和 TRIAGE 做候选互补性诊断。
 - `fuse-rrf`：读取多个已完成 run，仅使用候选名次执行无训练 Reciprocal Rank Fusion，并写出受控 Top-K 标准 run。
@@ -347,12 +354,18 @@ embedding cache。它支持两种无训练 Technique 聚合：
 
 `src/cve2attack/evaluation/diagnostics.py` 用于第一阶段候选源诊断。它计算 Recall@1/3/5/10/20/30/50、正确标签排名分布、两两候选交集、独有正确命中、并集 oracle，以及按 mapping type、CVE 年份、训练标签频率、CWE 数量和描述长度分组的 Micro Recall。TRIAGE 公开预测只到 Top-20，因此其 Recall@30/@50 会写为 `N/A`，不会把截断误报为零。
 
+`src/cve2attack/evaluation/paired.py` 在相同 CVE cohort 上逐例计算两个 run 的 Macro Recall
+差值，并用固定 seed 的 10,000 次配对 bootstrap 给出 95% 置信区间。它同时统计第二个 run
+相对第一个 run 改善、不变和退化的 CVE 数；`compare` 仅在恰好传入两个 run 时自动调用它。
+
 ## 5. 测试结构
 
 ```text
 tests/
 ├── test_diagnostics.py
+├── test_paired.py
 ├── test_rrf.py
+├── test_sampling.py
 ├── test_schemas.py
 ├── test_action_overlap.py
 ├── test_action_retrieval.py
@@ -369,6 +382,8 @@ tests/
 - `test_metrics.py`：固定 benchmark cohort、缺失预测和覆盖率语义。
 - `test_diagnostics.py`：任意 cutoff、公开排名截断、正确标签 rank bin 和并集候选预算语义。
 - `test_rrf.py`：RRF 共识排序、内部来源深度、确定性 tie break 和非法权重校验。
+- `test_paired.py`：逐 CVE Recall 差值、改进/退化计数和固定 seed 置信区间。
+- `test_sampling.py`：标签无关哈希抽样、确定性、元数据和禁止覆盖语义。
 
 ## 6. 数据目录与文件格式
 
@@ -381,12 +396,21 @@ data/benchmarks/
 ├── data_result/
 │   ├── dataset.yaml
 │   └── CVE-<year>.jsonl
+├── data_result_hash_sample_2000/
+│   ├── dataset.yaml
+│   ├── cohort.json
+│   └── CVE-<year>.jsonl
 └── cve2attack_result/
     ├── dataset.yaml
     └── CVE-<year>.jsonl
 ```
 
 `data_result` 与 `cve2attack_result` 来自不同论文，标注范围和策略不同。它们是两个独立 benchmark，程序不会自动合并。
+
+`data_result_hash_sample_2000` 是从 286,461 条 `data_result` 记录中，只按
+`SHA-256(seed + NUL + cve_id)` 排序选出的固定 2,000-CVE 子集。`cohort.json` 和
+`dataset.yaml` 保存 seed、来源规模与抽样规则。由于 `data_result` 暂无可核实论文引文且标签
+疑似自动生成，该子集只用于规模和跨数据分布一致性检查，不能作为权威人工标注主基准。
 
 TRIAGE 接入后还包含两个固定测试视图：
 
@@ -464,6 +488,10 @@ data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json
 | `v5d_rewrite_action_rank_rrf.yaml` | sec-i1 改写 | 独立 descriptions + procedures | action Top-3 rank-RRF，严格 LOO |
 
 `experiments/diagnostics/` 中的四份 `*_fullranking.yaml` 不是新方法，而是 V1/V2/V3a/V3b 的诊断运行条件：输入固定为 `triage_2025_test_all`，`retrieval.top_k=202`，保存 ATT&CK 15.1 全部父 Technique 的排序。这样才能区分“正确标签在 21–50 位”和“正确标签在所有实用 Top-50 候选之外”。V3 诊断配置直接复用已经完成的 296-CVE rewrite cache，执行 `run` 时不会调用 Ollama。
+
+`experiments/validation/` 固定 V1 与 V5c 共用 ATT&CK Enterprise 15.1，专用于跨 benchmark
+比较。运行时只通过 `--benchmark` 切换 cohort，不改变模型、动作语料、聚合参数或 Top-20
+预算，避免把 ATT&CK 版本差异误当作方法差异。
 
 V5 诊断配置分三组：V5a–V5d 是未做查询级排除的泄漏敏感性消融；V5e–V5h 是只使用
 父/子技术描述、不含 procedure 的对照；V5i–V5l 是正式解释使用的严格 LOO 完整排名。
@@ -860,6 +888,11 @@ comparisons/<comparison_id>/
 - `cohort.json`：本次比较使用的固定 CVE ID 集合。
 - `report.md`：覆盖率与 Recall 的对比表格。
 
+恰好比较两个 run 时，`metrics.json` 还包含 `paired_recall_delta`，`report.md` 会追加
+逐 CVE Macro Recall@10/@20 的差值、10,000 次配对 bootstrap 95% 置信区间，以及 improved、
+same、worse CVE 数。正差值表示命令中第二个 run 优于第一个 run。三个或更多 run 只输出
+常规并列表，不执行配对检验。
+
 示例：
 
 ```bash
@@ -1050,6 +1083,27 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
 命令读取当前固定 ATT&CK bundle，提取 `uses` relationship 原文中的 CVE/CAN 编号，并报告
 benchmark 中被直接提及的 CVE、直接真值对及其标签比例。输出包含 `summary.json`、
 `overlaps.jsonl` 和 `report.md`。这只是泄漏审计，不会生成候选或加载 embedding 模型。
+
+### 11.13 `sample-benchmark`：生成标签无关固定样本
+
+```bash
+.venv/bin/python -m cve2attack sample-benchmark \
+  --source data_result \
+  --output data_result_hash_sample_2000 \
+  --size 2000 \
+  --seed stage1-v5-multibench-20260727
+```
+
+| 参数 | 必需 | 含义 |
+| --- | --- | --- |
+| `--source NAME` | 是 | `data/benchmarks/NAME/` 下的源 benchmark。 |
+| `--output NAME` | 是 | 新 benchmark 目录名；目标已存在时拒绝覆盖。 |
+| `--size N` | 是 | 保留的 CVE 数量，必须为正且不超过来源规模。 |
+| `--seed TEXT` | 是 | 进入 SHA-256 选择键的版本化固定 seed。 |
+
+抽样过程只读取 CVE ID 决定成员，不使用 Technique 标签、描述或模型预测。输出按年份写为
+JSONL，并附带完整 `cohort.json` 与 `dataset.yaml`，因此其他机器无需重新抽样即可复现同一
+评测 cohort。
 
 ## 12. 常用使用流程
 

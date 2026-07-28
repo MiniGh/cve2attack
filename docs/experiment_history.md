@@ -82,3 +82,58 @@ Artifacts:
 - complementarity: `comparisons/triage_candidate_complementarity_actions_loo_final/`
 - controlled fusion: `comparisons/triage_action_v5_controlled_rrf_fusion/`
 - overlap audit: `comparisons/triage_action_procedure_overlap_audit/`
+
+## 2026-07-28: frozen-parameter cross-benchmark validation
+
+This validation compares V1 and formal V5c without changing any method parameter between
+datasets. Both use ATT&CK Enterprise 15.1 and `basel/ATTACK-BERT`; V5c uses raw CVE text,
+strict query-specific leave-one-CVE-out, all three action types, Top-3 action rank-RRF with
+`rank_constant=60`, and a fixed Top-20 output. Every run has 100% query and prediction coverage.
+
+The table reports the project's per-CVE Macro Recall. The TRIAGE Micro Recall values reported in
+the preceding section (V1 37.76%, V5c 60.14% at Top-20) use pooled labels and must not be mixed
+with these Macro values.
+
+| Benchmark | CVEs | V1 R@10 | V5c R@10 | ΔR@10 (95% CI) | V1 R@20 | V5c R@20 | ΔR@20 (95% CI) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| TRIAGE test all | 60 | 26.40% | 45.49% | +19.09 [11.73, 26.73] pp | 39.43% | 61.98% | +22.55 [14.10, 31.32] pp |
+| `cve2attack_result` | 1,661 | 35.44% | 44.83% | +9.40 [7.74, 11.09] pp | 47.83% | 58.53% | +10.70 [8.96, 12.47] pp |
+| KEV all | 296 | 22.77% | 45.91% | +23.14 [19.26, 27.17] pp | 35.41% | 60.51% | +25.10 [21.12, 29.05] pp |
+| KEV exploitation | 284 | 22.50% | 46.09% | +23.59 [19.72, 27.72] pp | 35.14% | 60.42% | +25.28 [21.34, 29.35] pp |
+| KEV nonoverlap | 251 | 24.91% | 46.10% | +21.20 [17.07, 25.39] pp | 36.52% | 61.43% | +24.90 [20.59, 29.24] pp |
+| `data_result` hash sample | 2,000 | 61.30% | 77.07% | +15.77 [13.97, 17.57] pp | 73.75% | 85.11% | +11.36 [9.79, 12.96] pp |
+
+Intervals use 10,000 paired CVE-level bootstrap samples with seed `20260728`. Every Recall@10
+and Recall@20 interval is entirely above zero. At Top-20, V5c improves/worsens 27/3 TRIAGE CVEs,
+422/121 `cve2attack_result` CVEs, 143/10 KEV-all CVEs, 139/10 KEV-exploitation CVEs, 122/9
+KEV-nonoverlap CVEs, and 381/69 sampled `data_result` CVEs; all remaining CVEs are unchanged.
+
+The KEV nonoverlap result is especially important: its +24.90-point Top-20 gain remains after
+removing every CVE shared with `cve2attack_result`, so the effect is not explained by benchmark
+overlap. The `data_result` V1 score is unusually high and the dataset has no currently verifiable
+citation; its 2,000-CVE cohort was therefore selected only by a committed seeded SHA-256 ordering
+of CVE IDs and is treated as supplementary scale/consistency evidence, not authoritative ground
+truth.
+
+Conclusion: frozen V5c is the current primary label-free Stage-1 candidate generator. This closes
+the question of whether its improvement is unique to the 60-CVE TRIAGE test slice, but it does not
+yet close Stage 1. Procedure-count bias, parent/sub-technique/procedure corpus ablations and
+case-level error analysis remain before freezing the paper method and final table.
+
+Runs:
+
+- `runs/multibench_cve2attack_v1_attack15_1_retry/`
+- `runs/multibench_cve2attack_v5c_action_attack15_1/`
+- `runs/kev_v1_raw_attackbert_15_1/`
+- `runs/multibench_kev_all_v5c_action_attack15_1/`
+- `runs/multibench_data_sample2000_v1_attack15_1/`
+- `runs/multibench_data_sample2000_v5c_action_attack15_1/`
+
+Paired reports:
+
+- `comparisons/multibench_final_triage_v1_vs_v5c_paired/`
+- `comparisons/multibench_final_cve2attack_v1_vs_v5c_paired/`
+- `comparisons/multibench_final_kev_all_v1_vs_v5c_paired_retry/`
+- `comparisons/multibench_final_kev_exploitation_v1_vs_v5c_paired/`
+- `comparisons/multibench_final_kev_nonoverlap_v1_vs_v5c_paired/`
+- `comparisons/multibench_final_data_sample2000_v1_vs_v5c_paired/`

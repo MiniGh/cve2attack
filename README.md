@@ -4,7 +4,7 @@ This branch contains the embedding-retrieval approach for the first mapping stag
 
 V3a was the method selected during the initial refactor, but the frozen TRIAGE comparison showed V1 as the strongest pre-V5 single-source Top-20 baseline. V3a remains an important query-view ablation rather than a preselected final method. The current research roadmap and acceptance gates are maintained in `STAGE1_PLAN.md`.
 
-The current strongest exploratory label-free Stage-1 method is V5c: it embeds individual ATT&CK descriptions, sub-technique descriptions and procedure actions, then rolls the Top-3 action ranks back to parent Techniques. Its strict leave-one-CVE-out evaluation reaches Micro Recall@20 60.14% on the public 60-CVE TRIAGE test view (V1 37.76%, SMET 52.45%, supervised TRIAGE 76.92%). Multi-benchmark confirmation remains the next work package.
+The current strongest label-free Stage-1 method is V5c: it embeds individual ATT&CK descriptions, sub-technique descriptions and procedure actions, then rolls the Top-3 action ranks back to parent Techniques. Its strict leave-one-CVE-out evaluation reaches Micro Recall@20 60.14% on the public 60-CVE TRIAGE test view (V1 37.76%, SMET 52.45%, supervised TRIAGE 76.92%). The frozen-parameter method also improves over V1 on `cve2attack_result`, all three KEV views and a label-independent 2,000-CVE `data_result` sample. Procedure-count bias, corpus ablations and case analysis remain before the Stage-1 method is frozen for the paper.
 
 ## Layout
 
@@ -64,6 +64,18 @@ Run the same method on either independent paper benchmark without copying the ex
 .venv/bin/python -m cve2attack run experiments/v1_raw_attackbert.yaml --benchmark cve2attack_result
 ```
 
+Cross-benchmark validation uses the same frozen ATT&CK 15.1 corpus for V1 and V5c:
+
+```bash
+.venv/bin/python -m cve2attack run \
+  experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml \
+  --benchmark ctid_kev_2025_02_13_nonoverlap
+```
+
+The committed `data_result_hash_sample_2000` cohort was selected from the 286,461-record
+`data_result` benchmark using only a seeded SHA-256 ordering of CVE IDs. It is a reproducibility
+and scale check, not a replacement for an independently curated authoritative benchmark.
+
 Rewrite caches use the selected benchmark name and prompt-template version. For example, `--benchmark data_result` with V3a reads or generates `data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json`. Legacy `*_sec_i1.json` caches were generated with an invalid raw-prompt template and must not be mixed with the v1 cache.
 
 Check paths, query coverage and the Technique knowledge base without loading the embedding model:
@@ -83,6 +95,9 @@ Each run writes a resolved `manifest.json`, schema-versioned candidates, metrics
 ```
 
 Every method is evaluated on the benchmark's complete fixed cohort. Missing predictions count as misses and coverage is reported separately.
+When exactly two runs are compared, the report additionally includes their paired per-CVE
+Recall@10/@20 deltas, 10,000-sample bootstrap 95% confidence intervals, and counts of improved,
+unchanged and worse CVEs.
 
 Import and compare on the exact 60-CVE public TRIAGE test split:
 
