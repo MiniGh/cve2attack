@@ -158,6 +158,7 @@ runs/<run_id>/
 - `compare-triage`：在论文原始测试 split 上，将项目 run 与公开的 TRIAGE、SMET 预测统一复评并输出逐 CVE 分歧。
 - `diagnose-triage`：在同一 60-CVE/143-parent-label 口径下，对完整排名 run、SMET 和 TRIAGE 做候选互补性诊断。
 - `fuse-rrf`：读取多个已完成 run，仅使用候选名次执行无训练 Reciprocal Rank Fusion，并写出受控 Top-K 标准 run。
+- `build-stage2-graph`：把统一的公开场景 YAML 转换成 MulVAL-compatible `AttackGraph.xml`，并隔离评价标签。
 - `extract-graph-context`：读取 MulVAL `AttackGraph.xml`，输出带版本号的局部上下文与完整上游证据分支。
 - `run-stage2`：读取已有第一阶段 run 和一张攻击图，连接 `CandidateRecord`、执行 topology-only 确定性重排序并输出前后评价。
 
@@ -331,6 +332,7 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 
 `src/cve2attack/stage2/` 将外部 MulVAL 生成的 `AttackGraph.xml` 转换成带版本号的上下文 JSON：
 
+- `scenario_graph.py`：校验统一场景 YAML，并生成确定性的 MulVAL-compatible XML；不使用评价标签生成图。
 - `graph_parser.py`：解析 XML，并显式把 MulVAL 原始边反转为“条件 → 规则 → 结果”。
 - `path_expander.py`：展开 OR 状态的全部 producer rules；不再任意选择第一条路径。
 - `context_extractor.py`：为每个 `vulExists` 分别生成直接的 `local_context` 和上游 `graph_context`。
@@ -339,7 +341,7 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 - `reranker.py`：实现不使用目标语义字段和标签的 `topology-rule-priority-v1` 基线。
 - `evaluation.py`：在候选集合不变的前提下比较 Top-1/3/5、MRR 和正确标签名次。
 
-攻击图生成器仍是外部组件，本仓库不依赖 `ldh_attackgraph` 父目录。原 MulVAL 固定回归输入复制在 `tests/fixtures/mulval/AttackGraph.xml`；最小闭环场景位于 `tests/fixtures/stage2/`。单独提取上下文时 `candidates` 为空，`run-stage2` 会用现有 `CandidateRecord` 填充并执行确定性重排序。详细数据契约见 `docs/stage2_graph_context.md`。
+MulVAL 攻击图生成器仍是外部组件，本仓库不依赖 `ldh_attackgraph` 父目录。M&NTIS 等非 MulVAL 执行轨迹先保存来源证据，再通过统一场景 YAML 转换；原始日志和 PCAP 不直接进入重排序器。原 MulVAL 固定回归输入复制在 `tests/fixtures/mulval/AttackGraph.xml`；最小闭环场景位于 `tests/fixtures/stage2/` 和 `data/stage2_scenarios/`。单独提取上下文时 `candidates` 为空，`run-stage2` 会用现有 `CandidateRecord` 填充并执行确定性重排序。详细数据契约见 `docs/stage2_graph_context.md`。
 
 ## 5. 测试结构
 
@@ -349,6 +351,7 @@ tests/
 ├── test_rrf.py
 ├── test_stage2_context.py
 ├── test_stage2_closed_loop.py
+├── test_stage2_scenario_graph.py
 ├── test_schemas.py
 ├── test_retrieval.py
 ├── test_technique_kb.py
@@ -995,7 +998,28 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
 
 该命令不加载 embedding 模型、不调用 Ollama，也不使用 benchmark 标签决定融合分数。标签只在候选写出后用于常规评估。
 
-### 11.12 `extract-graph-context`：提取第二阶段攻击图上下文
+### 11.12 `build-stage2-graph`：转换公开场景为攻击图
+
+```bash
+.venv/bin/python -m cve2attack build-stage2-graph \
+  --scenario data/stage2_scenarios/mantis/zerologon/scenario.yaml \
+  --output data/stage2_scenarios/mantis/zerologon/AttackGraph.xml \
+  [--force]
+```
+
+参数：
+
+| 参数 | 必需 | 默认值 | 含义 |
+| --- | --- | --- | --- |
+| `--scenario PATH` | 是 | — | schema 1.0 的统一场景 YAML；相对路径从项目根目录解析。 |
+| `--output PATH` | 是 | — | 生成的 MulVAL-compatible `AttackGraph.xml`。 |
+| `--force` | 否 | false | 覆盖已有生成图；默认遇到同名文件立即停止。 |
+
+统一场景的 `source` 记录数据集与证据来源，`context` 保存允许转换成图的初始状态、
+网络关系、服务、漏洞和后果，`evaluation` 单独保存事后标签。转换器不使用
+`evaluation.expected_techniques` 生成节点或边；相应测试会修改标签并断言 XML 不变。
+
+### 11.13 `extract-graph-context`：提取第二阶段攻击图上下文
 
 ```bash
 .venv/bin/python -m cve2attack extract-graph-context \
@@ -1024,7 +1048,7 @@ RRF(technique) = Σ_source weight_source / (rank_constant + rank_source)
 
 该命令不加载 embedding 模型，也不调用 Ollama。输出包含图统计、每个漏洞的直接利用条件和全部上游分支；候选字段保持为空，等待 `run-stage2` 接入第一阶段结果。
 
-### 11.13 `run-stage2`：运行第一、第二阶段最小闭环
+### 11.14 `run-stage2`：运行第一、第二阶段最小闭环
 
 ```bash
 PYTHONPATH=src ../cve2attack/.venv/bin/python -m cve2attack run-stage2 \
@@ -1067,6 +1091,20 @@ PYTHONPATH=src ../cve2attack/.venv/bin/python -m cve2attack run-stage2 \
 
 该场景使用真实 CVE、真实第一阶段候选和公开标签，但攻击图拓扑是人工合成的，只用于
 证明链路、确定性行为和报告正确，不能作为独立总体准确率证据。
+
+公开轨迹派生的 Zerologon 案例：
+
+```bash
+.venv/bin/python -m cve2attack run-stage2 \
+  --stage1-run data/stage2_scenarios/mantis/zerologon/stage1_snapshot \
+  --attack-graph data/stage2_scenarios/mantis/zerologon/AttackGraph.xml \
+  --benchmark stage2_mantis_scenarios \
+  --run-id mantis_zerologon_v1 \
+  --scenario-kind trace_derived_mantis_lateral_movement
+```
+
+该案例的拓扑事实来自 M&NTIS 执行轨迹，第一阶段快照保留 V3a 原始 Top-20；它是
+可复现的单案例证据，不代表大样本总体准确率。
 
 输出目录：
 

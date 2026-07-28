@@ -28,6 +28,7 @@ from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
 from cve2attack.stage2.pipeline import run_context_extraction, run_stage2_experiment
+from cve2attack.stage2.scenario_graph import build_attack_graph_from_scenario
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -156,6 +157,28 @@ def _parser() -> argparse.ArgumentParser:
         nargs="+",
         type=float,
         help="Optional positive source weights in the same order as the run paths",
+    )
+
+    scenario_graph = subparsers.add_parser(
+        "build-stage2-graph",
+        help="Convert a normalized public scenario YAML into MulVAL-compatible XML",
+    )
+    scenario_graph.add_argument(
+        "--scenario",
+        required=True,
+        type=Path,
+        help="Versioned stage-2 scenario YAML; relative paths use the project root",
+    )
+    scenario_graph.add_argument(
+        "--output",
+        required=True,
+        type=Path,
+        help="Generated AttackGraph.xml path; relative paths use the project root",
+    )
+    scenario_graph.add_argument(
+        "--force",
+        action="store_true",
+        help="Replace an existing generated graph instead of failing",
     )
 
     graph_context = subparsers.add_parser(
@@ -417,6 +440,17 @@ def main(argv: Sequence[str] | None = None) -> None:
             source_depth=args.source_depth,
             rank_constant=args.rank_constant,
             weights=args.weights,
+        )
+        print(path)
+        return
+
+    if args.command == "build-stage2-graph":
+        scenario = args.scenario if args.scenario.is_absolute() else PROJECT_ROOT / args.scenario
+        output = args.output if args.output.is_absolute() else PROJECT_ROOT / args.output
+        path = build_attack_graph_from_scenario(
+            scenario,
+            output,
+            overwrite=args.force,
         )
         print(path)
         return

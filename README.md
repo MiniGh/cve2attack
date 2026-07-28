@@ -21,6 +21,8 @@ The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `
 - `data/raw/`: raw CVE records.
 - `data/raw/triage/triage_2025/`: selected public TRIAGE split, labels and reference predictions; the 773.7 MB archive is not stored in Git.
 - `data/derived/`: reproducible intermediate data and expensive rewrite caches.
+- `data/stage2_sources/`: external scenario packages and source inventories; raw and extracted archives are ignored by Git.
+- `data/stage2_scenarios/`: versioned normalized scenario descriptors, generated graph inputs and frozen single-case inputs.
 - `src/cve2attack/`: reusable pipeline, strategies and evaluation code.
 - `src/cve2attack/stage2/`: MulVAL parsing and versioned graph-context extraction.
 - `tests/fixtures/mulval/`: self-contained attack-graph regression input.
@@ -69,6 +71,20 @@ Each run writes a resolved `manifest.json`, schema-versioned candidates, metrics
 
 ## Extract stage-2 graph context
 
+M&NTIS and similar execution packages are not MulVAL XML. Convert their
+versioned, normalized scenario descriptor before running context extraction:
+
+```bash
+.venv/bin/python -m cve2attack build-stage2-graph \
+  --scenario data/stage2_scenarios/mantis/zerologon/scenario.yaml \
+  --output data/stage2_scenarios/mantis/zerologon/AttackGraph.xml \
+  --force
+```
+
+The converter reads only the `context` section when constructing vertices and
+edges. `evaluation.expected_techniques` remains separate and is used only by
+the benchmark loader after reranking.
+
 ```bash
 .venv/bin/python -m cve2attack extract-graph-context \
   --attack-graph tests/fixtures/mulval/AttackGraph.xml \
@@ -97,6 +113,17 @@ labels, but its network topology is synthetic. It validates the engineering
 loop and must not be presented as independent aggregate accuracy evidence.
 Each run writes contexts, joined records, reranked records, metrics, a manifest
 and a readable report under `stage2_runs/<run_id>/`.
+
+Run the trace-derived Zerologon case from committed inputs:
+
+```bash
+.venv/bin/python -m cve2attack run-stage2 \
+  --stage1-run data/stage2_scenarios/mantis/zerologon/stage1_snapshot \
+  --attack-graph data/stage2_scenarios/mantis/zerologon/AttackGraph.xml \
+  --benchmark stage2_mantis_scenarios \
+  --run-id mantis_zerologon_v1 \
+  --scenario-kind trace_derived_mantis_lateral_movement
+```
 
 ## Compare runs
 

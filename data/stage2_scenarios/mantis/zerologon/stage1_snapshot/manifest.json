@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "run_id": "zerologon_from_kev_v3a_llm_rewrite_15_1",
+  "status": "imported",
+  "source_run_id": "kev_v3a_llm_rewrite_15_1",
+  "source_experiment": "v3a_llm_rewrite",
+  "source_git_commit": "076852ba9fb776e4bc4b39658f86c2d940797845",
+  "source_candidate_file": "runs/kev_v3a_llm_rewrite_15_1/candidates/CVE-2020.jsonl",
+  "selection": "Exact CandidateRecord for CVE-2020-1472; candidate order and scores are unchanged.",
+  "candidate_records": 1
+}

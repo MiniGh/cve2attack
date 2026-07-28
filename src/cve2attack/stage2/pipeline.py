@@ -75,13 +75,28 @@ def _write_stage2_report(
     stage1_run: Path,
     attack_graph: Path,
 ) -> None:
-    """Write a compact human-readable before/after smoke report."""
+    """Write a compact human-readable before/after case report."""
     original = metrics["original"]
     reranked = metrics["reranked"]
+    if "synthetic" in scenario_kind:
+        claim_boundary = (
+            "This run is an engineering smoke validation. A synthetic topology "
+            "does not constitute independent experimental evidence."
+        )
+    elif "trace_derived" in scenario_kind:
+        claim_boundary = (
+            "This graph was normalized from a public scenario execution trace. "
+            "It is a reproducible case study, not a population-level benchmark."
+        )
+    else:
+        claim_boundary = (
+            "Interpret this run according to the provenance recorded by its "
+            "scenario kind and input manifest."
+        )
     lines = [
         "# Stage-2 closed-loop report",
         "",
-        "> This run is an engineering smoke validation. A synthetic topology does not constitute independent experimental evidence.",
+        f"> {claim_boundary}",
         "",
         f"- Scenario kind: `{scenario_kind}`",
         f"- Stage-1 run: `{stage1_run}`",

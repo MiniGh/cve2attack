@@ -49,7 +49,7 @@
 | 已完成 | 44 节点、52 边、2 CVE 的固定回归样例 | `tests/fixtures/mulval/` |
 | 已完成（最小闭环） | 接入第一阶段 `CandidateRecord`，报告缺失、未解析和重复输入 | `stage2/candidate_joiner.py` |
 | 已完成（v1 基线） | topology-only 确定性重排序，候选集合和原始分数不变 | `stage2/reranker.py` |
-| 进行中 | 已完成一个合成公开服务场景；横向移动和本地提权场景待补 | 工作包 3 |
+| 进行中 | 已完成合成公开服务场景和 M&NTIS Zerologon 轨迹派生横向移动场景；本地提权待补 | 工作包 3 |
 | 未完成 | 可复现实验报告 | 工作包 4 |
 
 现有提取命令：
@@ -185,8 +185,24 @@
 - 图：`tests/fixtures/stage2/public_facing/AttackGraph.xml`，明确标记为合成公开服务拓扑。
 - 行为：`public_facing_service` 只依据互联网入口、目标网络服务和主机关系优先 `T1190`。
 
-该案例用于工程验收，不进入独立总体准确率主张。横向移动和本地提权还需要各自的
-完整攻击图、真实 CVE 候选和公开标签。
+该案例用于工程验收，不进入独立总体准确率主张。横向移动场景已在下方接入公开执行
+轨迹；本地提权仍需要完整攻击图、真实 CVE 候选和公开标签。
+
+当前已完成第一条公开执行轨迹派生闭环：
+
+- CVE：`CVE-2020-1472`（Zerologon）。
+- 来源：M&NTIS 数据集 `625f449f-e7f0-49a1-b0ce-030204be7545`，攻击步骤 `95`。
+- 统一描述：`data/stage2_scenarios/mantis/zerologon/scenario.yaml`。
+- 转换图：`data/stage2_scenarios/mantis/zerologon/AttackGraph.xml`，由
+  `build-stage2-graph` 确定性生成。
+- 第一阶段输入：真实 `kev_v3a_llm_rewrite_15_1` 中该 CVE 的冻结 Top-20；`T1210`
+  原始排名第 2。
+- 标签：M&NTIS worker 的 `T1210`，单独保存在 `stage2_mantis_scenarios`，不进入图生成。
+- 行为：已有普通用户会话和跨主机可达性触发 `lateral_remote_service`，把 `T1210`
+  提升到第 1。
+
+该案例是公开轨迹派生的可复现案例研究，不等同于大样本独立准确率。工作包 3 仍需
+完成本地提权场景，并在三个场景完成后汇总统一报告。
 
 ### 工作包 4：运行目录、报告和文档收口
 
@@ -306,6 +322,7 @@
 
 | 要修改的功能 | 主要文件 |
 | --- | --- |
+| 公开场景 schema 与攻击图转换 | `src/cve2attack/stage2/scenario_graph.py`、`data/stage2_scenarios/` |
 | XML 节点、边或方向解析 | `src/cve2attack/stage2/graph_parser.py` |
 | 上游分支、循环和边界行为 | `src/cve2attack/stage2/path_expander.py` |
 | local/graph context 字段 | `src/cve2attack/stage2/context_extractor.py` |
@@ -321,14 +338,13 @@
 
 ## 10. 下一次开发从哪里开始
 
-候选接入和第一条公开服务纵向闭环已经完成。下一步是把上下文提取与重排验证扩展到
-剩余两个场景，执行顺序为：
+候选接入、合成公开服务闭环和 M&NTIS Zerologon 横向移动闭环已经完成。下一步是：
 
-1. 从公开 benchmark 和已有 Top-20 run 中各选择一个横向移动、本地提权真实 CVE。
-2. 为两者构造并明确标记合成拓扑，写出预期 local/graph context。
-3. 增加攻击图级回归，而不仅是手写字典的规则单元测试。
-4. 分别运行 `run-stage2`，检查候选集合、前后名次、退化案例和解释证据。
+1. 使用同一统一场景 schema 接入 M&NTIS `CVE-2021-3156` 本地提权案例。
+2. 先生成或冻结该 CVE 的真实 Top-20，确认 `T1548` 与 `T1068` 是否都被召回。
+3. 根据普通用户会话到 root 会话的公开轨迹生成攻击图并增加图级回归。
+4. 修正当前把全部本地权限变化固定优先 `T1068` 的粗粒度规则，且不得根据单例答案调参。
 5. 加入 `no_context / local_context / full_graph_context` 消融开关。
-6. 三场景通过后再汇总毕设闭环报告。
+6. 三场景通过后再汇总毕设闭环报告，并同时展示提升、退化和不可挽救案例。
 
 三场景和消融完成前，不开始设计 LLM prompt，也不根据测试标签调重排序规则。

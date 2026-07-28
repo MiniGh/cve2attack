@@ -1,0 +1,71 @@
+schema_version: "1.0"
+scenario_id: mantis_zerologon_cve_2020_1472
+scenario_kind: trace_derived_lateral_movement
+cve_id: CVE-2020-1472
+
+source:
+  provider: M&NTIS
+  dataset_id: 625f449f-e7f0-49a1-b0ce-030204be7545
+  archive_sha256: d21e0c4089c321a28fbedbd6416ae56a69336d8f7b939f0ab09523564fa145f2
+  manifest: data/stage2_sources/mantis/extracted/zerologon/manifest.json
+  attack_report: >-
+    data/stage2_sources/mantis/extracted/zerologon/redteam_reports/
+    38e92f11-5d0b-4796-9c40-dab3a3bc5fc6/attacks/
+    8d09c9a2-db58-4d20-9ac6-2aa230d65628/attacks.json
+  attack_step_id: 95
+  predecessor_step_ids: [18, 89]
+  cve_resolution:
+    method: scenario_identity_and_upstream_exploit_link
+    note: >-
+      The M&NTIS manifest leaves scenario.cve empty, but names the scenario
+      intern_zerologon and links to the set_empty_pw Zerologon implementation.
+      The normalized identifier is therefore recorded explicitly as
+      CVE-2020-1472 with this provenance note.
+
+context:
+  # Step 89 records user execution on TARGET before step 95 runs the exploit.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  # The trace executes set_empty_pw.exe from TARGET (192.168.33.11) against
+  # dcserver (192.168.33.12). Port 445 is a documented normalization assumption
+  # for the Netlogon/RPC service, not a value copied from the ATT&CK label.
+  network_access:
+    source_host: TARGET
+    target_host: dcserver
+    protocol: tcp
+    port: "445"
+
+  target_service:
+    host: dcserver
+    name: netlogon
+    protocol: tcp
+    port: "445"
+    account: SYSTEM
+
+  vulnerability:
+    host: dcserver
+    service: netlogon
+    exploit_type: remoteExploit
+    expected_impact: credentialAccess
+
+  consequences:
+    - credentialAccess(dcserver,Administrator)
+
+  exploit_rule: RULE 1 (trace-derived Zerologon exploitation)
+  access_rule: RULE 2 (existing session reaches remote domain controller)
+  normalization_notes:
+    - TARGET and dcserver names and IP relationship come from topology.yaml and attack step 95.
+    - Existing user execution comes from predecessor user-activity step 89.
+    - The consequence reflects the empty Administrator credential reported by step 95.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1210
+  label_source: M&NTIS manifest.scenario.mitre_data
+  evaluation_only: true
+  note: >-
+    M&NTIS labels the Zerologon worker as Exploitation of Remote Services.
+    This field is loaded only by benchmark evaluation and is never converted
+    into a graph fact.

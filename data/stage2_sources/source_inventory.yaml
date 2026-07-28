@@ -72,31 +72,68 @@ sources:
         - direct_mulval_regression_without_conversion
 
   mantis:
-    status: authentication_required
+    status: downloaded_and_verified
     portal_url: https://app.mantis-platform.io/
     documentation_url: https://mantis-platform.io/blog/free-access-datasets.html
     acquisition: user_registration_and_authenticated_download
-    local_path: mantis/downloads
-    documented_export_fields:
+    local_paths:
+      raw: mantis/raw
+      extracted: mantis/extracted
+    git_policy:
+      raw_and_extracted: ignored
+      normalized_scenarios: data/stage2_scenarios/mantis
+    verified_export_fields:
       - manifest_with_attack_tactics_and_techniques
       - topology_yaml
       - asset_json
-      - attack_graph
       - redteam_reports_attacks_json
       - redteam_reports_sessions_json
       - logs_and_pcaps
-    unknown_until_download:
-      - cve_identifiers
-      - cve_to_attack_step_alignment
-      - mulval_conversion_cost
-    suitability: promising_but_unverified
+    absent_required_format:
+      - mulval_attack_graph_xml
+    archives:
+      - dataset_id: 099967fe-c11a-4bee-b4cc-916d96af5f3b
+        sha256: 10093bb162808fa2c5ed66cff033d40d51dcdfa42520f775c2d33a20dc05ab40
+        scenario: RCE on Wordpress with Tatsu Builder
+        cve_id: CVE-2021-25094
+        expected_techniques: [T1190]
+        role: public_facing_case
+      - dataset_id: 32133bd9-51dd-4fb3-8db2-e2e02323040f
+        sha256: 4d74c476f7d65d00c50093bcb0c35f6543224cee655ea873eff75826b47b2b9c
+        scenario: SQL injection to webshell on a blog
+        cve_id: null
+        expected_techniques: [T1190, T1505.003]
+        role: structure_only_non_cve_case
+      - dataset_id: 625f449f-e7f0-49a1-b0ce-030204be7545
+        sha256: d21e0c4089c321a28fbedbd6416ae56a69336d8f7b939f0ab09523564fa145f2
+        scenario: Exploitation of Zerologon
+        cve_id: CVE-2020-1472
+        cve_field_status: empty_in_manifest_resolved_from_scenario_identity
+        expected_techniques: [T1210]
+        role: lateral_movement_case
+        normalized_scenario: data/stage2_scenarios/mantis/zerologon/scenario.yaml
+      - dataset_id: d188aad5-a524-4255-82d3-5adab98715e1
+        sha256: 80ed0b6e06788643572b7571feb9e477fed2c8ded826ce9a3ae3d9e4314bf7b7
+        scenario: LPE on Sudo then Reverse Shell
+        cve_id: CVE-2021-3156
+        expected_techniques: [T1548.003]
+        role: local_privilege_case
+    suitability:
+      usable_for:
+        - trace_derived_thesis_case_studies
+        - public_facing_lateral_and_local_context_validation
+        - annotation_and_rule_granularity_analysis
+      not_sufficient_for:
+        - direct_input_to_mulval_context_parser_without_conversion
+        - population_level_external_accuracy_claims
 
 overall_assessment:
   enough_to_begin_conversion: true
+  first_conversion_complete: mantis_zerologon_cve_2020_1472
   enough_for_final_external_evaluation: false
-  blocking_next_input: one_small_authenticated_mantis_dataset
+  blocking_next_input: null
   next_actions:
-    - obtain_the_smallest_available_mantis_attack_or_scenario_zip
-    - inventory_cve_and_attack_step_fields_without_loading_pcaps
-    - generate_stage1_candidates_for_the_four_attackmate_cves
-    - convert_only_cases_with_independent_cve_and_attack_labels
+    - run_and_verify_the_zerologon_closed_loop
+    - generate_stage1_candidates_for_cve_2021_3156
+    - convert_the_sudo_trace_without_using_its_evaluation_label
+    - complete_three_scenario_thesis_report
