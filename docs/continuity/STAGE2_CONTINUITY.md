@@ -7,18 +7,19 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-07-29 17:40:09 +08:00 |
-| 最后只读核查时间 | 2026-07-29 17:38:27 +08:00 |
+| 最后内容更新时间 | 2026-07-30 00:03:12 +08:00 |
+| 最后只读核查时间 | 2026-07-30 00:03:12 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
+| 最后核查时的 HEAD | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` |
 | Stage 2 功能代码基线（最后核查时） | `be5ba41fac5231c0f277c09581c5f3812a52a4d8` |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
-| 最后核查时的上游实际 SHA | `9f19d3425a14845b0d34d6cb9ed4e3eb0f3c66ce` |
-| 最后核查时的 ahead / behind | ahead 3 / behind 0 |
-| 文档生成/最后核查时的工作区状态 | 除本文件所在的 `docs/continuity/` 为新增未跟踪目录外，无其他 Git 可见改动；另有被忽略的外部数据、缓存和实验结果 |
-| 当前目标 | 完成可靠、可解释且不破坏正确候选的 Stage 2 毕设闭环，并为后续论文扩展保留证据 |
-| 建议下一步 | 先从当前 HEAD 用冻结输入重现三个案例，再设计不读取标签的“避免伤害”保护策略；Stage 1 召回问题单独反馈给 Stage 1 |
-| 当前阻塞/限制 | 只有 3 个公开轨迹案例；当前均使用 V3a 冻结候选且不完全来自同一 Stage 1 run，不是统一正式 V5c Top-20 端到端评测；是否统一生成正式 V5c Top-20 输入、避免伤害策略和 Zerologon 排名差异均待验证；3 个功能提交尚未推送 |
+| 最后核查时的上游实际 SHA | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` |
+| 最后核查时的 ahead / behind | ahead 0 / behind 0 |
+| 文档生成/最后核查时的工作区状态 | 测试、V3a 验证 run 和正式 V5c run 完成后 Git 可见状态干净；更新本文后仅本文为 Git 可见修改；另有被忽略的外部数据、缓存和实验结果 |
+| 当前目标 | 以统一正式 V5c/ATT&CK 15.1/strict-LOO/父 Technique Top-20 为输入，完成可靠、可解释且不破坏正确候选的 Stage 2 毕设闭环 |
+| 建议下一步 | 以本轮正式 V5c 基线为固定对照，设计不读取标签的“避免伤害”策略，并将 Tatsu Top-20 缺失继续作为 Stage 1 召回问题处理 |
+| 当前阻塞/限制 | 只有 3 个公开轨迹案例；正式 V5c 基线仍是 1 个提升、1 个退化、1 个不可恢复；Top-1 总体不变，Sudo 退化和 Tatsu 缺失尚未解决，不能据此主张总体泛化 |
 
 上述分支、功能代码基线、上游 SHA、ahead/behind 和工作区状态都是指定时间点的状态快照。
 连续性文档自身的后续提交可能使当前分支 HEAD 和 ahead 数量高于这里记录的功能代码基线；这不表示
@@ -65,15 +66,16 @@ Stage 1 和 Stage 2 是同一 Git 仓库的两个独立 worktree：
 worktree 正在使用的分支。最后核查时 Stage 1 工作树存在两个未跟踪的 rewrite cache；它们不属于
 Stage 2，不得代为清理。
 
-Stage 2 当前领先实际 GitHub 上游 3 个提交：
+以下 Stage 2 功能提交和连续性文档提交均已进入实际 GitHub 上游：
 
 | 提交 | 作用 |
 | --- | --- |
 | `a0c74893a3d113d871c76e949650b16aaaf0b9b5` | 建立外部场景数据源清单和 Git 忽略边界 |
 | `8af99437f1a071d24815023c4775fc80d3a49d22` | 接入 M&NTIS Zerologon 轨迹派生场景与转换器 |
 | `be5ba41fac5231c0f277c09581c5f3812a52a4d8` | 接入 Tatsu、Sudo，冻结候选并完成三案例回归与报告 |
+| `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` | 新增持续维护的 Stage 2 连续性文档 |
 
-这三个提交均未推送，必须完整保留。何时推送是待用户决定的问题，不得自动 push。
+最后核查时本地 HEAD、上游跟踪引用和 `git ls-remote` 均为 `e3d095d`。后续仍不得自动 push。
 
 ## 4. Stage 2 在完整流程中的职责
 
@@ -259,17 +261,65 @@ M&NTIS 导出不是 MulVAL XML，必须先通过归一化场景和确定性转�
 
 ## 10. 三个 M&NTIS 案例和已确认结果
 
+### 10.1 历史 V3a 冻结基线
+
 | 场景 | 输入与来源 | 图规模 | 外部标签 | Stage 1 最佳名次 | Stage 2 最佳名次 | 结果 |
 | --- | --- | ---: | --- | ---: | ---: | --- |
 | Zerologon | 数据集 `625f...`，攻击步骤 95，前序 18/89 | 8 节点/7 边 | T1210 | 2 | 1 | 提升 |
 | Tatsu Builder RCE | 数据集 `0999...`，攻击步骤 17，前序 8/9/11 | 8 节点/7 边 | T1190 | 不在 Top-20 | 不在 Top-20 | 不可恢复 |
 | Sudo Baron Samedit | 数据集 `d188...`，攻击步骤 17，前序 35 | 4 节点/3 边 | T1548.003→T1548 | 1 | 2 | 退化 |
 
-正式运行目录：
+历史保存运行目录：
 
 - `stage2_runs/mantis_zerologon_v1`
 - `stage2_runs/mantis_tatsu_rce_v1`
 - `stage2_runs/mantis_sudo_cve_2021_3156_v1`
+
+2026-07-29 从 `e3d095d` 使用三个单 CVE 冻结快照完成独立重现：
+
+- `stage2_runs/verify_e3d095d_mantis_zerologon_v3a_20260729`
+- `stage2_runs/verify_e3d095d_mantis_tatsu_v3a_20260729`
+- `stage2_runs/verify_e3d095d_mantis_sudo_v3a_20260729`
+
+三个验证 run 均为 `complete`，`candidate_records == matched == 1`，无缺失或未解析 ID，
+候选集合保持，图哈希和原/新排名均与固定预期一致。
+
+### 10.2 统一正式 V5c/ATT&CK 15.1 基线
+
+统一 Stage 1 输入：
+
+`/home/ghdemi/Code/cve2attack/runs/stage2_mantis_v5c_attack15_1_top20_20260729T2352`
+
+只读验收确认：
+
+- manifest `status=complete`，Stage 1 commit `259ce570b15518c7f56568ad78aa21bd61b74cef`；
+- 配置为 `v5c_raw_action_rank_rrf_attack15_1.yaml`、`raw_description`、ATT&CK 15.1；
+- action corpus 14121 条、202 个父 Technique、`exclude_query_cve_actions=true`；
+- rank-RRF `top_m=3`、`rank_constant=60`、`top_k=20`，三个 CVE 覆盖 3/3；
+- 每个 CVE 恰有 20 个互异父 Technique；
+- `CVE-2020.jsonl` SHA256 为 `5b547b8841e953da16c412bd58a88e4d2c06e7e098c5915cd11843f52257ec66`；
+- `CVE-2021.jsonl` SHA256 为 `0facfa934d4d265711e339884e1fe74f2e0729731f65e667f0c17e1989ba7c02`。
+
+正式 Stage 2 运行目录：
+
+- `stage2_runs/formal_v5c_attack15_1_e3d095d_zerologon_20260729`
+- `stage2_runs/formal_v5c_attack15_1_e3d095d_tatsu_20260729`
+- `stage2_runs/formal_v5c_attack15_1_e3d095d_sudo_20260729`
+
+| 场景 | 外部标签 | 图规则 | Stage 1 最佳名次 | Stage 2 最佳名次 | 结果 |
+| --- | --- | --- | ---: | ---: | --- |
+| Zerologon | T1210 | `lateral_remote_service` | 13 | 1 | 提升 |
+| Tatsu Builder RCE | T1190 | `public_facing_service` | 不在 Top-20 | 不在 Top-20 | 不可恢复 |
+| Sudo Baron Samedit | T1548.003→T1548 | `local_privilege_transition` | 1 | 2 | 退化 |
+
+三个正式 run 均满足：
+
+- Stage 2 manifest `status=complete`、`git_commit=e3d095d...`，并记录同一 Stage 1 run ID 和 commit；
+- 每张图 `matched=1`、`missing_candidates=[]`、`unresolved_context_ids=[]`；
+- `candidate_records=3`，另外两个 CVE 出现在 `candidates_without_context`，这是单图逐例运行的预期连接统计；
+- 候选集合全部保持，独立核对重排前后 Technique ID 集合一致；
+- 图哈希分别为 Zerologon `6f3d0b0e...`、Tatsu `f7846de8...`、Sudo `3304f20c...`；
+- 重排规则仍为 `topology-rule-priority-v1`，`uses_target_semantics=false`，没有修改规则或按标签调参。
 
 研究意义：
 
@@ -282,7 +332,7 @@ Sudo 机制知识选择 `T1548.003`。尚未决定是否以及如何加入机制
 
 ## 11. 指标、口径差异和统计限制
 
-按三个场景各自冻结输入汇总：
+### 11.1 历史 V3a 冻结基线
 
 | 指标 | Stage 1 | Stage 2 |
 | --- | ---: | ---: |
@@ -292,19 +342,35 @@ Sudo 机制知识选择 `T1548.003`。尚未决定是否以及如何加入机制
 
 结果组成：1 个提升、1 个退化、1 个不可恢复；候选集合全部保持不变。
 
+三个 V3a 快照并非完全来自同一 Stage 1 run：Zerologon 的 T1210 排名第 2，而统一
+`stage2_mantis_v3a_top20` 中为第 5；Tatsu 的 T1190 缺失。该差异仍保留为 Stage 1 诊断问题。
+
+### 11.2 统一正式 V5c 基线
+
+| 指标 | Stage 1 | Stage 2 |
+| --- | ---: | ---: |
+| Top-1 | 1/3 | 1/3 |
+| Top-3 | 1/3 | 2/3 |
+| Top-5 | 1/3 | 2/3 |
+| MRR | 0.359 | 0.500 |
+
+逐例结果：
+
+- Zerologon：T1210 从第 13 升到第 1，MRR 从 `1/13` 升到 `1`；
+- Tatsu：T1190 不在统一正式 Top-20，前后均不可恢复；
+- Sudo：T1548 从第 1 降到第 2，MRR 从 `1` 降到 `0.5`。
+
+因此统一正式 V5c 输入下，Top-1 总体不变，Top-3 和 MRR 提升；案例组成仍是
+1 个提升、1 个退化、1 个不可恢复。该结果是当前正式端到端小样本基线，不得省略退化和不可恢复案例。
+
 必须同时记录以下限制：
 
-1. 样本量仅 3，不能当作总体准确率结论。
-2. 三个案例并非完全来自同一个冻结 Stage 1 run。
-3. Zerologon 冻结快照来自 Stage 1 worktree 的 `runs/kev_v3a_llm_rewrite_15_1`，T1210 排名第 2。
-4. Tatsu 和 Sudo 快照来自 Stage 2 worktree 的 `runs/stage2_mantis_v3a_top20`。
-5. 当前统一 `stage2_mantis_v3a_top20` 中 Zerologon 的 T1210 排名第 5，而不是第 2；原因尚未诊断。
-6. 统一 V3a run 的三 CVE `recall@20` 为 2/3，Tatsu 的 T1190 缺失。
-7. 已保存的正式运行 manifest 指向输入尚未全部提交时的 HEAD；当前 `be5ba41` 才完整包含三案例固定输入和测试。
-8. 当前三个案例使用 V3a 冻结候选，不是统一正式 V5c Top-20、ATT&CK 15.1 条件下的端到端评测；
-   是否统一生成该正式输入仍属于待验证事项。
-
-因此当前结果适合展示能力边界和失败模式，不适合声称 Stage 2 已带来总体性能提升。
+1. 样本量仅 3，不能当作总体准确率或泛化结论。
+2. 三个场景来自同一 M&NTIS 数据来源，属于公开轨迹派生案例研究，不是独立大样本 benchmark。
+3. 候选集合保持不变；Tatsu 缺失属于 Stage 1 召回问题，不是 Stage 2 可以修复的排序问题。
+4. Sudo 继续证明 topology-only 的通用 T1068 规则可能伤害机制更具体的正确 Top-1。
+5. 当前没有正式的避免伤害策略、特征消融或 `max_graph_depth` 消融。
+6. 不得在这三个案例上调规则后，再把同一案例结果描述为独立效果。
 
 ## 12. 实验环境、命令和成功判断
 
@@ -363,8 +429,9 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
   ../cve2attack/.venv/bin/python -m pytest -q -p no:cacheprovider
 ```
 
-最近一次观察到的结果是 `44 passed, 6 subtests passed`。本次创建连续性文档时没有重新运行测试，
-因此不要把该数字描述为本轮新测试结果。成功还应包括运行前后 `git status` 没有意外变化。
+2026-07-29 23:41 +08:00 在 `e3d095d` 上实际运行，结果为
+`44 passed, 6 subtests passed in 5.14s`。运行使用 `PYTHONDONTWRITEBYTECODE=1` 和
+`-p no:cacheprovider`，测试前后 `git status` 均无意外变化。
 
 ## 13. 已确认决策与已知问题
 
@@ -384,7 +451,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 当前规则只有“命中即优先”，没有置信度或“保持原 Top-1”的保护机制。
 - `max_graph_depth=2` 尚缺少系统验证和消融。
 - 当前没有关闭单个上下文特征的正式消融开关。
-- 三案例冻结输入口径不完全一致。
+- 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
 
 ## 14. 待验证问题
@@ -396,8 +463,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 3. 是否利用机制证据细化 T1068 与 T1548/T1548.003。
 4. AttackMate Zenodo v4 完整实验包的最终价值。
 5. 如何获得足够大的公开 Stage 2 样本集。
-6. 三个未推送提交何时推送。
-7. 是否为三个案例统一生成正式 V5c Top-20、ATT&CK 15.1 条件下的 Stage 1 冻结输入。
+6. 如何设计不读取评价标签的上下文和深度消融，并避免在三个固定案例上过拟合。
 
 ## 15. Stage 1 与 Stage 2 的问题边界
 
@@ -406,7 +472,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 正确 Technique 未进入 Top-K，例如 Tatsu 的 T1190。
 - rewrite 或检索条件导致同一 CVE 候选顺序不稳定。
 - 候选深度、召回率、文本改写和 embedding retrieval 的改进。
-- 统一生成三个案例的同条件冻结候选。
+- 后续候选实验继续维持同一配置、同一 ATT&CK 版本和 3/3 coverage 的统一输入契约。
 
 应在 Stage 2 处理：
 
@@ -421,12 +487,12 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 
 以下是建议顺序，不构成自动授权：
 
-1. 经用户决定后，保护性地推送当前 3 个提交；推送前再次核对远端 SHA 和工作区状态。
-2. 从当前 HEAD `be5ba41` 使用各场景冻结输入和全新 run ID 重现三个案例，使新 manifest 指向当前基线。
-3. 在不读取评价标签的前提下设计“避免伤害”保护策略，先验证是否能保留 Sudo 的 Stage 1 Top-1，且不破坏 Zerologon 提升。
-4. 将 Tatsu Top-20 缺失和 Zerologon 排名差异反馈给 Stage 1 对话诊断。
-5. 评估同一 Stage 1 run 下重新冻结三个案例的必要性。
-6. 在获得更多公开案例后再进行总体指标比较；不要在 3 个样本上优化权重。
+1. 将本轮统一正式 V5c 基线作为固定对照保留，不覆盖三个 run。
+2. 在不读取评价标签的前提下，预先定义“避免伤害”保护条件，再评估其能否保留 Sudo 的 Stage 1 Top-1，
+   同时不破坏 Zerologon 的提升。
+3. 为 `no_context / local_context / full_graph_context` 和 `max_graph_depth` 增加正式消融设计。
+4. 将 Tatsu 的 T1190 缺失继续反馈给 Stage 1；Stage 2 不插入正确答案。
+5. 获得更多公开案例后再进行总体指标比较；不要在 3 个样本上优化权重。
 
 “重新迁移/复制/整理 Stage 2 代码”不是下一步，也永远不应从本文派生为任务。
 
@@ -451,6 +517,10 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - `a0c7489`：盘点 AttackMate、M&NTIS 等外部来源并建立忽略/归属规则。
 - `8af9943`：接入 Zerologon 轨迹派生场景，验证 T1210 从第 2 到第 1。
 - `be5ba41`：加入 Tatsu 与 Sudo，形成提升、不可恢复、退化三种固定案例及回归测试。
+- `e3d095d`：新增并推送持续维护的 Stage 2 连续性文档；功能代码基线仍为 `be5ba41`。
+- 2026-07-29：在 `e3d095d` 上通过全部快速测试，并从三个冻结 V3a 快照创建全新验证 run。
+- 2026-07-30：验收统一正式 V5c/ATT&CK 15.1/strict-LOO Top-20 输入，并用未修改的
+  topology-only v1 完成三个正式端到端 run；结果为 1 个提升、1 个退化、1 个不可恢复。
 
 这里只保留会改变接管判断的重要变化，不记录完整对话时间线。
 
