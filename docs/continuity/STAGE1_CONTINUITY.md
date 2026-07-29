@@ -6,21 +6,22 @@
 
 | 项目 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | `2026-07-29T17:38:31+08:00` |
-| 最后事实核查时间 | `2026-07-29T17:38:31+08:00` |
-| SSH 别名 | `sun_demi` |
+| 最后内容更新时间 | `2026-07-30T00:12:30+08:00` |
+| 最后事实核查时间 | `2026-07-30T00:12:30+08:00` |
+| SSH 别名 | `pri_sun`（历史文档曾使用 `sun_demi`） |
 | Stage 1 工作区 | `/home/ghdemi/Code/cve2attack` |
 | Stage 1 冻结代码基线 | `5912587e1376825457239316faa8d42c6f11e07a` (`Freeze-Stage-1-action-retrieval`) |
-| 最后核查时的分支 / HEAD | `refactor/new-method-stage1` / `5912587e1376825457239316faa8d42c6f11e07a` |
+| 连续性文档提交 | `259ce570b15518c7f56568ad78aa21bd61b74cef` (`docs(stage1): add living continuity guide`) |
+| 最后核查时的分支 / HEAD | `refactor/new-method-stage1` / `259ce570b15518c7f56568ad78aa21bd61b74cef` |
 | 最后核查时的上游状态 | `origin/refactor/new-method-stage1`；ahead `0` / behind `0` |
-| 文档生成 / 最后核查时的工作区状态 | 已跟踪文件无修改、无暂存；本文件尚未提交；另有两份本轮开始前已存在的未跟踪 rewrite cache，详见第 14 节 |
+| 最后核查时的工作区状态 | 本文件有未暂存修改；新增三场景 benchmark 的 4 个文件未跟踪；两份原有 rewrite cache 仍未跟踪；无暂存；新 run 被 Git 忽略，详见第 9.6、14 节 |
 | Stage 1 状态 | 已冻结；正式方法是严格 LOO 的 V5c、固定 Top-20、label-free 候选生成 |
-| 当前目标 | 保持冻结结果可追溯并向 Stage 2 提供受控候选；除非出现重新开启条件，否则不继续在 TRIAGE test 上调参 |
-| 下一步 | 用户审核本文；若获授权，只显式暂存本文。研究默认转向 Stage 2 端到端验证 |
+| 当前目标 | 将三项 M&NTIS 场景统一切换到正式 V5c/ATT&CK 15.1/strict LOO/父 Technique Top-20 输入，并保持冻结方法不变 |
+| 下一步 | Stage 2 直接消费新正式 Top-20 run，记录上下文重排；用户另行决定是否提交本轮 benchmark 与文档修改 |
 | 硬阻塞 | 无 |
-| 当前风险 | 根 V5c 配置未显式固定 ATT&CK 15.1；正式 TRIAGE run manifest 记录的是冻结前提交；两套历史数据集引文仍缺失；无持久化测试日志 |
+| 当前风险 | 根 V5c 配置未显式固定 ATT&CK 15.1；正式 TRIAGE run manifest 记录的是冻结前提交；三场景中的 Tatsu 真值 T1190 未进入 V5c Top-20；两套历史数据集引文仍缺失；无持久化测试日志 |
 
-上述分支 HEAD、上游同步和工作区字段是 `2026-07-29T17:38:31+08:00` 的状态快照，不是自动更新的实时值。连续性文档自身的纯文档提交可能使实际分支 HEAD 和 ahead 数量高于这里记录的值，但不会因此改变 Stage 1 冻结代码基线 `5912587`。新任务接管时必须重新执行只读 Git 检查，并把“冻结代码基线”“文档提交”和“实时分支 HEAD”分开记录，不能只凭本文快照判断当前状态。
+上述分支 HEAD、上游同步和工作区字段是 `2026-07-30T00:12:30+08:00` 的状态快照，不是自动更新的实时值。当前实时 HEAD `259ce57` 是连续性文档提交，其父提交才是 Stage 1 冻结代码基线 `5912587`；纯文档提交没有改变冻结方法。新任务接管时仍必须重新执行只读 Git 检查，并把“冻结代码基线”“文档提交”和“实时分支 HEAD”分开记录，不能只凭本文快照判断当前状态。
 
 ### 0.1 事实来源优先级
 
@@ -75,18 +76,19 @@ CVE 描述 -> Stage 1 候选生成（正式 Top-20 CandidateRecord）
 
 ### 3.1 Stage 1
 
-最后核查时间：`2026-07-29T17:38:31+08:00`。
+最后核查时间：`2026-07-30T00:12:30+08:00`。
 
 ```text
 worktree:                   /home/ghdemi/Code/cve2attack
 branch at last check:       refactor/new-method-stage1
-branch HEAD at last check:  5912587e1376825457239316faa8d42c6f11e07a
+branch HEAD at last check:  259ce570b15518c7f56568ad78aa21bd61b74cef
 frozen Stage-1 code base:   5912587e1376825457239316faa8d42c6f11e07a
+continuity doc commit:       259ce570b15518c7f56568ad78aa21bd61b74cef
 upstream at last check:     origin/refactor/new-method-stage1
 sync at last check:         ahead 0, behind 0
 ```
 
-本文创建前，`git status --short --branch` 只有两份未跟踪 rewrite cache；已跟踪文件无修改。本文创建并完成本轮修订后额外出现 `?? docs/continuity/STAGE1_CONTINUITY.md`。当前连续性文档尚未提交，未经用户审核不得暂存、提交或推送。
+`259ce57` 只新增本文，当前 HEAD 相对冻结基线 `5912587` 没有代码或配置差异。本轮授权生成三场景统一输入后，实时工作区包含：本文的未暂存修改；`data/benchmarks/stage2_mantis_scenarios/` 下 4 个新增未跟踪文件；两份原有未跟踪 rewrite cache。无暂存内容。新 run 位于被 Git 忽略的 `runs/`，不显示在 `git status`。本轮不得暂存、提交或推送。
 
 本节记录的是指定时间点的 Git 快照。若之后只提交本文，分支 HEAD 和相对上游的 ahead 数会变化，提交哈希应作为“文档提交”单独记录；Stage 1 冻结代码基线仍保持 `5912587`。只有 Stage 1 方法或冻结代码正式改变时，才更新冻结代码基线。任何新任务都必须重新核对实时 Git 状态。
 
@@ -97,13 +99,13 @@ sync at last check:         ahead 0, behind 0
 ```text
 worktree: /home/ghdemi/Code/cve2attack-stage2
 branch:   feat/full-pipeline-stage2
-HEAD:     be5ba41fac5231c0f277c09581c5f3812a52a4d8
+HEAD:     e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda
 upstream: origin/feat/full-pipeline-stage2
-sync:     ahead 3
-tracked working tree: clean
+sync:     ahead 0, behind 0
+tracked working tree: docs/continuity/STAGE2_CONTINUITY.md modified, unstaged
 ```
 
-Stage 1 任务不得修改该工作树。第 12 节的接口结论来自这个具体 Stage 2 HEAD；如果 Stage 2 HEAD 改变，必须重新核查。
+`e3d095d` 相对第 12 节原接口核查基线 `be5ba41` 只新增已提交的 `docs/continuity/STAGE2_CONTINUITY.md`，接口代码未改变。最终核查时，该 Stage 2 连续性文档又出现未暂存修改（105 insertions / 35 deletions），无其他工作区或暂存变化；本任务未写入 Stage 2，接口文件仍未改变。Stage 1 任务不得修改该工作树；如果 Stage 2 代码 HEAD 或接口文件后续改变，必须重新核查。
 
 ## 4. 正式冻结方案 V5c
 
@@ -278,12 +280,15 @@ runs/<run_id>/candidates/CVE-<year>.jsonl
 | `ctid_kev_2025_02_13_nonoverlap` | 251 | 去除 `cve2attack_result` 重叠 CVE，严格外部视图 |
 | `triage_2025_test_all` | 60 CVE / 143 父标签 | TRIAGE 公开固定 test split，同 cohort 对比 V1、V5c、SMET、TRIAGE |
 | `triage_2025_test_no_secondary` | 同 60 CVE / 115 父标签 | 排除 secondary impact 的语义消融；不是独立测试集 |
+| `stage2_mantis_scenarios` | 3 CVE / 3 场景标签 | 与 Stage 2 冻结 M&NTIS 案例标签逐字一致的交接 cohort；只作案例级端到端评价，不是总体 benchmark |
 
 `data_result_hash_sample_2000` 的成员选择为 `smallest_sha256(seed + NUL + cve_id)`，seed 为 `stage1-v5-multibench-20260727`；只使用 CVE ID，不看标签。
 
 KEV 三个视图来自同一 CTID 2025-02-13、ATT&CK 15.1 快照，不是三份独立标注。原始 CSV SHA-256 为 `8f15aab468f17f9a1d655ef2db814b0323792cfa066373a02a0a1d7f4a8f6676`，来源记录为 Zenodo `16747173`。
 
 TRIAGE 两个视图来自同一 296-CVE CTID 标签和同一 236/60 公开划分；其价值是与作者公开预测严格同 cohort，而不是提供新的独立人工标签源。TRIAGE 论文链接记录为 arXiv `2508.18439`，复现实验包为 Zenodo `17341504`。
+
+`stage2_mantis_scenarios` 在本轮从 Stage 2 HEAD `e3d095d` 的同名 benchmark 精确复制标签记录：`CVE-2020-1472 -> T1210`、`CVE-2021-25094 -> T1190`、`CVE-2021-3156 -> T1548.003`（评价上卷为 `T1548`）。两个年度标签文件 SHA-256 分别为 `30cb0495...6258ca` 和 `f957339c...5cbc0e`，与 Stage 2 源文件一致。该 cohort 的查询只使用 `data/raw/cve/` 原始描述；M&NTIS 标签不参与查询、action 检索、聚合或排序，只在候选生成完成后评价。
 
 ## 8. 正式评测口径与防泄漏约束
 
@@ -307,6 +312,7 @@ Micro 与 Macro 不能混写。例如 TRIAGE V5c 的 Micro R@20 为 60.14%，同
 - union oracle 的平均候选数大于 20，不能作为 Recall@20 主结果。
 - 若未来训练 reranker，只能使用 TRIAGE 236-CVE train split 开发并明确标为 `label_efficient`；冻结 60-CVE test 只做最终评价。
 - 不新增人工标注是当前约束。
+- M&NTIS 三场景 cohort 只用于固定案例交接和端到端诊断，不得据 3 个标签反复调整 Stage 1 参数或冒充总体性能证据。
 
 ## 9. 主要实验结果
 
@@ -420,6 +426,38 @@ comparisons/triage_stage1_v5c_final_audit/technique_bias.jsonl
 
 union oracle 可以展示互补覆盖，但平均候选数超出 20；不能当作正式受控候选结果。
 
+### 9.6 Stage 2 M&NTIS 三场景统一正式 Top-20 基线
+
+本轮获用户授权后，用冻结 V5c 方法为三个 Stage 2 案例生成了同一正式输入：
+
+```text
+benchmark: data/benchmarks/stage2_mantis_scenarios/
+config:    experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml
+run:       runs/stage2_mantis_v5c_attack15_1_top20_20260729T2352/
+status:    complete
+```
+
+已确认的运行条件：原始 CVE description、`basel/ATTACK-BERT`、ATT&CK Enterprise 15.1（SHA-256 `a57988b...a5a3f6bc`）、三类 action、strict query-specific LOO、Top-3 action rank-RRF、`rank_constant=60`、`fusion=none`、父 Technique Top-20。`validate` 成功；`inspect` 为 3/3 查询、0 缺失描述、14,121 actions、202 个父 Technique。运行时 HEAD 为文档提交 `259ce57`，代码仍等同冻结基线 `5912587`；工作区 dirty 仅来自新增未跟踪 cohort 和两份原有未跟踪 rewrite cache，无已跟踪或暂存代码变化。
+
+三个 `CandidateRecord` 均为 schema 1.0、恰好 20 个唯一父 Technique、无子技术 ID 或重复项。真值只在 run 完成后读取：
+
+| CVE | M&NTIS 原始真值 | 评价父真值 | V5c Top-20 名次 | query-CVE action 排除数 |
+| --- | --- | --- | ---: | ---: |
+| `CVE-2020-1472` | `T1210` | `T1210` | 13 | 6 |
+| `CVE-2021-25094` | `T1190` | `T1190` | 未进入 Top-20 | 0 |
+| `CVE-2021-3156` | `T1548.003` | `T1548` | 1 | 0 |
+
+该三案例的 Hit@20 为 2/3。Tatsu 的 `T1190` 缺失是 Stage 2 无法通过只重排候选修复的固定案例级覆盖失败；但三案例不是总体 benchmark，单个失败不足以据此重开 Stage 1 或在标签上调参。
+
+候选文件 SHA-256：
+
+```text
+candidates/CVE-2020.jsonl  5b547b8841e953da16c412bd58a88e4d2c06e7e098c5915cd11843f52257ec66
+candidates/CVE-2021.jsonl  0facfa934d4d265711e339884e1fe74f2e0729731f65e667f0c17e1989ba7c02
+```
+
+完整 Git dirty 状态、输入描述/配置/cohort/manifest/candidate 哈希与评价记录保存在该 run 的 `handoff_audit.json`；可读交接为 `handoff_report.md`。本轮没有运行单元测试，也没有覆盖任何既有 run/comparison。
+
 ## 10. 正式 run 的历史可复现性缺口
 
 `runs/triage_diag_v5k_raw_action_loo_rank_rrf_fullranking/manifest.json` 记录：
@@ -439,6 +477,8 @@ embedding_cache: data/derived/embedding_cache/actions_f0d54a569643e79e.npz
 **已确认事实**：后续提交保存并冻结了对应实现与测试，结果文件未被覆盖。
 
 **待复核/建议任务**：若论文要求完全 clean-HEAD 的工件指纹，应在单独授权后，用冻结配置、冻结 ATT&CK 15.1 和独立新 run ID 做最小确定性核验或完整复跑，并对候选文件校验；不得覆盖原 run。本文不声称该 clean-HEAD 复跑已经完成。
+
+第 9.6 节的新三场景 run 使用的新 cohort 尚未提交，因此 manifest 记录的 HEAD `259ce57` 与完整输入状态由 `handoff_audit.json` 联合描述。它验证了当前冻结代码路径可产生正式 Top-20，但不替代原 60-CVE TRIAGE V5k 的 clean-HEAD 复现缺口。
 
 ## 11. 可复现命令与成功判断
 
@@ -534,7 +574,7 @@ git status --short --branch
 
 ## 12. Stage 1 到 Stage 2 的实际接口
 
-本节由 `/home/ghdemi/Code/cve2attack-stage2` 的实际代码在 HEAD `be5ba41` 上只读核查得到，主要证据：
+本节接口代码由 `/home/ghdemi/Code/cve2attack-stage2` 的实际代码在 `be5ba41` 上只读核查；当前 HEAD `e3d095d` 只新增已提交的连续性文档，最终核查时只有该文档另有未暂存修改，所列接口代码未变化。主要证据：
 
 - `src/cve2attack/cli.py`
 - `src/cve2attack/data/loaders.py`
@@ -572,13 +612,23 @@ git status --short --branch
 
 Stage 2 共享 `CandidateRecord.from_dict()` 和 `parent_technique_id()`。读取历史候选时会把 `Txxxx.xxx` 上卷到 `Txxxx` 并对父 ID 去重。当前拓扑规则使用父 Technique ID（如 `T1190`、`T1210`、`T1068`）。因此 Stage 1 正式输出父 Technique 与 Stage 2 当前实现一致。
 
+### 12.5 当前三场景正式交接
+
+Stage 2 应直接传入本轮完整 run 目录：
+
+```text
+--stage1-run /home/ghdemi/Code/cve2attack/runs/stage2_mantis_v5c_attack15_1_top20_20260729T2352
+```
+
+该目录 manifest 为 `complete`，`candidates/` 只含 `CVE-2020.jsonl` 和 `CVE-2021.jsonl`，合计 3 个 CVE、每条恰好 20 个父 Technique。Stage 2 将按 `cve_id` 连接，保留 score/sources/metadata，并对不变的 20 项集合重排。不要再使用三个旧 V3a 单场景 snapshot 作为这次统一正式 V5c 基线。
+
 ## 13. 运行环境与模型依赖
 
 ### 13.1 主机职责
 
 | 主机 | 职责 |
 | --- | --- |
-| `172.23.216.47`（SSH `sun_demi`） | 代码、Git 工作树、数据、ATTACK-BERT/HF 缓存、rewrite cache、runs、comparisons |
+| `172.23.216.47`（SSH `pri_sun`；历史别名 `sun_demi`） | 代码、Git 工作树、数据、ATTACK-BERT/HF 缓存、rewrite cache、runs、comparisons |
 | `172.23.216.73:11434` | Ollama 服务与 `sec-i1` 权重；47 通过 HTTP 调用 |
 
 不要把 73 上的模型误认为被复制到 47。仓库中的 `models/ollama/sec-i1-cve-rewrite-v1.Modelfile` 只是版本化运行模板和参数，不包含 GGUF 权重。
@@ -680,6 +730,7 @@ data/derived/rewrite_cache/       about 1.1 MB
 - embedding cache 可理论重建，但成本高且与 corpus/model 键相关；不要为“干净”而删除。
 - rewrite cache 昂贵且可能无法逐字重现；默认视为受保护用户数据。
 - `data_result`、`cve2attack_result`、KEV、TRIAGE benchmark 和 raw 来源不得混合、覆盖或删除。
+- 本轮新增但尚未提交的 `data/benchmarks/stage2_mantis_scenarios/` 与新 run `runs/stage2_mantis_v5c_attack15_1_top20_20260729T2352/` 已成为 Stage 2 交接证据，不得删除、覆盖或改名；审核前保持原样。
 - 禁止使用宽泛的 `git add .`、`git add -A`。需要提交本文时只能显式：
 
 ```bash
@@ -687,6 +738,8 @@ git add docs/continuity/STAGE1_CONTINUITY.md
 ```
 
 提交前必须再次确认 `git diff --cached --name-status` 只有获批文件。
+
+若用户未来授权提交本轮 cohort 和本文，必须逐文件显式暂存 4 个 benchmark 文件与本文；两份 rewrite cache 和被忽略的 run 仍不得暂存。run 的不可覆盖路径、manifest 与 candidate 哈希已由第 9.6 节和 `handoff_audit.json` 固定。
 
 ## 15. 已遇到的失败、易误判与无效工作
 
@@ -716,9 +769,10 @@ git add docs/continuity/STAGE1_CONTINUITY.md
 
 - `data_result` 的可核实论文引文、构建方式和标签权威性；当前 `dataset.yaml` 为 `citation: null`。
 - `cve2attack_result` 的完整规范引文；元数据写“CVE2ATT&CK paper dataset”，但 `citation: null`。
-- 冻结 `5912587` clean HEAD 上是否存在与原 TRIAGE V5k 候选逐字完全一致的新 run；本轮没有复跑。
-- 冻结前 37/37 测试通过的持久化日志；仓库中没有该日志，本轮也未重跑。
-- Stage 2 分支尚未推送的 3 个提交未来是否改变接口；本文只保证 `be5ba41` 时的实际行为。
+- 冻结 `5912587` clean HEAD 上是否存在与原 TRIAGE V5k 候选逐字完全一致的新 run；本轮只生成三场景 Top-20，没有复跑 60-CVE TRIAGE。
+- 冻结前 37/37 测试通过的持久化日志；仓库中没有该日志。本轮 `validate`/`inspect` 成功，但未运行单元测试。
+- 新三场景 cohort 与本文仍未提交，新 run 又被 Git 忽略；在提交前必须联合使用 `259ce57`、工作区差异和 `handoff_audit.json` 描述完整输入状态。
+- V5c 在 Tatsu `CVE-2021-25094` 上未把 M&NTIS 真值 `T1190` 召回 Top-20；这是已确认的单案例不可恢复覆盖失败，但尚不足以证明 Stage 1 Top-20 是总体端到端性能的主要瓶颈。
 
 以上事项不阻塞本文创建，也不允许用猜测填补。
 
@@ -730,15 +784,16 @@ git add docs/continuity/STAGE1_CONTINUITY.md
 - 主要论文定位是 label-free/label-efficient 的受控候选生成，不追求在不同监督条件下盲目追平 TRIAGE。
 - SMET 是公开性能参照；TRIAGE 是监督参考上界。
 - procedure 覆盖偏置必须主动披露。
-- 下一阶段默认评估攻击图上下文能否在固定候选中提升最终映射。
+- 三个 M&NTIS 场景的正式 Stage 1 输入统一使用第 9.6 节的新 V5c Top-20 run，不再混用三个 V3a snapshot。
+- 下一阶段默认评估攻击图上下文能否在该固定候选集合中提升最终映射；Tatsu 的候选缺失必须报告为 Stage 1 不可恢复案例。
 
 ### 17.2 下一步可直接执行的任务
 
 在用户审核和授权后：
 
-1. 只提交本文，保持两份 rewrite cache 未跟踪且不暂存；
-2. Stage 2 使用正式 Top-20 V5c run 做端到端候选连接和上下文重排；
-3. 记录 Stage 2 是否因真值不在 Top-20 而不可恢复，判断 Stage 1 是否仍为瓶颈；
+1. Stage 2 以 `runs/stage2_mantis_v5c_attack15_1_top20_20260729T2352/` 作为三场景统一输入，保持 20 项集合不变并重新评估三项真值名次；
+2. 审核本轮新增的 4 个 `stage2_mantis_scenarios` benchmark 文件与本文；如需提交，只逐文件显式暂存，保持两份 rewrite cache 未跟踪且不暂存；
+3. 把 Tatsu 的 T1190 缺失作为固定覆盖失败，在更大且预先确定的端到端 cohort 上判断 Top-20 覆盖是否为系统性瓶颈，不能据单案例调参；
 4. 论文写作中使用已冻结比较表、消融和偏置结论，并补查两份历史数据集引文。
 
 ### 17.3 只有以下证据才重开 Stage 1
@@ -749,24 +804,26 @@ git add docs/continuity/STAGE1_CONTINUITY.md
 
 重开时必须创建新配置、新 run ID、新 comparison ID，保留冻结结果；不能覆盖原产物，也不能在 60-CVE test 上反复搜索参数。
 
+本轮三场景中出现 1 个 Top-20 外真值，是重新开启条件的诊断信号而不是充分证据；在总体或更大预注册 cohort 证明候选覆盖为主要不可恢复瓶颈之前，Stage 1 方法继续冻结。
+
 ## 18. 最近重要变化
 
 只保留高价值变更，不扩展为聊天时间线：
 
+- `[未提交，2026-07-30]`：新增三场景 M&NTIS cohort，并生成正式 V5c/ATT&CK 15.1/strict LOO/父 Technique Top-20 交接 run `stage2_mantis_v5c_attack15_1_top20_20260729T2352`。
+- `259ce57`：提交 Stage 1 持续维护连续性文档；这是文档提交，不改变冻结代码基线。
 - `5912587`：冻结 Stage 1 action retrieval，加入最终语料消融、偏置和案例诊断。
 - `e0bb8a6`：加入跨 benchmark V5 验证、2,000-CVE 标签无关样本和配对 bootstrap。
 - `4227472`：实现 action-level ATT&CK 检索、严格 LOO、V5 配置与测试。
 - `aa0379a`：加入 TRIAGE 候选互补诊断与无训练 RRF 基线。
 - `b9f3ef6`：接入 TRIAGE 公开 benchmark 与统一公开预测比较。
 - `076852b`：版本化 `sec-i1-cve-rewrite:v1` Llama 3 模板与上下文参数。
-- `d7ae864`：长任务增加阶段、进度、耗时与 ETA 输出。
-- `3b44154`：缓存 embedding 模型支持离线运行。
 
 ## 19. 新任务接管只读检查清单
 
 接管者在任何修改、测试或运行前执行并记录：
 
-- [ ] SSH 到 `sun_demi`，确认主机和 `/home/ghdemi/Code/cve2attack`。
+- [ ] SSH 到 `pri_sun`（历史环境可能使用 `sun_demi`），确认主机和 `/home/ghdemi/Code/cve2attack`。
 - [ ] 重新确认实时分支、HEAD、上游、ahead/behind；本文顶部和第 3 节只提供最后核查时的快照。
 - [ ] 区分 Stage 1 冻结代码基线、连续性文档提交和实时分支 HEAD；纯文档提交不得被误记为新的冻结代码基线。
 - [ ] 运行 `git status --short --branch`，区分本文后续变化、用户变化和两份原有 cache。
@@ -821,7 +878,8 @@ git add docs/continuity/STAGE1_CONTINUITY.md
 | 最终消融与偏置 | `comparisons/triage_stage1_v5c_final_audit/` |
 | 多 benchmark 结果 | `comparisons/multibench_final_*` 与 `docs/experiment_history.md` |
 | 数据规模与来源 | 各 `data/benchmarks/<name>/dataset.yaml`、TRIAGE/KEV source metadata |
-| Stage 2 接口 | Stage 2 HEAD `be5ba41` 下的 loaders/schemas/candidate_joiner/pipeline/reranker |
+| Stage 2 接口 | Stage 2 当前 HEAD `e3d095d`；接口代码仍为 `be5ba41` 下的 loaders/schemas/candidate_joiner/pipeline/reranker |
+| M&NTIS 三场景正式交接 | `data/benchmarks/stage2_mantis_scenarios/`、`runs/stage2_mantis_v5c_attack15_1_top20_20260729T2352/manifest.json`、`handoff_audit.json`、`handoff_report.md` |
 | V3 rewrite 参数 | V3 YAML、`rewrite/ollama.py`、`rewrite/pipeline.py`、CLI、Modelfile、73 `/api/tags` |
 | 测试数量 | `tests/` 静态 37 个 `test_*`；冻结前执行观察，无持久日志 |
 | 受保护 cache | `git status`、`stat`、`sha256sum`、`.gitignore` |
