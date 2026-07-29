@@ -16,6 +16,8 @@ from cve2attack.stage2.context_extractor import parse_fact
 
 
 RULESET_VERSION = "topology-rule-priority-v2"
+CONTEXT_MODES = ("no_context", "local_context", "full_graph_context")
+DEFAULT_CONTEXT_MODE = "full_graph_context"
 
 
 def _collect_facts(value: Any) -> set[str]:
@@ -70,15 +72,25 @@ def _rule_matches_candidate(
     raise ValueError(f"Unsupported topology rule match scope: {scope!r}")
 
 
-def detect_topology_rules(record: Mapping[str, Any]) -> list[dict[str, Any]]:
+def detect_topology_rules(
+    record: Mapping[str, Any],
+    *,
+    context_mode: str = DEFAULT_CONTEXT_MODE,
+) -> list[dict[str, Any]]:
     """Detect predeclared ATT&CK-compatible shapes from graph topology only."""
     local_context = record.get("local_context")
     graph_context = record.get("graph_context")
     if not isinstance(local_context, Mapping) or not isinstance(graph_context, Mapping):
         raise ValueError("Joined record must contain local_context and graph_context objects")
+    if context_mode not in CONTEXT_MODES:
+        raise ValueError(f"Unsupported context mode: {context_mode!r}")
+    if context_mode == "no_context":
+        return []
 
     target_host = str(local_context.get("target_host") or "")
-    facts = _collect_facts(local_context) | _collect_facts(graph_context)
+    facts = _collect_facts(local_context)
+    if context_mode == "full_graph_context":
+        facts |= _collect_facts(graph_context)
     parsed = _parsed_facts(facts)
     rules: list[dict[str, Any]] = []
 
@@ -175,13 +187,17 @@ def detect_topology_rules(record: Mapping[str, Any]) -> list[dict[str, Any]]:
     return rules
 
 
-def rerank_joined_record(record: Mapping[str, Any]) -> dict[str, Any]:
+def rerank_joined_record(
+    record: Mapping[str, Any],
+    *,
+    context_mode: str = DEFAULT_CONTEXT_MODE,
+) -> dict[str, Any]:
     """Prioritize candidates matched by topology rules without changing the set."""
     raw_candidates = record.get("candidates")
     if not isinstance(raw_candidates, list):
         raise ValueError("Joined record must contain a candidates list")
 
-    rules = detect_topology_rules(record)
+    rules = detect_topology_rules(record, context_mode=context_mode)
     decorated: list[tuple[bool, int, dict[str, Any]]] = []
     for original_rank, raw_candidate in enumerate(raw_candidates, start=1):
         if not isinstance(raw_candidate, Mapping):
@@ -212,11 +228,18 @@ def rerank_joined_record(record: Mapping[str, Any]) -> dict[str, Any]:
     result["candidates"] = reranked_candidates
     result["reranker"] = {
         "strategy": RULESET_VERSION,
+        "context_mode": context_mode,
         "uses_target_semantics": False,
         "detected_rules": rules,
     }
     return result
 
 
-def rerank_joined_records(records: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
-    return [rerank_joined_record(record) for record in records]
+def rerank_joined_records(
+    records: Iterable[Mapping[str, Any]],
+    *,
+    context_mode: str = DEFAULT_CONTEXT_MODE,
+) -> list[dict[str, Any]]:
+    if context_mode not in CONTEXT_MODES:
+        raise ValueError(f"Unsupported context mode: {context_mode!r}")
+    return [rerank_joined_record(record, context_mode=context_mode) for record in records]

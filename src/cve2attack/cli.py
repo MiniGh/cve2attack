@@ -28,6 +28,7 @@ from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
 from cve2attack.stage2.pipeline import run_context_extraction, run_stage2_experiment
+from cve2attack.stage2.reranker import CONTEXT_MODES, DEFAULT_CONTEXT_MODE
 from cve2attack.stage2.scenario_graph import build_attack_graph_from_scenario
 
 
@@ -247,6 +248,15 @@ def _parser() -> argparse.ArgumentParser:
         type=int,
         default=2,
         help="Maximum upstream evidence expansion depth (default: 2)",
+    )
+    stage2_run.add_argument(
+        "--context-mode",
+        choices=CONTEXT_MODES,
+        default=DEFAULT_CONTEXT_MODE,
+        help=(
+            "Context ablation mode: no_context, local_context, or "
+            "full_graph_context (default)"
+        ),
     )
     return parser
 
@@ -492,6 +502,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             project_root=PROJECT_ROOT,
             scenario_kind=args.scenario_kind,
             max_graph_depth=args.max_graph_depth,
+            context_mode=args.context_mode,
         )
         print(path)
         return

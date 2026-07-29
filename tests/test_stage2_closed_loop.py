@@ -167,6 +167,52 @@ class TopologyRerankerTests(unittest.TestCase):
             "tactic",
         )
 
+    def test_no_context_preserves_stage1_order(self):
+        joined, _stats = join_contexts_with_candidates(
+            _context_document(), candidate_records(STAGE1_RUN)
+        )
+        reranked = rerank_joined_records(joined, context_mode="no_context")
+
+        self.assertEqual(
+            [candidate["technique_id"] for candidate in reranked[0]["candidates"]],
+            [candidate["technique_id"] for candidate in joined[0]["candidates"]],
+        )
+        self.assertEqual(reranked[0]["reranker"]["detected_rules"], [])
+        self.assertEqual(reranked[0]["reranker"]["context_mode"], "no_context")
+
+    def test_local_context_ignores_upstream_only_lateral_evidence(self):
+        record = {
+            "cve_id": "CVE-2024-0006",
+            "local_context": {
+                "target_host": "serverB",
+                "direct_consequences": [{"fact": "execCode(serverB,root)"}],
+            },
+            "graph_context": {
+                "upstream_requirements": [
+                    {"fact": "hacl(serverA,serverB,tcp,445)"},
+                    {"fact": "execCode(serverA,user)"},
+                ]
+            },
+            "candidates": [
+                {"technique_id": "T1000", "sources": ["fixture"]},
+                {"technique_id": "T1210", "sources": ["fixture"]},
+            ],
+        }
+        local = rerank_joined_records([record], context_mode="local_context")[0]
+        full = rerank_joined_records([record], context_mode="full_graph_context")[0]
+
+        self.assertEqual(local["candidates"][0]["technique_id"], "T1000")
+        self.assertEqual(local["reranker"]["detected_rules"], [])
+        self.assertEqual(full["candidates"][0]["technique_id"], "T1210")
+        self.assertEqual(
+            [rule["rule_id"] for rule in full["reranker"]["detected_rules"]],
+            ["lateral_remote_service"],
+        )
+
+    def test_rejects_unknown_context_mode(self):
+        with self.assertRaisesRegex(ValueError, "Unsupported context mode"):
+            rerank_joined_records([], context_mode="unknown")
+
     def test_target_semantic_fields_alone_do_not_change_ranking(self):
         record = {
             "cve_id": "CVE-2024-0004",
@@ -204,6 +250,10 @@ class TopologyRerankerTests(unittest.TestCase):
             manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
             metrics = json.loads((output / "metrics.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["status"], "complete")
+            self.assertEqual(
+                manifest["parameters"]["context_mode"],
+                "full_graph_context",
+            )
             self.assertEqual(metrics["reranked"]["top1"], 1.0)
             self.assertTrue((output / "report.md").is_file())
 

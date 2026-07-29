@@ -22,7 +22,12 @@ from cve2attack.stage2.graph_parser import (
     reverse_for_analysis,
     summarize_graph,
 )
-from cve2attack.stage2.reranker import RULESET_VERSION, rerank_joined_records
+from cve2attack.stage2.reranker import (
+    CONTEXT_MODES,
+    DEFAULT_CONTEXT_MODE,
+    RULESET_VERSION,
+    rerank_joined_records,
+)
 
 
 def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
@@ -72,6 +77,7 @@ def _write_stage2_report(
     metrics: Mapping[str, Any],
     join_stats: Mapping[str, Any],
     scenario_kind: str,
+    context_mode: str,
     stage1_run: Path,
     attack_graph: Path,
 ) -> None:
@@ -102,6 +108,7 @@ def _write_stage2_report(
         f"- Stage-1 run: `{stage1_run}`",
         f"- Attack graph: `{attack_graph}`",
         f"- Reranker: `{RULESET_VERSION}` (topology only)",
+        f"- Context mode: `{context_mode}`",
         f"- Matched graph CVEs: {join_stats['matched']}",
         "",
         "## Summary",
@@ -198,6 +205,7 @@ def run_stage2_experiment(
     project_root: str | Path,
     scenario_kind: str,
     max_graph_depth: int = 2,
+    context_mode: str = DEFAULT_CONTEXT_MODE,
 ) -> Path:
     """Run the first reproducible stage-1 -> context -> reranking loop."""
     stage1_path = Path(stage1_run).resolve()
@@ -214,6 +222,8 @@ def run_stage2_experiment(
         raise ValueError("run_id must be one safe directory name")
     if not scenario_kind.strip():
         raise ValueError("scenario_kind must be non-empty")
+    if context_mode not in CONTEXT_MODES:
+        raise ValueError(f"Unsupported context mode: {context_mode!r}")
 
     stage1_manifest_path = stage1_path / "manifest.json"
     stage1_manifest: dict[str, Any] = {}
@@ -248,7 +258,10 @@ def run_stage2_experiment(
             "attack_graph_sha256": _sha256(graph_path),
             "benchmark": str(truth_path),
         },
-        "parameters": {"max_graph_depth": max_graph_depth},
+        "parameters": {
+            "max_graph_depth": max_graph_depth,
+            "context_mode": context_mode,
+        },
     }
     _write_json_atomic(manifest_path, manifest)
 
@@ -280,8 +293,14 @@ def run_stage2_experiment(
         _write_jsonl_atomic(output_dir / "joined_records.jsonl", joined_records)
         _write_json_atomic(output_dir / "join_stats.json", join_stats)
 
-        print(f"[stage2 4/6] Applying deterministic topology rules: {RULESET_VERSION}")
-        reranked_records = rerank_joined_records(joined_records)
+        print(
+            f"[stage2 4/6] Applying deterministic topology rules: {RULESET_VERSION} "
+            f"context_mode={context_mode}"
+        )
+        reranked_records = rerank_joined_records(
+            joined_records,
+            context_mode=context_mode,
+        )
         _write_jsonl_atomic(output_dir / "reranked_records.jsonl", reranked_records)
         for record in reranked_records:
             detected = record["reranker"]["detected_rules"]
@@ -303,6 +322,7 @@ def run_stage2_experiment(
             metrics=metrics,
             join_stats=join_stats,
             scenario_kind=scenario_kind,
+            context_mode=context_mode,
             stage1_run=stage1_path,
             attack_graph=graph_path,
         )
