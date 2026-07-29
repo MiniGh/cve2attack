@@ -136,6 +136,37 @@ class TopologyRerankerTests(unittest.TestCase):
             ["local_privilege_transition"],
         )
 
+    def test_local_privilege_rule_uses_stable_tactic_priority_group(self):
+        record = {
+            "cve_id": "CVE-2024-0005",
+            "local_context": {
+                "target_host": "workstation",
+                "direct_consequences": [{"fact": "execCode(workstation,root)"}],
+            },
+            "graph_context": {
+                "upstream_requirements": [{"fact": "execCode(workstation,user)"}]
+            },
+            "candidates": [
+                {"technique_id": "T1059", "metadata": {"tactics": ["execution"]}},
+                {
+                    "technique_id": "T1548",
+                    "metadata": {"tactics": ["privilege-escalation", "defense-evasion"]},
+                },
+                {"technique_id": "T1068", "metadata": {"tactics": ["privilege-escalation"]}},
+                {"technique_id": "T1134", "metadata": {"tactics": ["privilege-escalation"]}},
+            ],
+        }
+        reranked = rerank_joined_records([record])[0]
+        self.assertEqual(
+            [candidate["technique_id"] for candidate in reranked["candidates"]],
+            ["T1548", "T1068", "T1134", "T1059"],
+        )
+        self.assertTrue(reranked["candidates"][0]["metadata"]["stage2"]["topology_match"])
+        self.assertEqual(
+            reranked["reranker"]["detected_rules"][0]["match_scope"],
+            "tactic",
+        )
+
     def test_target_semantic_fields_alone_do_not_change_ranking(self):
         record = {
             "cve_id": "CVE-2024-0004",

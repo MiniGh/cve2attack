@@ -47,7 +47,8 @@ class ScenarioGraphTests(unittest.TestCase):
         self.assertEqual(record["local_context"]["target_host"], "dcserver")
         rules = detect_topology_rules(record)
         self.assertEqual([rule["rule_id"] for rule in rules], ["lateral_remote_service"])
-        self.assertEqual(rules[0]["technique_id"], "T1210")
+        self.assertEqual(rules[0]["match_scope"], "technique")
+        self.assertEqual(rules[0]["match_values"], ["T1210"])
         self.assertIn("execCode(TARGET,user)", rules[0]["evidence"])
         self.assertIn("hacl(TARGET,dcserver,tcp,445)", rules[0]["evidence"])
 
@@ -59,7 +60,8 @@ class ScenarioGraphTests(unittest.TestCase):
         self.assertEqual(record["cve_id"], "CVE-2021-25094")
         rules = detect_topology_rules(record)
         self.assertEqual([rule["rule_id"] for rule in rules], ["public_facing_service"])
-        self.assertEqual(rules[0]["technique_id"], "T1190")
+        self.assertEqual(rules[0]["match_scope"], "technique")
+        self.assertEqual(rules[0]["match_values"], ["T1190"])
         self.assertIn("attackerLocated(internet)", rules[0]["evidence"])
         self.assertIn("networkServiceInfo(TARGET,wordpress_tatsu,tcp,80,www-data)", rules[0]["evidence"])
 
@@ -71,7 +73,9 @@ class ScenarioGraphTests(unittest.TestCase):
         self.assertEqual(record["cve_id"], "CVE-2021-3156")
         rules = detect_topology_rules(record)
         self.assertEqual([rule["rule_id"] for rule in rules], ["local_privilege_transition"])
-        self.assertEqual(rules[0]["technique_id"], "T1068")
+        self.assertEqual(rules[0]["match_scope"], "tactic")
+        self.assertEqual(rules[0]["match_values"], ["privilege-escalation"])
+        self.assertEqual(rules[0]["fallback_technique_ids"], ["T1068"])
         self.assertIn("execCode(TARGET,user)", rules[0]["evidence"])
         self.assertIn("execCode(TARGET,root)", rules[0]["evidence"])
 
@@ -128,7 +132,7 @@ class ScenarioGraphTests(unittest.TestCase):
             self.assertEqual(metrics["unrecoverable"], 1)
             self.assertTrue(metrics["candidate_sets_preserved"])
 
-    def test_sudo_rule_degradation_is_kept_as_a_regression_case(self):
+    def test_sudo_tactic_guard_preserves_specific_stage1_top1(self):
         with tempfile.TemporaryDirectory() as directory:
             output = run_stage2_experiment(
                 stage1_run=SUDO_DIR / "stage1_snapshot",
@@ -142,11 +146,12 @@ class ScenarioGraphTests(unittest.TestCase):
             metrics = json.loads((output / "metrics.json").read_text(encoding="utf-8"))
             case = metrics["cases"][0]
             self.assertEqual(case["best_original_rank"], 1)
-            self.assertEqual(case["best_reranked_rank"], 2)
+            self.assertEqual(case["best_reranked_rank"], 1)
             self.assertEqual(case["original_top1"], "T1548")
-            self.assertEqual(case["reranked_top1"], "T1068")
-            self.assertEqual(case["outcome"], "degraded")
-            self.assertEqual(metrics["losses"], 1)
+            self.assertEqual(case["reranked_top1"], "T1548")
+            self.assertEqual(case["outcome"], "unchanged")
+            self.assertEqual(metrics["losses"], 0)
+            self.assertEqual(metrics["ties"], 1)
             self.assertTrue(metrics["candidate_sets_preserved"])
 
 

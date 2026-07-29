@@ -2,8 +2,9 @@
 
 This first baseline deliberately uses no benchmark labels, CVE description,
 ``remoteExploit`` field or ``expected_impact`` field.  It detects three graph
-shapes and gives matching ATT&CK candidates priority while preserving the
-stage-1 order within matched and unmatched groups.
+shapes and gives compatible ATT&CK candidates priority while preserving the
+stage-1 order within matched and unmatched groups.  Generic topology may match
+at tactic level when it cannot justify one specific Technique.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ from typing import Any, Iterable, Mapping
 from cve2attack.stage2.context_extractor import parse_fact
 
 
-RULESET_VERSION = "topology-rule-priority-v1"
+RULESET_VERSION = "topology-rule-priority-v2"
 
 
 def _collect_facts(value: Any) -> set[str]:
@@ -34,6 +35,39 @@ def _collect_facts(value: Any) -> set[str]:
 
 def _parsed_facts(facts: Iterable[str]) -> list[tuple[str, tuple[str, ...], str]]:
     return [(predicate, arguments, fact) for fact in sorted(facts) for predicate, arguments in [parse_fact(fact)]]
+
+
+def _normalized_values(value: Any) -> set[str]:
+    if isinstance(value, str):
+        return {value} if value else set()
+    if isinstance(value, (list, tuple, set)):
+        return {str(item) for item in value if str(item)}
+    return set()
+
+
+def _candidate_tactics(candidate: Mapping[str, Any]) -> set[str]:
+    metadata = candidate.get("metadata")
+    if not isinstance(metadata, Mapping):
+        return set()
+    return _normalized_values(metadata.get("tactics"))
+
+
+def _rule_matches_candidate(
+    rule: Mapping[str, Any],
+    candidate: Mapping[str, Any],
+) -> bool:
+    """Match a rule at the evidence resolution it explicitly declares."""
+    scope = str(rule.get("match_scope") or "")
+    match_values = _normalized_values(rule.get("match_values"))
+    technique_id = str(candidate.get("technique_id") or "")
+    if scope == "technique":
+        return technique_id in match_values
+    if scope == "tactic":
+        candidate_tactics = _candidate_tactics(candidate)
+        if candidate_tactics:
+            return bool(candidate_tactics & match_values)
+        return technique_id in _normalized_values(rule.get("fallback_technique_ids"))
+    raise ValueError(f"Unsupported topology rule match scope: {scope!r}")
 
 
 def detect_topology_rules(record: Mapping[str, Any]) -> list[dict[str, Any]]:
@@ -70,7 +104,8 @@ def detect_topology_rules(record: Mapping[str, Any]) -> list[dict[str, Any]]:
         rules.append(
             {
                 "rule_id": "public_facing_service",
-                "technique_id": "T1190",
+                "match_scope": "technique",
+                "match_values": ["T1190"],
                 "reason": "Internet-origin access reaches a network service on the target host.",
                 "evidence": sorted(attacker_facts + internet_edges + service_facts),
             }
@@ -96,7 +131,8 @@ def detect_topology_rules(record: Mapping[str, Any]) -> list[dict[str, Any]]:
         rules.append(
             {
                 "rule_id": "lateral_remote_service",
-                "technique_id": "T1210",
+                "match_scope": "technique",
+                "match_values": ["T1210"],
                 "reason": "Code execution on another host precedes network access to the target service.",
                 "evidence": sorted(set(lateral_evidence)),
             }
@@ -125,8 +161,13 @@ def detect_topology_rules(record: Mapping[str, Any]) -> list[dict[str, Any]]:
         rules.append(
             {
                 "rule_id": "local_privilege_transition",
-                "technique_id": "T1068",
-                "reason": "Existing non-root execution on the target precedes root execution on the same host.",
+                "match_scope": "tactic",
+                "match_values": ["privilege-escalation"],
+                "fallback_technique_ids": ["T1068"],
+                "reason": (
+                    "Existing non-root execution precedes root execution on the same host; "
+                    "the topology establishes privilege escalation but not its specific mechanism."
+                ),
                 "evidence": sorted(set(root_consequences + prior_local_exec)),
             }
         )
@@ -141,17 +182,15 @@ def rerank_joined_record(record: Mapping[str, Any]) -> dict[str, Any]:
         raise ValueError("Joined record must contain a candidates list")
 
     rules = detect_topology_rules(record)
-    rules_by_technique: dict[str, list[dict[str, Any]]] = {}
-    for rule in rules:
-        rules_by_technique.setdefault(str(rule["technique_id"]), []).append(rule)
-
     decorated: list[tuple[bool, int, dict[str, Any]]] = []
     for original_rank, raw_candidate in enumerate(raw_candidates, start=1):
         if not isinstance(raw_candidate, Mapping):
             raise ValueError("Each candidate must be a JSON object")
         candidate = deepcopy(dict(raw_candidate))
         technique_id = str(candidate.get("technique_id") or "")
-        matched_rules = rules_by_technique.get(technique_id, [])
+        if not technique_id:
+            raise ValueError("Each candidate must contain a technique_id")
+        matched_rules = [rule for rule in rules if _rule_matches_candidate(rule, candidate)]
         metadata = candidate.get("metadata")
         metadata_copy = deepcopy(dict(metadata)) if isinstance(metadata, Mapping) else {}
         metadata_copy["stage2"] = {
