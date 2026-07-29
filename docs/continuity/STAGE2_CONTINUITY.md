@@ -7,24 +7,24 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-07-30 00:03:12 +08:00 |
-| 最后只读核查时间 | 2026-07-30 00:03:12 +08:00 |
+| 最后内容更新时间 | 2026-07-30 02:04:59 +08:00 |
+| 最后只读核查时间 | 2026-07-30 02:04:59 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` |
-| Stage 2 功能代码基线（最后核查时） | `be5ba41fac5231c0f277c09581c5f3812a52a4d8` |
+| 最后核查时的 HEAD | `729d45c0bf25a7fced53e1989d7a59dd4917d91e` |
+| Stage 2 功能代码状态（最后核查时） | topology-only v2 已提交为 `729d45c0bf25a7fced53e1989d7a59dd4917d91e`，尚未推送 |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
-| 最后核查时的上游实际 SHA | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` |
-| 最后核查时的 ahead / behind | ahead 0 / behind 0 |
-| 文档生成/最后核查时的工作区状态 | 测试、V3a 验证 run 和正式 V5c run 完成后 Git 可见状态干净；更新本文后仅本文为 Git 可见修改；另有被忽略的外部数据、缓存和实验结果 |
-| 当前目标 | 以统一正式 V5c/ATT&CK 15.1/strict-LOO/父 Technique Top-20 为输入，完成可靠、可解释且不破坏正确候选的 Stage 2 毕设闭环 |
-| 建议下一步 | 以本轮正式 V5c 基线为固定对照，设计不读取标签的“避免伤害”策略，并将 Tatsu Top-20 缺失继续作为 Stage 1 召回问题处理 |
-| 当前阻塞/限制 | 只有 3 个公开轨迹案例；正式 V5c 基线仍是 1 个提升、1 个退化、1 个不可恢复；Top-1 总体不变，Sudo 退化和 Tatsu 缺失尚未解决，不能据此主张总体泛化 |
+| 最后核查时的上游实际 SHA | `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` |
+| 最后核查时的 ahead / behind | ahead 1 / behind 0（连续性文档自身提交前） |
+| 文档生成/最后核查时的工作区状态 | v2 代码与测试已提交；更新本文后仅本文有 Git 可见修改；另有被忽略的三个 v2 run、外部数据和缓存 |
+| 当前目标 | 稳定并扩大验证 topology-only v2 的 tactic 级避免伤害机制，再完成上下文与深度消融 |
+| 建议下一步 | 以 v1/v2 为固定对照开展 `no_context / local_context / full_graph_context` 和深度消融 |
+| 当前阻塞/限制 | 只有 3 个同源公开轨迹案例；v2 消除本轮 Sudo 退化但仍在相同案例上评价，Tatsu 仍不可恢复；不能据此主张总体泛化 |
 
-上述分支、功能代码基线、上游 SHA、ahead/behind 和工作区状态都是指定时间点的状态快照。
-连续性文档自身的后续提交可能使当前分支 HEAD 和 ahead 数量高于这里记录的功能代码基线；这不表示
-`be5ba41` 已失去作为当前 Stage 2 功能代码基线的意义。新对话接管时必须重新执行第 19 节的只读 Git 检查，
-不得把本表当作实时 Git 状态。
+上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。三个 v2 run
+在提交前运行，manifest 因此记录基础 HEAD `3f3f762...`；其代码/测试 diff SHA256
+`d26c8869089af959ddeccbc803a3f89f29623676f25b76c0215a09024439bb53` 与提交 `729d45c...` 的相应补丁
+完全一致。新对话接管时必须重新执行第 19 节的只读 Git 检查，不得把本表当作实时 Git 状态。
 
 ## 1. 不可变的工作区边界
 
@@ -66,7 +66,7 @@ Stage 1 和 Stage 2 是同一 Git 仓库的两个独立 worktree：
 worktree 正在使用的分支。最后核查时 Stage 1 工作树存在两个未跟踪的 rewrite cache；它们不属于
 Stage 2，不得代为清理。
 
-以下 Stage 2 功能提交和连续性文档提交均已进入实际 GitHub 上游：
+以下截至 `3f3f762` 的 Stage 2 功能与文档提交均已进入实际 GitHub 上游：
 
 | 提交 | 作用 |
 | --- | --- |
@@ -74,8 +74,11 @@ Stage 2，不得代为清理。
 | `8af99437f1a071d24815023c4775fc80d3a49d22` | 接入 M&NTIS Zerologon 轨迹派生场景与转换器 |
 | `be5ba41fac5231c0f277c09581c5f3812a52a4d8` | 接入 Tatsu、Sudo，冻结候选并完成三案例回归与报告 |
 | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` | 新增持续维护的 Stage 2 连续性文档 |
+| `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` | 记录统一正式 V5c 端到端 v1 基线 |
 
-最后核查时本地 HEAD、上游跟踪引用和 `git ls-remote` 均为 `e3d095d`。后续仍不得自动 push。
+本地另有已评审但尚未推送的 `729d45c0bf25a7fced53e1989d7a59dd4917d91e`：
+`feat(stage2): add tactic-level reranking guard`。最后核查时上游跟踪引用和 `git ls-remote` 仍为
+`3f3f762`；后续仍不得自动 push。
 
 ## 4. Stage 2 在完整流程中的职责
 
@@ -167,19 +170,24 @@ Stage 1 已召回的候选更符合当前攻击过程。
 - `tests/test_stage2_closed_loop.py`：候选连接、三条规则、集合保持和端到端输出。
 - `tests/test_stage2_scenario_graph.py`：三个 M&NTIS 场景、图可重建、标签隔离和固定结果。
 
-## 7. 当前重排方法：topology-rule-priority-v1
+## 7. 当前重排方法：topology-rule-priority-v2
 
-规则集版本：`topology-rule-priority-v1`。它不读取 benchmark 标签，也不读取
-`remoteExploit`、`localExploit` 或 `expected_impact` 等目标语义字段，只根据图事实识别三种形状：
+当前已提交但未推送实现的规则集版本为 `topology-rule-priority-v2`。v1 正式基线及其 run 保持不变，
+v2 不读取 benchmark 标签，也不读取 `remoteExploit`、`localExploit` 或 `expected_impact` 等目标语义字段。
 
-| 规则 | 触发证据 | 优先候选 |
-| --- | --- | --- |
-| `public_facing_service` | `attackerLocated(internet)`、internet→目标 `hacl`、目标网络服务 | `T1190` |
-| `lateral_remote_service` | 另一主机已有 `execCode`，并通过 `hacl` 访问目标主机 | `T1210` |
-| `local_privilege_transition` | 目标主机已有非 root `execCode`，直接后果为同主机 root `execCode` | `T1068` |
+| 规则 | 触发证据 | 匹配分辨率 | 优先候选 |
+| --- | --- | --- | --- |
+| `public_facing_service` | `attackerLocated(internet)`、internet→目标 `hacl`、目标网络服务 | Technique | `T1190` |
+| `lateral_remote_service` | 另一主机已有 `execCode`，并通过 `hacl` 访问目标主机 | Technique | `T1210` |
+| `local_privilege_transition` | 目标主机已有非 root `execCode`，直接后果为同主机 root `execCode` | tactic | metadata 中含 `privilege-escalation` 的候选稳定分组 |
 
-当前方法是确定性、无训练的毕设基线，不是最终学习模型。规则匹配候选不在 Top-K 时，Stage 2
-不会插入它；因此第一阶段没有召回的正确答案不可恢复。
+v2 的变化只针对证据分辨率：非 root→root 拓扑能证明发生本地权限提升，但不能独立区分
+`T1068`、`T1548` 等具体机制。因此所有 `privilege-escalation` 候选先于非匹配候选，同时组内继续保持
+Stage 1 顺序；候选缺少 tactic metadata 时仅对 `T1068` 使用兼容回退。该设计不使用 CVE ID、场景名称
+或评价答案，候选集合和原始分数仍保持不变。
+
+第一阶段没有召回的正确答案仍不可恢复。v2 目前只在三个同源案例上验证，不能把 Sudo 的修复描述为
+独立总体效果。
 
 ## 8. 标签隔离和信息泄漏防线
 
@@ -327,8 +335,33 @@ M&NTIS 导出不是 MulVAL XML，必须先通过归一化场景和确定性转�
 - Tatsu 证明 Stage 2 无法补回 Stage 1 Top-20 中不存在的正确 Technique。
 - Sudo 证明粗粒度“非 root→root”规则可能覆盖 Stage 1 已经正确的、更具体机制判断。
 
-Sudo 的退化不是测试错误。当前 topology-only 图只支持通用本地提权形状 `T1068`；M&NTIS 标签利用
-Sudo 机制知识选择 `T1548.003`。尚未决定是否以及如何加入机制级证据，禁止为单个标签临时调规则。
+Sudo 的 v1 退化不是测试错误：通用 topology-only 图只能证明本地权限变化，却被 v1 过度解释为
+具体 `T1068`。这条失败分析是 v2 将本地规则降到 tactic 分辨率的依据；仍禁止为单个标签临时调规则。
+
+### 10.3 topology-only v2 tactic guard 研究结果
+
+2026-07-30 在基础 HEAD `3f3f762...` 的提交前 v2 工作树上，继续使用 10.2 的同一个统一正式 Stage 1
+run 和三张冻结图；该工作树内容随后原样提交为 `729d45c...`。代码与两个测试文件的 diff SHA256 为
+`d26c8869089af959ddeccbc803a3f89f29623676f25b76c0215a09024439bb53`。
+
+新运行目录：
+
+- `stage2_runs/v2_tactic_guard_v5c_attack15_1_zerologon_20260730T013916`
+- `stage2_runs/v2_tactic_guard_v5c_attack15_1_tatsu_20260730T013916`
+- `stage2_runs/v2_tactic_guard_v5c_attack15_1_sudo_20260730T013916`
+
+| 场景 | 正确父 Technique | Stage 1 名次 | v1 名次 | v2 名次 | v2 结果 |
+| --- | --- | ---: | ---: | ---: | --- |
+| Zerologon | T1210 | 13 | 1 | 1 | 提升保持 |
+| Tatsu Builder RCE | T1190 | 不在 Top-20 | 不在 Top-20 | 不在 Top-20 | 不可恢复 |
+| Sudo Baron Samedit | T1548 | 1 | 2 | 1 | 原 Top-1 保持 |
+
+三个 v2 manifest 均为 `complete`、`reranker=topology-rule-priority-v2`、`uses_target_semantics=false`；
+每例 `candidate_records=3`、`matched=1`、无缺失或未解析 ID，候选集合保持。图哈希与 v1 正式基线相同：
+Zerologon `6f3d0b0e...`、Tatsu `f7846de8...`、Sudo `3304f20c...`。
+
+注意：manifest 的 `git_commit=3f3f762...` 只表示运行时基础 HEAD，不表示该提交已包含 v2；上述 diff
+已原样进入 `729d45c...`，因此该提交是后续复现 v2 的代码依据。原 run 仍不得误标为在干净提交上运行。
 
 ## 11. 指标、口径差异和统计限制
 
@@ -368,9 +401,22 @@ Sudo 机制知识选择 `T1548.003`。尚未决定是否以及如何加入机制
 1. 样本量仅 3，不能当作总体准确率或泛化结论。
 2. 三个场景来自同一 M&NTIS 数据来源，属于公开轨迹派生案例研究，不是独立大样本 benchmark。
 3. 候选集合保持不变；Tatsu 缺失属于 Stage 1 召回问题，不是 Stage 2 可以修复的排序问题。
-4. Sudo 继续证明 topology-only 的通用 T1068 规则可能伤害机制更具体的正确 Top-1。
-5. 当前没有正式的避免伤害策略、特征消融或 `max_graph_depth` 消融。
+4. v1 的通用 T1068 规则会伤害机制更具体的正确 Top-1；v2 已在同一 Sudo 案例消除该退化，但尚缺独立案例验证。
+5. v2 只有 tactic 级保护，仍没有正式的上下文特征或 `max_graph_depth` 消融。
 6. 不得在这三个案例上调规则后，再把同一案例结果描述为独立效果。
+
+### 11.3 统一正式 V5c 输入上的 v2 研究指标
+
+| 指标 | Stage 1 | v1 | v2 |
+| --- | ---: | ---: | ---: |
+| Top-1 | 1/3 | 1/3 | 2/3 |
+| Top-3 | 1/3 | 2/3 | 2/3 |
+| Top-5 | 1/3 | 2/3 | 2/3 |
+| MRR | 0.359 | 0.500 | 0.667 |
+
+v2 结果组成为 1 个提升、1 个保持、1 个不可恢复、0 个退化。Top-1 和 MRR 相对 v1 提升来自 Sudo
+不再被粗粒度规则排坏；Zerologon 的提升保持，Tatsu 仍不可恢复。该结果同时用于设计反馈和评价，
+只能证明三个固定案例上的回归改善，不能作为独立泛化证据。
 
 ## 12. 实验环境、命令和成功判断
 
@@ -429,28 +475,32 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
   ../cve2attack/.venv/bin/python -m pytest -q -p no:cacheprovider
 ```
 
-2026-07-29 23:41 +08:00 在 `e3d095d` 上实际运行，结果为
-`44 passed, 6 subtests passed in 5.14s`。运行使用 `PYTHONDONTWRITEBYTECODE=1` 和
-`-p no:cacheprovider`，测试前后 `git status` 均无意外变化。
+2026-07-30 在提交前、内容已原样进入 `729d45c...` 的 v2 工作树上运行完整快速测试，结果为
+`45 passed, 6 subtests passed in 5.11s`；此前两组定向测试为
+`19 passed, 6 subtests passed in 0.26s`。两次均使用 `PYTHONDONTWRITEBYTECODE=1` 和
+`-p no:cacheprovider`，没有产生额外 Git 可见文件。
 
 ## 13. 已确认决策与已知问题
 
 ### 13.1 已确认决策
 
-- 当前使用确定性、无训练的 topology-only v1 作为毕设基线。
+- 已提交的 topology-only v1 和三个正式 V5c run 作为固定对照保留。
+- 当前研究实现为确定性、无训练的 topology-only v2；本地权限变化只支持 tactic 级证据分辨率。
 - Stage 2 只重排同一候选集合，不在此阶段扩大候选集。
-- benchmark 标签不参与图生成和规则检测。
-- 不根据单个测试标签逐例修改规则。
+- benchmark 标签不参与图生成和规则检测；v2 不读取 CVE ID、场景名或目标语义字段。
+- 不根据单个测试标签逐例修改规则；Sudo 修复必须继续在更多独立案例上验证。
 - 合成场景只做工程验证；M&NTIS 三案例只做轨迹派生案例研究。
 - 第一阶段 Top-K 缺失必须报告为不可恢复，不能伪装成第二阶段排序失败。
 
 ### 13.2 已知问题
 
-- Sudo 中通用 T1068 规则把正确的 T1548 从第 1 降到第 2。
+- v2 只在触发设计的同一个 Sudo 案例上消除退化，尚不能证明对其他本地提权案例普遍安全。
 - Tatsu 正确标签 T1190 未进入 Stage 1 Top-20。
-- 当前规则只有“命中即优先”，没有置信度或“保持原 Top-1”的保护机制。
+- 缺少 tactic metadata 的历史候选会回退到精确 T1068，不能获得完整的 tactic 级保护。
+- 当前规则仍是“匹配组优先”，没有校准置信度；v2 只降低了本地规则的证据分辨率。
 - `max_graph_depth=2` 尚缺少系统验证和消融。
 - 当前没有关闭单个上下文特征的正式消融开关。
+- v2 已提交但尚未推送；三个既有 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
 - 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
 
@@ -459,7 +509,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 以下问题尚未决定，不能写成已确认方案：
 
 1. Zerologon 两次 V3a 候选排序不同的原因。
-2. 是否采用“避免伤害”的重排保护策略，以及保护条件和评价方式。
+2. v2 tactic 级保护在更多独立本地提权案例上的收益和风险。
 3. 是否利用机制证据细化 T1068 与 T1548/T1548.003。
 4. AttackMate Zenodo v4 完整实验包的最终价值。
 5. 如何获得足够大的公开 Stage 2 样本集。
@@ -487,12 +537,12 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 
 以下是建议顺序，不构成自动授权：
 
-1. 将本轮统一正式 V5c 基线作为固定对照保留，不覆盖三个 run。
-2. 在不读取评价标签的前提下，预先定义“避免伤害”保护条件，再评估其能否保留 Sudo 的 Stage 1 Top-1，
-   同时不破坏 Zerologon 的提升。
-3. 为 `no_context / local_context / full_graph_context` 和 `max_graph_depth` 增加正式消融设计。
+1. 保留 v1 正式基线和三个 v2 run，不覆盖任何结果。
+2. 为 `no_context / local_context / full_graph_context` 和 `max_graph_depth` 增加正式消融设计。
+3. 寻找更多独立本地提权案例验证 tactic guard；不要只在 Sudo 上证明避免伤害。
 4. 将 Tatsu 的 T1190 缺失继续反馈给 Stage 1；Stage 2 不插入正确答案。
 5. 获得更多公开案例后再进行总体指标比较；不要在 3 个样本上优化权重。
+6. `729d45c...` 尚未推送；只有获得用户授权后才 push。
 
 “重新迁移/复制/整理 Stage 2 代码”不是下一步，也永远不应从本文派生为任务。
 
@@ -500,7 +550,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 
 本轮只记录，不顺带修改：
 
-- `docs/stage2_graph_context.md` 末尾仍只介绍 Zerologon，没有覆盖 Tatsu 和 Sudo。
+- `docs/stage2_graph_context.md` 仍描述 v1 精确提升 T1068，且末尾只介绍 Zerologon；尚未覆盖 v2、Tatsu 和 Sudo。
 - `STAGE2_PLAN.md` 前部已写三案例完成，但末尾仍把接入 Sudo 列为下一步。
 - `data/stage2_sources/README.md` 仍写 M&NTIS 尚未下载和 `mantis/downloads/`；实际为 `raw/`、`extracted/`。
 - `data/stage2_sources/source_inventory.yaml` 的 M&NTIS 主体信息基本正确，但
@@ -518,9 +568,13 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - `8af9943`：接入 Zerologon 轨迹派生场景，验证 T1210 从第 2 到第 1。
 - `be5ba41`：加入 Tatsu 与 Sudo，形成提升、不可恢复、退化三种固定案例及回归测试。
 - `e3d095d`：新增并推送持续维护的 Stage 2 连续性文档；功能代码基线仍为 `be5ba41`。
+- `3f3f762`：记录并同步统一正式 V5c 端到端 v1 基线。
+- `729d45c`：提交 topology-only v2 tactic 级避免伤害规则和对应测试，尚未推送。
 - 2026-07-29：在 `e3d095d` 上通过全部快速测试，并从三个冻结 V3a 快照创建全新验证 run。
 - 2026-07-30：验收统一正式 V5c/ATT&CK 15.1/strict-LOO Top-20 输入，并用未修改的
   topology-only v1 完成三个正式端到端 run；结果为 1 个提升、1 个退化、1 个不可恢复。
+- 2026-07-30：topology-only v2 将本地权限规则降为 tactic 级稳定分组；45 个测试通过，
+  三个新 run 为 1 个提升、1 个保持、1 个不可恢复；代码随后提交为 `729d45c`，尚无独立泛化证据。
 
 这里只保留会改变接管判断的重要变化，不记录完整对话时间线。
 
