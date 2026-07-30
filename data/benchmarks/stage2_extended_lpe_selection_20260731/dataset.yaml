@@ -1,0 +1,30 @@
+name: stage2_extended_lpe_selection_20260731
+kind: candidate_selection_cohort
+task: stage2_input_generation_only
+frozen_at: "2026-07-31"
+cve_count: 6
+selection_policy: >-
+  CVE identifiers were frozen from public local-privilege execution evidence
+  before generating this cohort's Stage 1 candidates.
+cohort_order: lexicographic_cve_id
+cohort:
+  - CVE-2010-3856
+  - CVE-2020-0787
+  - CVE-2021-4034
+  - CVE-2021-40449
+  - CVE-2022-21999
+  - CVE-2022-26904
+label_policy:
+  true_attack_labels_present: false
+  selection_sentinel: T0000
+  sentinel_is_valid_attack_id: false
+  generated_metrics: invalid_do_not_report
+  reason: >-
+    The existing benchmark-mode selector requires a non-empty techniques
+    field. T0000 carries no semantic information and only preserves the CVE
+    identifiers for candidate generation.
+technique_corpus:
+  path: data/knowledge/enterprise-attack-15.1.json
+  version: "15.1"
+candidate_method:
+  config: experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml
