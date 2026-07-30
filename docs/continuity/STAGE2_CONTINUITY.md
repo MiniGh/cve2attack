@@ -7,24 +7,24 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-07-30 02:04:59 +08:00 |
-| 最后只读核查时间 | 2026-07-30 02:04:59 +08:00 |
+| 最后内容更新时间 | 2026-07-30 23:38:07 +08:00 |
+| 最后只读核查时间 | 2026-07-30 23:38:07 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `729d45c0bf25a7fced53e1989d7a59dd4917d91e` |
-| Stage 2 功能代码状态（最后核查时） | topology-only v2 已提交为 `729d45c0bf25a7fced53e1989d7a59dd4917d91e`，尚未推送 |
+| 最后核查时的 HEAD | `4b5ff982e2ac08d2d1266ac2f2fabdae0b71def5` |
+| Stage 2 功能代码状态（最后核查时） | topology-only v2、上下文/深度消融接口和独立 PwnKit 场景均已提交，尚未推送 |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
 | 最后核查时的上游实际 SHA | `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` |
-| 最后核查时的 ahead / behind | ahead 1 / behind 0（连续性文档自身提交前） |
-| 文档生成/最后核查时的工作区状态 | v2 代码与测试已提交；更新本文后仅本文有 Git 可见修改；另有被忽略的三个 v2 run、外部数据和缓存 |
-| 当前目标 | 稳定并扩大验证 topology-only v2 的 tactic 级避免伤害机制，再完成上下文与深度消融 |
-| 建议下一步 | 以 v1/v2 为固定对照开展 `no_context / local_context / full_graph_context` 和深度消融 |
-| 当前阻塞/限制 | 只有 3 个同源公开轨迹案例；v2 消除本轮 Sudo 退化但仍在相同案例上评价，Tatsu 仍不可恢复；不能据此主张总体泛化 |
+| 最后核查时的 ahead / behind | ahead 4 / behind 0（连续性文档自身提交前） |
+| 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；另有被忽略的 27 个消融 run、3 个 PwnKit run、既有结果、外部数据和缓存 |
+| 当前目标 | 在固定 v2 上扩大独立案例与复杂图验证，不再用三个固定案例调规则 |
+| 建议下一步 | 寻找具有正式 Top-20 输入和独立标签的更多本地提权案例，并加入多跳/多分支图验证 |
+| 当前阻塞/限制 | 仅有 3 个 M&NTIS 案例和 1 个 AttackMate PwnKit 案例；PwnKit 只能证明避免伤害，Tatsu 仍因 Stage 1 缺失不可恢复；不能据此主张总体泛化 |
 
-上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。三个 v2 run
-在提交前运行，manifest 因此记录基础 HEAD `3f3f762...`；其代码/测试 diff SHA256
-`d26c8869089af959ddeccbc803a3f89f29623676f25b76c0215a09024439bb53` 与提交 `729d45c...` 的相应补丁
-完全一致。新对话接管时必须重新执行第 19 节的只读 Git 检查，不得把本表当作实时 Git 状态。
+上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
+提交前 v2 run 的 manifest 仍记录基础 HEAD `3f3f762...`，但其精确代码/测试补丁已进入
+`729d45c...`。27 个正式消融 run 记录干净提交 `e8ca4ea...`，三个 PwnKit run 记录干净提交
+`4b5ff98...`。新对话接管时必须重新执行第 19 节的只读 Git 检查，不得把本表当作实时 Git 状态。
 
 ## 1. 不可变的工作区边界
 
@@ -76,9 +76,16 @@ Stage 2，不得代为清理。
 | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` | 新增持续维护的 Stage 2 连续性文档 |
 | `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` | 记录统一正式 V5c 端到端 v1 基线 |
 
-本地另有已评审但尚未推送的 `729d45c0bf25a7fced53e1989d7a59dd4917d91e`：
-`feat(stage2): add tactic-level reranking guard`。最后核查时上游跟踪引用和 `git ls-remote` 仍为
-`3f3f762`；后续仍不得自动 push。
+本地另有以下已评审、尚未推送的提交：
+
+| 提交 | 作用 |
+| --- | --- |
+| `729d45c0bf25a7fced53e1989d7a59dd4917d91e` | topology-only v2 tactic 级避免伤害规则 |
+| `ebf08fa` | 记录 v2 三案例结果 |
+| `e8ca4ea9b8e0fe6a11b3648c74c5173c06b19049` | 增加 `no/local/full` 上下文与深度消融接口 |
+| `4b5ff982e2ac08d2d1266ac2f2fabdae0b71def5` | 增加独立 AttackMate PwnKit 场景和回归测试 |
+
+最后核查时上游跟踪引用和 `git ls-remote` 仍为 `3f3f762`；后续仍不得自动 push。
 
 ## 4. Stage 2 在完整流程中的职责
 
@@ -168,12 +175,13 @@ Stage 1 已召回的候选更符合当前攻击过程。
 
 - `tests/test_stage2_context.py`：固定 MulVAL 图、上下文和多分支证据。
 - `tests/test_stage2_closed_loop.py`：候选连接、三条规则、集合保持和端到端输出。
-- `tests/test_stage2_scenario_graph.py`：三个 M&NTIS 场景、图可重建、标签隔离和固定结果。
+- `tests/test_stage2_scenario_graph.py`：三个 M&NTIS 场景及 AttackMate PwnKit 场景、图可重建、标签隔离和固定结果。
 
 ## 7. 当前重排方法：topology-rule-priority-v2
 
-当前已提交但未推送实现的规则集版本为 `topology-rule-priority-v2`。v1 正式基线及其 run 保持不变，
-v2 不读取 benchmark 标签，也不读取 `remoteExploit`、`localExploit` 或 `expected_impact` 等目标语义字段。
+当前规则集版本为 `topology-rule-priority-v2`，规则实现提交为 `729d45c...`，消融接口提交为
+`e8ca4ea...`；二者均未推送。v1 正式基线及其 run 保持不变。v2 不读取 benchmark 标签，也不读取
+`remoteExploit`、`localExploit` 或 `expected_impact` 等目标语义字段。
 
 | 规则 | 触发证据 | 匹配分辨率 | 优先候选 |
 | --- | --- | --- | --- |
@@ -186,8 +194,8 @@ v2 的变化只针对证据分辨率：非 root→root 拓扑能证明发生本�
 Stage 1 顺序；候选缺少 tactic metadata 时仅对 `T1068` 使用兼容回退。该设计不使用 CVE ID、场景名称
 或评价答案，候选集合和原始分数仍保持不变。
 
-第一阶段没有召回的正确答案仍不可恢复。v2 目前只在三个同源案例上验证，不能把 Sudo 的修复描述为
-独立总体效果。
+第一阶段没有召回的正确答案仍不可恢复。v2 已在三个同源 M&NTIS 案例上完成设计回归，并在独立
+AttackMate PwnKit 轨迹上证明不会破坏原有正确 Top-1；但后者没有产生排名提升，仍不能描述为总体效果。
 
 ## 8. 标签隔离和信息泄漏防线
 
@@ -230,14 +238,23 @@ M&NTIS 导出不是 MulVAL XML，必须先通过归一化场景和确定性转�
 
 ### 9.2 AttackMate
 
-- 位置：`data/stage2_sources/attackmate/repository`
-- 外层 `cve2attack` 仓库将整个 repository 忽略。
-- 它是独立嵌套 Git 仓库，origin 为 `git@github.com:ait-testbed/attackmate.git`。
-- 分支 `main`，固定 commit `d2edd8bfbb4d18bf4788f222022fe8c73d8fb58f`，最后核查时干净。
-- Zenodo v4（DOI `10.5281/zenodo.19810174`）实验包尚未下载。
+- 位置：`data/stage2_sources/attackmate/repository`；外层仓库忽略该嵌套 Git 仓库。
+- origin 为 `git@github.com:ait-testbed/attackmate.git`，分支 `main`，固定 commit
+  `d2edd8bfbb4d18bf4788f222022fe8c73d8fb58f`，最后核查时干净。
+- `playbook.yml` SHA256 为
+  `91ce76fd0e09cf1cd50e899ae3b1ba3dedae7f089b2b6328cc23ed110f008970`；步骤 3 创建
+  `foothold`，步骤 4 显式执行 CVE-2021-4034 PwnKit 本地模块并创建 `root`，步骤 6/7 在
+  `root` 会话执行 `id`。
+- 归一化场景位于
+  `data/stage2_scenarios/attackmate/pwnkit_cve_2021_4034/`；生成图 SHA256 为
+  `1e2d3a9c9b192761df1084dbef169e44262507194ce8f9596f2ec0d5e3977985`。
+- 评价标签来自独立 CTID KEV 02.13.2025 exploitation benchmark，T1068；图生成器仍只读取
+  `context`，不读取该标签。
+- Zenodo v4（DOI `10.5281/zenodo.19810174`）官方 `playbooks.zip` 仍未下载：远端连接被拒绝，
+  本机 DNS 解析也失败，且没有留下部分文件；不得将其标为已核验。
 
-现有仓库示例可以作为受控场景种子和标注分歧材料，但没有直接 MulVAL 图、缺少合适横向移动案例，
-且不能作为最终外部 benchmark。
+PwnKit 可作为独立来源的受控本地提权“避免伤害”案例，但它只有一个 CVE、Stage 1 已经 Top-1，
+不能代替最终外部 benchmark，也不能证明规则能普遍提升排名。
 
 ### 9.3 MulVAL fixture 与合成样例
 
@@ -363,6 +380,64 @@ Zerologon `6f3d0b0e...`、Tatsu `f7846de8...`、Sudo `3304f20c...`。
 注意：manifest 的 `git_commit=3f3f762...` 只表示运行时基础 HEAD，不表示该提交已包含 v2；上述 diff
 已原样进入 `729d45c...`，因此该提交是后续复现 v2 的代码依据。原 run 仍不得误标为在干净提交上运行。
 
+### 10.4 上下文与深度消融
+
+消融接口已提交为 `e8ca4ea9b8e0fe6a11b3648c74c5173c06b19049`，没有改变 v2 规则：
+
+- `no_context`：不应用图规则，直接保持 Stage 1 排名；
+- `local_context`：只使用漏洞节点的直接条件、规则和后果；
+- `full_graph_context`：在 local context 之外使用上游图证据；
+- manifest 同时记录 `context_mode` 和 `max_graph_depth`，非法模式即使输入为空也会失败。
+
+正式矩阵前缀为
+`stage2_runs/ablation_e8ca4ea_v5c_20260730T080046_`，共 27 个不可覆盖 run：
+3 种模式 × 深度 0/1/2 × Zerologon/Tatsu/Sudo。全部 manifest 为 `complete`，
+`git_commit=e8ca4ea...`，并使用 10.2 的统一正式 Stage 1 run。每个 run 均为
+`candidate_records=3`、`matched=1`、`missing_candidates=[]`，20 个互异父 Technique 集合保持。
+三张图哈希仍为 Zerologon `6f3d0b0e...`、Tatsu `f7846de8...`、Sudo `3304f20c...`。
+
+| 模式/深度 | Zerologon T1210 | Tatsu T1190 | Sudo T1548 | Top-1 | MRR |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `no_context`，d0/d1/d2 | 13→13 | 缺失→缺失 | 1→1 | 1/3 | 0.359 |
+| `local_context`，d0/d1/d2 | 13→13 | 缺失→缺失 | 1→1 | 1/3 | 0.359 |
+| `full_graph_context`，d0 | 13→13 | 缺失→缺失 | 1→1 | 1/3 | 0.359 |
+| `full_graph_context`，d1/d2 | 13→1 | 缺失→缺失 | 1→1 | 2/3 | 0.667 |
+
+规则审计显示：local context 只识别 Sudo 的 `local_privilege_transition`；完整图 d1/d2 才识别
+Zerologon 的 `lateral_remote_service` 和 Tatsu 的 `public_facing_service`。d0/d1/d2 的上游事实数
+分别为 Zerologon 2/5/5、Tatsu 2/5/5、Sudo 1/1/1。因此在这三张简单图上，深度 1 足够，深度 2
+没有增加事实或改变结果；这不能外推到多跳、多分支攻击图。定向测试结果为
+`22 passed, 6 subtests passed in 0.27s`，完整测试为
+`48 passed, 6 subtests passed in 5.42s`。
+
+### 10.5 独立 AttackMate PwnKit 避免伤害案例
+
+场景与测试提交为 `4b5ff982e2ac08d2d1266ac2f2fabdae0b71def5`。Stage 1 输入为
+`/home/ghdemi/Code/cve2attack/runs/multibench_kev_all_v5c_action_attack15_1`：manifest
+`status=complete`、commit `422747270ff5867cf8bac9f2b6b38fc19210a952`、raw description、
+ATT&CK 15.1、202 个父 Technique、14121 条 action 文档、strict LOO、rank-RRF top-m 3/k 60、
+Top-20、296/296 coverage。其 `CVE-2021.jsonl` SHA256 为
+`6d1c7b5297394a2b904a6b205a2c6819525a25e21ef99c1f0e7270ebdfc58c18`；CVE-2021-4034 有
+20 个互异父 Technique，T1068 原排名第 1。
+
+不可覆盖 run：
+
+| run ID | 参数 | 规则 | T1068 名次 | manifest SHA256 |
+| --- | --- | --- | ---: | --- |
+| `attackmate_pwnkit_4b5ff98_20260730T233319_no_context_d0` | no context / d0 | 无 | 1→1 | `1a32820e3ff905b178870733e8df02030fee332206121626b178d70d664c1d7e` |
+| `attackmate_pwnkit_4b5ff98_20260730T233319_local_context_d0` | local / d0 | local privilege | 1→1 | `463a386965bb68cc107d60a7756c37ed1658a7fe3c2b4c80258d78be0fd2e298` |
+| `attackmate_pwnkit_4b5ff98_20260730T233319_full_graph_context_d1` | full graph / d1 | local privilege | 1→1 | `15f1a4601050b0b3bdedb371489b8ee6602a6c3fdb4e5473aa97a58b1c8b5441` |
+
+三个 manifest 均为 `complete`，记录干净提交 `4b5ff98...`、同一 Stage 1 run 和图哈希
+`1e2d3a9c...`。连接统计均为 `context_records=1`、`candidate_records=296`、`matched=1`、
+`missing_candidates=[]`；其余 295 条候选无本图上下文是单图运行的预期结果。候选数 20、唯一数 20，
+前后集合保持。local/full 模式稳定提升的 tactic 组为
+`T1068,T1548,T1055,T1134,T1574,T1078,T1543,T1098,T1546`，组内保持 Stage 1 顺序；
+因此正确 T1068 仍为 Top-1。单例前后 Top-1/Top-3/Top-5/MRR 都为 1.0，0 提升、1 保持、0 退化。
+
+该案例与 Sudo 来源独立，支持“tactic guard 在另一本地提权轨迹上不破坏正确 Top-1”；但 Stage 1
+本来已经正确，它不能证明 Stage 2 带来增益，也不能估计总体退化率。
+
 ## 11. 指标、口径差异和统计限制
 
 ### 11.1 历史 V3a 冻结基线
@@ -398,12 +473,12 @@ Zerologon `6f3d0b0e...`、Tatsu `f7846de8...`、Sudo `3304f20c...`。
 
 必须同时记录以下限制：
 
-1. 样本量仅 3，不能当作总体准确率或泛化结论。
-2. 三个场景来自同一 M&NTIS 数据来源，属于公开轨迹派生案例研究，不是独立大样本 benchmark。
+1. M&NTIS 样本量仅 3，不能当作总体准确率或泛化结论。
+2. 三个主案例来自同一 M&NTIS 数据来源，属于公开轨迹派生案例研究，不是独立大样本 benchmark。
 3. 候选集合保持不变；Tatsu 缺失属于 Stage 1 召回问题，不是 Stage 2 可以修复的排序问题。
-4. v1 的通用 T1068 规则会伤害机制更具体的正确 Top-1；v2 已在同一 Sudo 案例消除该退化，但尚缺独立案例验证。
-5. v2 只有 tactic 级保护，仍没有正式的上下文特征或 `max_graph_depth` 消融。
-6. 不得在这三个案例上调规则后，再把同一案例结果描述为独立效果。
+4. 27 个消融 run 复用了同三个样本，只能解释上下文来源和深度，不能增加统计样本量。
+5. PwnKit 是独立来源，但只有一个 CVE 且 Stage 1 已为 Top-1，只能提供避免伤害证据。
+6. 不得在这些案例上继续调规则后，再把相同案例结果描述为独立效果。
 
 ### 11.3 统一正式 V5c 输入上的 v2 研究指标
 
@@ -417,6 +492,14 @@ Zerologon `6f3d0b0e...`、Tatsu `f7846de8...`、Sudo `3304f20c...`。
 v2 结果组成为 1 个提升、1 个保持、1 个不可恢复、0 个退化。Top-1 和 MRR 相对 v1 提升来自 Sudo
 不再被粗粒度规则排坏；Zerologon 的提升保持，Tatsu 仍不可恢复。该结果同时用于设计反馈和评价，
 只能证明三个固定案例上的回归改善，不能作为独立泛化证据。
+
+### 11.4 消融和独立案例如何解释
+
+- `no_context` 精确复现 Stage 1 排名，说明消融开关没有隐式重排。
+- local context 足以识别同机权限变化，但不能恢复需要入口/跨主机证据的 Zerologon 和 Tatsu。
+- full graph 深度 1 在三张现有图上达到深度 2 的全部效果；这只是现有图的最小充分深度。
+- PwnKit 使独立本地提权案例数从 0 增加到 1，并保持正确 Top-1；它不改变三案例总体指标。
+- 目前可主张“机制行为与设计一致、存在一个独立无伤害例”，不能主张总体准确率或显著性。
 
 ## 12. 实验环境、命令和成功判断
 
@@ -475,32 +558,41 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
   ../cve2attack/.venv/bin/python -m pytest -q -p no:cacheprovider
 ```
 
-2026-07-30 在提交前、内容已原样进入 `729d45c...` 的 v2 工作树上运行完整快速测试，结果为
-`45 passed, 6 subtests passed in 5.11s`；此前两组定向测试为
-`19 passed, 6 subtests passed in 0.26s`。两次均使用 `PYTHONDONTWRITEBYTECODE=1` 和
-`-p no:cacheprovider`，没有产生额外 Git 可见文件。
+2026-07-30 的测试事实：
+
+- v2 提交前完整快速测试：`45 passed, 6 subtests passed in 5.11s`；定向测试
+  `19 passed, 6 subtests passed in 0.26s`。
+- 消融接口提交前定向测试：`22 passed, 6 subtests passed in 0.27s`；完整测试
+  `48 passed, 6 subtests passed in 5.42s`。
+- PwnKit 场景提交前，`test_stage2_scenario_graph.py + test_stage2_closed_loop.py` 为
+  `23 passed, 8 subtests passed in 0.29s`；完整测试为
+  `49 passed, 8 subtests passed in 5.15s`。
+
+各次测试后均执行 `git diff --check` 和状态核查，没有把缓存或运行结果加入 Git。
 
 ## 13. 已确认决策与已知问题
 
 ### 13.1 已确认决策
 
-- 已提交的 topology-only v1 和三个正式 V5c run 作为固定对照保留。
+- 已提交的 topology-only v1、v2、正式 V5c run 和 27 个消融 run 均作为固定对照保留。
 - 当前研究实现为确定性、无训练的 topology-only v2；本地权限变化只支持 tactic 级证据分辨率。
+- `no_context / local_context / full_graph_context` 是正式消融接口；现有简单图上 full graph 深度 1
+  足够，深度 2 不增加证据。
 - Stage 2 只重排同一候选集合，不在此阶段扩大候选集。
 - benchmark 标签不参与图生成和规则检测；v2 不读取 CVE ID、场景名或目标语义字段。
-- 不根据单个测试标签逐例修改规则；Sudo 修复必须继续在更多独立案例上验证。
-- 合成场景只做工程验证；M&NTIS 三案例只做轨迹派生案例研究。
+- PwnKit 是独立来源的避免伤害案例：规则触发但正确 T1068 保持 Top-1；不把保持描述为提升。
+- 不根据单个测试标签逐例修改规则；合成场景只做工程验证，M&NTIS 和 AttackMate 均按案例研究解释。
 - 第一阶段 Top-K 缺失必须报告为不可恢复，不能伪装成第二阶段排序失败。
 
 ### 13.2 已知问题
 
-- v2 只在触发设计的同一个 Sudo 案例上消除退化，尚不能证明对其他本地提权案例普遍安全。
+- 只有一个独立本地提权案例，且其 Stage 1 已为 Top-1，尚不能证明 tactic guard 普遍安全或有效。
 - Tatsu 正确标签 T1190 未进入 Stage 1 Top-20。
 - 缺少 tactic metadata 的历史候选会回退到精确 T1068，不能获得完整的 tactic 级保护。
 - 当前规则仍是“匹配组优先”，没有校准置信度；v2 只降低了本地规则的证据分辨率。
-- `max_graph_depth=2` 尚缺少系统验证和消融。
-- 当前没有关闭单个上下文特征的正式消融开关。
-- v2 已提交但尚未推送；三个既有 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
+- 深度消融只覆盖三张简单图；尚无需要深度 2 以上或包含多条 producer path 的独立场景。
+- 已有模式级消融，但还没有逐一关闭 hacl、入口位置、前置执行和后果等单个事实的细粒度开关。
+- 本地提交均未推送；三个早期 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
 - 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
 
@@ -509,11 +601,12 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 以下问题尚未决定，不能写成已确认方案：
 
 1. Zerologon 两次 V3a 候选排序不同的原因。
-2. v2 tactic 级保护在更多独立本地提权案例上的收益和风险。
-3. 是否利用机制证据细化 T1068 与 T1548/T1548.003。
-4. AttackMate Zenodo v4 完整实验包的最终价值。
+2. v2 tactic 级保护在更多独立本地提权案例上的收益、无伤害率和失败模式。
+3. 是否以及如何利用独立机制证据细化 T1068 与 T1548/T1548.003。
+4. AttackMate Zenodo v4 完整实验包在网络可达后的最终价值。
 5. 如何获得足够大的公开 Stage 2 样本集。
-6. 如何设计不读取评价标签的上下文和深度消融，并避免在三个固定案例上过拟合。
+6. 深度 2 以上、多分支和循环图是否会改变当前“深度 1 足够”的案例结论。
+7. 是否需要不读取评价标签的单事实级消融，以及怎样避免因开关过多而在小样本上过拟合。
 
 ## 15. Stage 1 与 Stage 2 的问题边界
 
@@ -537,12 +630,14 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 
 以下是建议顺序，不构成自动授权：
 
-1. 保留 v1 正式基线和三个 v2 run，不覆盖任何结果。
-2. 为 `no_context / local_context / full_graph_context` 和 `max_graph_depth` 增加正式消融设计。
-3. 寻找更多独立本地提权案例验证 tactic guard；不要只在 Sudo 上证明避免伤害。
+1. 保留 v1/v2 正式基线、27 个消融 run 和 3 个 PwnKit run，不覆盖任何结果。
+2. 继续寻找具有公开轨迹、独立标签和正式 Top-20 输入的本地提权 CVE；优先加入正确答案非 Top-1
+   的潜在提升例和非权限提升 Top-1 的潜在伤害例。
+3. 加入至少一张真正多跳或多 producer path 的独立图，验证深度 1 与深度 2 以上的差异。
 4. 将 Tatsu 的 T1190 缺失继续反馈给 Stage 1；Stage 2 不插入正确答案。
-5. 获得更多公开案例后再进行总体指标比较；不要在 3 个样本上优化权重。
-6. `729d45c...` 尚未推送；只有获得用户授权后才 push。
+5. 网络恢复后只下载并校验已登记的 AttackMate Zenodo 最小 playbook 包，再决定是否取大日志包。
+6. 获得更多公开案例后再进行总体指标比较；不要在当前 4 个样本上优化规则或权重。
+7. 所有本地提交尚未推送；只有获得用户授权后才 push。
 
 “重新迁移/复制/整理 Stage 2 代码”不是下一步，也永远不应从本文派生为任务。
 
@@ -570,11 +665,13 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - `e3d095d`：新增并推送持续维护的 Stage 2 连续性文档；功能代码基线仍为 `be5ba41`。
 - `3f3f762`：记录并同步统一正式 V5c 端到端 v1 基线。
 - `729d45c`：提交 topology-only v2 tactic 级避免伤害规则和对应测试，尚未推送。
+- `e8ca4ea`：提交上下文模式和深度消融接口；27 个干净提交 run 证明现有三图上 full graph d1 足够。
+- `4b5ff98`：提交独立 AttackMate PwnKit 场景和测试；三个新 run 保持 T1068 Top-1，尚未推送。
 - 2026-07-29：在 `e3d095d` 上通过全部快速测试，并从三个冻结 V3a 快照创建全新验证 run。
 - 2026-07-30：验收统一正式 V5c/ATT&CK 15.1/strict-LOO Top-20 输入，并用未修改的
   topology-only v1 完成三个正式端到端 run；结果为 1 个提升、1 个退化、1 个不可恢复。
-- 2026-07-30：topology-only v2 将本地权限规则降为 tactic 级稳定分组；45 个测试通过，
-  三个新 run 为 1 个提升、1 个保持、1 个不可恢复；代码随后提交为 `729d45c`，尚无独立泛化证据。
+- 2026-07-30：v2 三案例结果为 1 个提升、1 个保持、1 个不可恢复；消融进一步定位了本地与上游
+  证据作用，PwnKit 增加一个独立无伤害例，但仍无总体泛化证据。
 
 这里只保留会改变接管判断的重要变化，不记录完整对话时间线。
 
@@ -588,7 +685,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 3. 使用 `git ls-remote` 只读核对实际 GitHub 上游；未经授权不要先 fetch/pull。
 4. 用 `git worktree list` 确认 Stage 1/Stage 2 worktree 边界。
 5. 核对 `origin..HEAD` 的未推送提交，避免覆盖 `a0c7489`、`8af9943`、`be5ba41`。
-6. 确认三个场景 YAML、AttackGraph、stage1 snapshot 和 benchmark 标签仍存在。
+6. 确认三个 M&NTIS 场景及 AttackMate PwnKit 场景的 YAML、AttackGraph、候选输入和 benchmark 标签仍存在。
 7. 确认 M&NTIS raw/extracted、AttackMate repository 和 ignored run 目录仍存在，不执行清理。
 8. 阅读 `src/cve2attack/stage2/`、本文件、`docs/stage2_mantis_case_studies.md` 和对应测试。
 9. 准备正式端到端输入时读取 Stage 1 manifest 和配置，核查 `top_k`、ATT&CK corpus/version 和
@@ -609,7 +706,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 把 benchmark 标签写入图生成、上下文规则或候选分数。
 - 为一个案例逐例调整规则并将其宣称为独立效果。
 - 在未核对状态时 pull、rebase、merge、push 或删除分支/worktree。
-- 把三个案例的结果描述为总体准确率。
+- 把当前四个小样本案例的结果描述为总体准确率。
 
 ## 21. 持续更新规则
 
