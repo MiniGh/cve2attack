@@ -1,0 +1,55 @@
+schema_version: "1.0"
+scenario_id: attackmate_pwnkit_cve_2021_4034
+scenario_kind: trace_derived_local_privilege
+cve_id: CVE-2021-4034
+
+source:
+  provider: AttackMate
+  dataset_id: attackmate_repository_d2edd8b_pwnkit_playbook
+  repository_url: https://github.com/ait-testbed/attackmate
+  repository_commit: d2edd8bfbb4d18bf4788f222022fe8c73d8fb58f
+  playbook: data/stage2_sources/attackmate/repository/playbook.yml
+  playbook_sha256: 91ce76fd0e09cf1cd50e899ae3b1ba3dedae7f089b2b6328cc23ed110f008970
+  attack_step: "commands[4]"
+  predecessor_step: "commands[3]"
+  confirmation_steps: ["commands[6]", "commands[7]"]
+  cve_resolution:
+    method: explicit_cve_in_metasploit_module_name
+    note: >-
+      The AttackMate playbook invokes
+      exploit/linux/local/cve_2021_4034_pwnkit_lpe_pkexec from the existing
+      foothold session and records a newly created root session.
+
+context:
+  # The local exploit consumes the existing non-root foothold session.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  vulnerability:
+    host: TARGET
+    service: pkexec
+    exploit_type: localExploit
+    expected_impact: privilegeEscalation
+
+  consequences:
+    - execCode(TARGET,root)
+
+  exploit_rule: RULE 1 (trace-derived PwnKit local privilege escalation)
+  normalization_notes:
+    - The predecessor step creates the foothold session consumed by the PwnKit module.
+    - The exploit step creates a separate root session on the same target.
+    - Two following commands execute id through the root session.
+    - Generic TARGET and user names avoid importing target-specific semantics.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1068
+  label_source: CTID KEV 02.13.2025 exploitation_technique
+  benchmark_record: >-
+    ../cve2attack/data/benchmarks/ctid_kev_2025_02_13_exploitation/
+    CVE-2021.jsonl
+  evaluation_only: true
+  note: >-
+    CTID KEV independently maps PwnKit exploitation to T1068. The benchmark
+    label is used only after reranking and is never converted into a graph fact.

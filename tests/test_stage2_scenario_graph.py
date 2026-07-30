@@ -18,6 +18,9 @@ from cve2attack.stage2.scenario_graph import (
 
 
 ROOT = Path(__file__).parent.parent
+ATTACKMATE_DIR = (
+    ROOT / "data" / "stage2_scenarios" / "attackmate" / "pwnkit_cve_2021_4034"
+)
 MANTIS_DIR = ROOT / "data" / "stage2_scenarios" / "mantis"
 CASE_DIR = MANTIS_DIR / "zerologon"
 SCENARIO = CASE_DIR / "scenario.yaml"
@@ -30,7 +33,7 @@ BENCHMARK = ROOT / "data" / "benchmarks" / "stage2_mantis_scenarios"
 
 class ScenarioGraphTests(unittest.TestCase):
     def test_checked_graph_is_reproducible_from_scenario(self):
-        for case_dir in (CASE_DIR, TATSU_DIR, SUDO_DIR):
+        for case_dir in (CASE_DIR, TATSU_DIR, SUDO_DIR, ATTACKMATE_DIR):
             with self.subTest(case=case_dir.name):
                 scenario = load_scenario(case_dir / "scenario.yaml")
                 self.assertEqual(
@@ -79,8 +82,23 @@ class ScenarioGraphTests(unittest.TestCase):
         self.assertIn("execCode(TARGET,user)", rules[0]["evidence"])
         self.assertIn("execCode(TARGET,root)", rules[0]["evidence"])
 
+    def test_pwnkit_graph_preserves_independent_local_privilege_evidence(self):
+        graph = reverse_for_analysis(
+            parse_xml_to_graph(ATTACKMATE_DIR / "AttackGraph.xml")
+        )
+        contexts = extract_all_cve_contexts(graph)
+        self.assertEqual(len(contexts), 1)
+        record = contexts[0]
+        self.assertEqual(record["cve_id"], "CVE-2021-4034")
+        rules = detect_topology_rules(record)
+        self.assertEqual([rule["rule_id"] for rule in rules], ["local_privilege_transition"])
+        self.assertEqual(rules[0]["match_scope"], "tactic")
+        self.assertEqual(rules[0]["match_values"], ["privilege-escalation"])
+        self.assertIn("execCode(TARGET,user)", rules[0]["evidence"])
+        self.assertIn("execCode(TARGET,root)", rules[0]["evidence"])
+
     def test_evaluation_label_cannot_change_generated_graph(self):
-        for case_dir in (CASE_DIR, TATSU_DIR, SUDO_DIR):
+        for case_dir in (CASE_DIR, TATSU_DIR, SUDO_DIR, ATTACKMATE_DIR):
             with self.subTest(case=case_dir.name):
                 scenario = load_scenario(case_dir / "scenario.yaml")
                 original = render_attack_graph_xml(scenario)

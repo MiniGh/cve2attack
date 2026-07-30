@@ -1,5 +1,5 @@
 schema_version: "1.0"
-updated_at: "2026-07-27"
+updated_at: "2026-07-30"
 
 sources:
   attackmate:
@@ -29,7 +29,16 @@ sources:
       distinct_technique_ids: 30
       explicit_cve_ids:
         - CVE-2012-1823
+        - CVE-2021-4034
     candidate_cases:
+      - cve_id: CVE-2021-4034
+        example: playbook.yml
+        cve_link_type: explicit_in_metasploit_module_name
+        trace_transition: existing_foothold_to_new_root_session
+        ctid_kev_exploitation_techniques: [T1068]
+        stage1_v5c_attack15_1_status: available_top1
+        normalized_scenario: >-
+          data/stage2_scenarios/attackmate/pwnkit_cve_2021_4034/scenario.yaml
       - cve_id: CVE-2012-1823
         example: examples/webserv.yml
         cve_link_type: explicit_in_playbook
@@ -65,6 +74,7 @@ sources:
       usable_now_for:
         - controlled_scenario_seed
         - annotation_disagreement_analysis
+        - independent_local_privilege_guard_case
         - public_facing_and_local_privilege_context_tests
       not_sufficient_for:
         - final_external_benchmark
