@@ -7,24 +7,26 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-07-30 23:38:07 +08:00 |
-| 最后只读核查时间 | 2026-07-30 23:38:07 +08:00 |
+| 最后内容更新时间 | 2026-07-31 01:46:02 +08:00 |
+| 最后只读核查时间 | 2026-07-31 01:46:02 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `4b5ff982e2ac08d2d1266ac2f2fabdae0b71def5` |
-| Stage 2 功能代码状态（最后核查时） | topology-only v2、上下文/深度消融接口和独立 PwnKit 场景均已提交，尚未推送 |
+| 最后核查时的 HEAD | `30d8882972a7bb570ed9a8cbebe76fe0b9a90356` |
+| Stage 2 功能代码状态（最后核查时） | topology-only v2、消融、PwnKit、扩展 LPE 来源/预注册和冻结 Stage 1 候选均已提交；扩展图和正式评价尚未开始，全部尚未推送 |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
 | 最后核查时的上游实际 SHA | `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` |
-| 最后核查时的 ahead / behind | ahead 4 / behind 0（连续性文档自身提交前） |
-| 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；另有被忽略的 27 个消融 run、3 个 PwnKit run、既有结果、外部数据和缓存 |
-| 当前目标 | 在固定 v2 上扩大独立案例与复杂图验证，不再用三个固定案例调规则 |
-| 建议下一步 | 寻找具有正式 Top-20 输入和独立标签的更多本地提权案例，并加入多跳/多分支图验证 |
-| 当前阻塞/限制 | 仅有 3 个 M&NTIS 案例和 1 个 AttackMate PwnKit 案例；PwnKit 只能证明避免伤害，Tatsu 仍因 Stage 1 缺失不可恢复；不能据此主张总体泛化 |
+| 最后核查时的 ahead / behind | ahead 7 / behind 0（连续性文档自身提交前） |
+| 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
+| 当前目标 | 在固定 v2 和冻结候选上，label-blind 构建、审阅并冻结扩展 LPE 攻击图，不按标签调规则 |
+| 建议下一步 | 从已登记 Rapid7 记录构建四个主案例和 CVE-2010-3856 诊断图，冻结来源行号与图 SHA256；闸门通过后才运行正式 Stage 2 评价 |
+| 当前阻塞/限制 | AttackMate Zenodo v4 档案在远程主机连接被拒；CVE-2010-3856 缺少独立 ATT&CK 标签；扩展图尚未冻结，因此禁止正式 Stage 2 评价 |
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
 提交前 v2 run 的 manifest 仍记录基础 HEAD `3f3f762...`，但其精确代码/测试补丁已进入
 `729d45c...`。27 个正式消融 run 记录干净提交 `e8ca4ea...`，三个 PwnKit run 记录干净提交
-`4b5ff98...`。新对话接管时必须重新执行第 19 节的只读 Git 检查，不得把本表当作实时 Git 状态。
+`4b5ff98...`。扩展 LPE Stage 1 run 记录 Stage 1 提交 `9688a5b...`，来源/预注册和候选登记分别进入
+Stage 2 提交 `a89d672...`、`30d8882...`；扩展图和 Stage 2 正式 run 不存在。新对话接管时必须
+重新执行第 19 节的只读 Git 检查，不得把本表当作实时 Git 状态。
 
 ## 1. 不可变的工作区边界
 
@@ -84,6 +86,9 @@ Stage 2，不得代为清理。
 | `ebf08fa` | 记录 v2 三案例结果 |
 | `e8ca4ea9b8e0fe6a11b3648c74c5173c06b19049` | 增加 `no/local/full` 上下文与深度消融接口 |
 | `4b5ff982e2ac08d2d1266ac2f2fabdae0b71def5` | 增加独立 AttackMate PwnKit 场景和回归测试 |
+| `c51ea13` | 更新消融与 PwnKit 验证连续性事实 |
+| `a89d6724218c5b69be8687477f40e7e369718861` | 冻结扩展 LPE 公开来源、CVE 角色、标签来源和评价规则 |
+| `30d8882972a7bb570ed9a8cbebe76fe0b9a90356` | 登记冻结的六例 Stage 1 V5c Top-20 输入及哈希 |
 
 最后核查时上游跟踪引用和 `git ls-remote` 仍为 `3f3f762`；后续仍不得自动 push。
 
@@ -583,6 +588,10 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - PwnKit 是独立来源的避免伤害案例：规则触发但正确 T1068 保持 Top-1；不把保持描述为提升。
 - 不根据单个测试标签逐例修改规则；合成场景只做工程验证，M&NTIS 和 AttackMate 均按案例研究解释。
 - 第一阶段 Top-K 缺失必须报告为不可恢复，不能伪装成第二阶段排序失败。
+- 扩展 LPE 主评价冻结为 CVE-2020-0787、CVE-2021-40449、CVE-2022-21999、CVE-2022-26904；
+  CVE-2021-4034 只作既有桥接对照，CVE-2010-3856 在缺少独立标签时只作诊断。
+- 六例候选必须使用冻结 Stage 1 V5c 方法；选择输入不含正确标签，候选均为 20 个互异父 Technique。
+- 扩展图、来源行号和 SHA256 未经审阅冻结前，禁止运行正式 Stage 2 评价。
 
 ### 13.2 已知问题
 
@@ -595,6 +604,9 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 本地提交均未推送；三个早期 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
 - 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
+- 扩展 LPE 目前只有来源、预注册和 Stage 1 候选，尚未构建或冻结图，也没有 Stage 2 结果。
+- CVE-2010-3856 的 AttackMate T1068 标注与同一攻击轨迹耦合，不能充当独立金标。
+- 远程主机访问 Zenodo `:443` 被拒；AttackMate v4 playbook/执行日志档案尚待人工下载。
 
 ## 14. 待验证问题
 
@@ -631,13 +643,15 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 以下是建议顺序，不构成自动授权：
 
 1. 保留 v1/v2 正式基线、27 个消融 run 和 3 个 PwnKit run，不覆盖任何结果。
-2. 继续寻找具有公开轨迹、独立标签和正式 Top-20 输入的本地提权 CVE；优先加入正确答案非 Top-1
-   的潜在提升例和非权限提升 Top-1 的潜在伤害例。
-3. 加入至少一张真正多跳或多 producer path 的独立图，验证深度 1 与深度 2 以上的差异。
-4. 将 Tatsu 的 T1190 缺失继续反馈给 Stage 1；Stage 2 不插入正确答案。
-5. 网络恢复后只下载并校验已登记的 AttackMate Zenodo 最小 playbook 包，再决定是否取大日志包。
-6. 获得更多公开案例后再进行总体指标比较；不要在当前 4 个样本上优化规则或权重。
-7. 所有本地提交尚未推送；只有获得用户授权后才 push。
+2. 仅依据已登记 Rapid7 模块/文档，label-blind 构建四个新主案例和 CVE-2010-3856 诊断图；
+   不读取候选正确排名，不改变 v2 规则。
+3. 为每张新图登记精确来源行号、转换假设和 SHA256，完成代码/数据审阅后冻结。
+4. 图冻结闸门通过后，才用已冻结的六例 Stage 1 run 创建不可覆盖的正式 Stage 2 run；桥接例和
+   诊断例不得混入四例主聚合指标。
+5. 人工取得 AttackMate Zenodo v4 档案后校验页面 MD5 和本地 SHA256；原始档案保持 ignored。
+6. 后续再寻找真正多跳或多 producer path 的独立图，验证深度 1 与深度 2 以上的差异。
+7. 将 Tatsu 的 T1190 缺失继续反馈给 Stage 1；Stage 2 不插入正确答案。
+8. 所有本地提交尚未推送；只有获得用户授权后才 push。
 
 “重新迁移/复制/整理 Stage 2 代码”不是下一步，也永远不应从本文派生为任务。
 
@@ -648,8 +662,8 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - `docs/stage2_graph_context.md` 仍描述 v1 精确提升 T1068，且末尾只介绍 Zerologon；尚未覆盖 v2、Tatsu 和 Sudo。
 - `STAGE2_PLAN.md` 前部已写三案例完成，但末尾仍把接入 Sudo 列为下一步。
 - `data/stage2_sources/README.md` 仍写 M&NTIS 尚未下载和 `mantis/downloads/`；实际为 `raw/`、`extracted/`。
-- `data/stage2_sources/source_inventory.yaml` 的 M&NTIS 主体信息基本正确，但
-  `overall_assessment.next_actions` 和 `first_conversion_complete` 周边状态已过期。
+- `data/stage2_sources/source_inventory.yaml` 的扩展 LPE `next_actions` 已更新，但
+  `first_conversion_complete` 仍是历史 M&NTIS 单例字段，不能理解为当前扩展图已经完成。
 - 现有部分复现文档使用 `.venv/bin/python`；Stage 2 实际应使用 `../cve2attack/.venv/bin/python`。
 - `context_extractor.py` 中关于 Stage 1 “未来填充 candidates”的注释已落后于已经完成的候选连接实现。
 
@@ -667,6 +681,10 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - `729d45c`：提交 topology-only v2 tactic 级避免伤害规则和对应测试，尚未推送。
 - `e8ca4ea`：提交上下文模式和深度消融接口；27 个干净提交 run 证明现有三图上 full graph d1 足够。
 - `4b5ff98`：提交独立 AttackMate PwnKit 场景和测试；三个新 run 保持 T1068 Top-1，尚未推送。
+- `c51ea13`：连续性文档同步消融和 PwnKit 验证事实。
+- `a89d672`：冻结六例扩展 LPE 的公开来源、案例角色、独立标签来源和正式评价闸门。
+- Stage 1 `9688a5b`：提交不含正确标签的六例 selection-only cohort，并生成冻结 V5c Top-20 run。
+- `30d8882`：在 Stage 2 登记该 run、manifest 和四个年度候选文件 SHA256；未运行 Stage 2。
 - 2026-07-29：在 `e3d095d` 上通过全部快速测试，并从三个冻结 V3a 快照创建全新验证 run。
 - 2026-07-30：验收统一正式 V5c/ATT&CK 15.1/strict-LOO Top-20 输入，并用未修改的
   topology-only v1 完成三个正式端到端 run；结果为 1 个提升、1 个退化、1 个不可恢复。
@@ -728,3 +746,81 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
     不得只更新 run 名称。
 
 本文本身应与相关实质变化一起提交；但创建或更新本文不自动授权 `git add`、commit 或 push。
+
+## 22. 扩展 LPE 来源、预注册和冻结 Stage 1 输入（2026-07-31）
+
+本节记录公开检索和候选冻结后的实时事实。它不表示扩展 Stage 2 已运行；截至本节更新时间，
+没有创建任何扩展 LPE Stage 2 正式 run，也没有查看正确 Technique 在六例候选中的排名。
+
+### 22.1 公开执行证据与许可
+
+Rapid7 Metasploit Framework 固定在 commit
+`1816d9023b353800046567984f15b42d24bd334a`，ignored 只读来源位于
+`data/stage2_sources/metasploit/repository/`。许可为 BSD-3-Clause（含第三方例外），`COPYING`
+SHA256 为 `38f848ebdf03a4f7ce5a703b72e8be6bd724de17d7869d71f3df78734cb4e507`。
+以下模块/文档提供可复核的本地提权步骤和低权限到 root/SYSTEM 的控制台证据：
+
+| CVE | module SHA256 | documentation SHA256 |
+| --- | --- | --- |
+| CVE-2010-3856 | `f7126f6eb6ee87edd98de53d4f265b41d4386b11d11455ecfee918c28171fa40` | `0c72acdaa16bec8cb8934c3d0fa209859420f4c47bcba81e7b68f74d3faf2231` |
+| CVE-2020-0787 | `afe494a1be326f819e0a514868664278c62de242c3f1a5bdb00786eb7373afd9` | `42ad0e058290155ee39eb82fdd905206f8a2480d4a2b8d743e326735d2f1d911` |
+| CVE-2021-4034 | `7c238f16f477213d7f84c6d508bb08ce9a3df5ffcc49250c0b9065abbd5f410e` | `99ca8d99d1c45a0c968458241fbba446ab4e28cc172a8f0c251530dcaaab028e` |
+| CVE-2021-40449 | `af7b23bbae6179c4c7ed3768ea3293170a2f653701e0e99edf9c26187dfccad9` | `c1d8b617acbbe4cd72bb35cc5d65b10efb69e3488d122de9d9f9e25aa8a94067` |
+| CVE-2022-21999 | `bd86f2ac8cbcf4c3033bdf620b1e5b01a984e9aacc426ce00f590fc10d1e667f` | `b879679af021105cfe1554d6dc56d88acb177ba492d76688840690355e67d427` |
+| CVE-2022-26904 | `fee4f463b59e53cd7ef58a16f3d9180fd3df852f1cf224cb999e6115cb8a96d2` | `353a80cc8bfdd231122939486e0505417da5ec9725cf40feb4b068ab1c6776ad` |
+
+AttackMate repository 固定在 `d2edd8bfbb4d18bf4788f222022fe8c73d8fb58f`，许可 GPL-3.0。
+`examples/http-put_example.yml` 使用 CVE-2010-3856 并标注 T1068，SHA256 为
+`7d5a27eed6c931bdb57449b6b8b2e964d1d232bbfab9c62599ad5f5c4907b267`；但标签与同一攻击轨迹
+耦合，只能用于诊断，不作为独立金标。既有 PwnKit `playbook.yml` SHA256 为
+`91ce76fd0e09cf1cd50e899ae3b1ba3dedae7f089b2b6328cc23ed110f008970`。
+
+独立标签使用 CTID KEV→ATT&CK 记录 `10.5281/zenodo.16747173`，版本 `02.13.2025`、
+ATT&CK 15.1。本地冻结 CSV 位于
+`/home/ghdemi/Code/cve2attack/data/raw/kev/kev-02.13.2025_attack-15.1-enterprise.csv`，SHA256
+为 `8f15aab468f17f9a1d655ef2db814b0323792cfa066373a02a0a1d7f4a8f6676`。Zenodo 记录页未显示
+明确许可；上游 CTID `mappings-explorer` 仓库是 Apache-2.0，二者不得混写。该 CSV 为五个
+2020--2022 案例提供独立 T1068 标注；CVE-2010-3856 不在其中。
+
+### 22.2 AttackMate Zenodo 人工下载缺口
+
+AttackMate Zenodo v4 页面为 `https://zenodo.org/records/19810174`，DOI
+`10.5281/zenodo.19810174`，许可 CC-BY-4.0。远程主机连接 `zenodo.org:443` 被拒，`curl`
+返回 error 7；没有部分文件，也未绕过网络限制。人工下载后应放入 ignored 目录
+`data/stage2_sources/attackmate/downloads/zenodo_v4_20260731/`：
+
+- `playbooks.zip`，页面 MD5 `6a1dd5cf1a89d85915065124ab8ee08a`，用于冻结编排与声明；
+- `privilege_escalation_attackmate.zip`，页面 MD5 `f6c3d5b04f8855d2bd90be9d0143bf14`，用于完整执行日志；
+- 可选 `privilege_escalation_atomic.zip`，页面 MD5 `fdb102503ceb032375c5ebbfbe140e0f`，用于 Atomic 对照。
+
+人工交付后必须先核对页面 MD5，再计算并登记本地 SHA256；原始压缩包不得进入 Git。
+
+### 22.3 冻结案例角色和 Stage 1 候选
+
+主聚合只包含 CVE-2020-0787、CVE-2021-40449、CVE-2022-21999、CVE-2022-26904。
+CVE-2021-4034 是已评价 PwnKit 的桥接对照，不计入新增主聚合；CVE-2010-3856 是强制诊断例，
+在取得独立 ATT&CK 标签前不计主指标。完整六例按以下顺序生成候选：CVE-2010-3856、
+CVE-2020-0787、CVE-2021-4034、CVE-2021-40449、CVE-2022-21999、CVE-2022-26904。
+
+Stage 1 selection-only cohort 位于
+`/home/ghdemi/Code/cve2attack/data/benchmarks/stage2_extended_lpe_selection_20260731/`，提交为
+`9688a5b340dee0de3af4dd3ceaa48bf0267fc9d4`。输入不含正确标签；因当前选择器要求非空标签，
+只使用无效哨兵 `T0000`，因此该 run 的 benchmark metrics 全部无效、不得报告。
+
+冻结 run 绝对路径为
+`/home/ghdemi/Code/cve2attack/runs/stage2_extended_lpe_v5c_attack15_1_top20_20260731T011812`。
+manifest `status=complete`、覆盖 6/6、缺失描述 0；配置为
+`experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml`：raw description、ATT&CK
+Enterprise 15.1、202 个父 Technique、14,121 条 action、strict LOO、Top-3 rank-RRF、k=60、
+Top-20。manifest SHA256 为 `228d4318a35e7a2a967c12b8959f633185a1fb5c689a520a4d14dfd172076753`。
+六条记录均恰好包含 20 个互异父 Technique，无子技术 ID。
+
+| 候选文件 | SHA256 |
+| --- | --- |
+| `CVE-2010.jsonl` | `9130243dac61b43656a4c728fb526e84db0eace744b38d6ca535bf9a15521e96` |
+| `CVE-2020.jsonl` | `c8933f18cb852b701e5c0d8bb1360c3a88986c32f2b1cdf777ee7efe7636465b` |
+| `CVE-2021.jsonl` | `33068234ec16c2f1070da7db07dde542fb6e08fcbba8b3f432dbbe5d1576fc6a` |
+| `CVE-2022.jsonl` | `27ef57ab537c24199aeeaaf92c873f5288be880b3ef91daf16a63855916a0110` |
+
+下一闸门是 label-blind 构建、审阅并冻结新图的来源行号、转换规则和 SHA256。在该闸门完成前，
+不得检查正确标签的候选排名，不得运行新的正式 Stage 2 评价，不得为这些标签修改 v2 规则。
