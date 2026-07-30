@@ -1,7 +1,7 @@
 # Stage 2 扩展本地提权评测预注册
 
 冻结时间：2026-07-31（Asia/Shanghai）
-状态：来源、CVE 清单、标签角色和评测规则已冻结；新图尚未构建，禁止运行正式 Stage 2 评价。
+状态：来源、清单、标签、规则和 Stage 1 候选已冻结；新图尚未构建，禁止运行正式 Stage 2 评价。
 
 ## 1. 目的与闸门
 
@@ -112,6 +112,25 @@ Stage 1 metrics 必须忽略。正式候选固定使用
 逐文件计算 SHA256；记录绝对 run 路径、完整 cohort、Git commit、ATT&CK 版本、202 个父
 Technique 和 action 数。候选生成程序不得读取本文件第 2、3.3 节的正确标签。
 
+实际冻结 run：
+
+- 绝对路径：`/home/ghdemi/Code/cve2attack/runs/stage2_extended_lpe_v5c_attack15_1_top20_20260731T011812`
+- manifest SHA256：`228d4318a35e7a2a967c12b8959f633185a1fb5c689a520a4d14dfd172076753`
+- Stage 1 commit：`9688a5b340dee0de3af4dd3ceaa48bf0267fc9d4`
+- 状态/覆盖：`complete`，6/6，缺失描述 0
+- 语料：ATT&CK Enterprise 15.1，202 个父 Technique，14,121 条 action
+- 方法：raw description、strict LOO、Top-3 rank-RRF、k=60、Top-20
+- 结构验收：六条记录均为 20 个互异父 Technique，没有子技术 ID
+
+候选文件 SHA256：
+
+| 文件 | SHA256 |
+| --- | --- |
+| `CVE-2010.jsonl` | `9130243dac61b43656a4c728fb526e84db0eace744b38d6ca535bf9a15521e96` |
+| `CVE-2020.jsonl` | `c8933f18cb852b701e5c0d8bb1360c3a88986c32f2b1cdf777ee7efe7636465b` |
+| `CVE-2021.jsonl` | `33068234ec16c2f1070da7db07dde542fb6e08fcbba8b3f432dbbe5d1576fc6a` |
+| `CVE-2022.jsonl` | `27ef57ab537c24199aeeaaf92c873f5288be880b3ef91daf16a63855916a0110` |
+
 ## 5. 后续 Stage 2 正式评价规则
 
 - 实现固定为当前未修改的 `topology-rule-priority-v2`。
@@ -123,5 +142,5 @@ Technique 和 action 数。候选生成程序不得读取本文件第 2、3.3 �
 - 如果正确标签不在 Stage 1 Top-20，状态固定为不可恢复，归因于 Stage 1 召回。
 - 不以这 4 个新案例调规则；任何未来规则变化必须先形成独立假设和新版本，再使用另一批案例。
 
-本预注册不授权或触发 Stage 2 运行。下一步只能生成并验收冻结 Stage 1 候选，然后进行
-label-blind 图构建与审阅；图冻结前仍不得进行正式评价。
+本预注册不授权或触发 Stage 2 运行。下一步只能进行 label-blind 图构建、测试与审阅；
+图和来源行号冻结前仍不得进行正式评价。

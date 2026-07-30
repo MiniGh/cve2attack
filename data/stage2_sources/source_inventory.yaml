@@ -261,6 +261,30 @@ sources:
         - direct_input_to_mulval_context_parser_without_conversion
         - population_level_external_accuracy_claims
 
+frozen_stage1_candidate_input:
+  status: complete_and_verified
+  selection_cohort: stage2_extended_lpe_selection_20260731
+  true_attack_labels_present_in_selection_input: false
+  selection_sentinel: T0000
+  stage1_git_commit: 9688a5b340dee0de3af4dd3ceaa48bf0267fc9d4
+  config: experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml
+  absolute_run_path: >-
+    /home/ghdemi/Code/cve2attack/runs/stage2_extended_lpe_v5c_attack15_1_top20_20260731T011812
+  manifest_sha256: 228d4318a35e7a2a967c12b8959f633185a1fb5c689a520a4d14dfd172076753
+  cve_ids:
+    - CVE-2010-3856
+    - CVE-2020-0787
+    - CVE-2021-4034
+    - CVE-2021-40449
+    - CVE-2022-21999
+    - CVE-2022-26904
+  candidate_file_sha256:
+    CVE-2010.jsonl: 9130243dac61b43656a4c728fb526e84db0eace744b38d6ca535bf9a15521e96
+    CVE-2020.jsonl: c8933f18cb852b701e5c0d8bb1360c3a88986c32f2b1cdf777ee7efe7636465b
+    CVE-2021.jsonl: 33068234ec16c2f1070da7db07dde542fb6e08fcbba8b3f432dbbe5d1576fc6a
+    CVE-2022.jsonl: 27ef57ab537c24199aeeaaf92c873f5288be880b3ef91daf16a63855916a0110
+  verification: six_of_six_each_exactly_20_unique_parent_techniques
+
 overall_assessment:
   enough_to_begin_conversion: true
   first_conversion_complete: mantis_zerologon_cve_2020_1472
@@ -268,7 +292,6 @@ overall_assessment:
   blocking_next_input: null
   optional_missing_input: attackmate_zenodo_v4_execution_archives
   next_actions:
-    - generate_one_label_blind_frozen_v5c_top20_run_for_the_six_cve_cohort
     - normalize_new_graphs_from_registered_execution_records_without_labels
     - review_and_freeze_graph_hashes_before_any_formal_stage2_evaluation
   formal_stage2_evaluation_gate: >-
