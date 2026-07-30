@@ -1,5 +1,5 @@
-schema_version: "1.0"
-updated_at: "2026-07-30"
+schema_version: "1.1"
+updated_at: "2026-07-31"
 
 sources:
   attackmate:
@@ -16,13 +16,38 @@ sources:
       version: v4
       license: CC-BY-4.0
       status: not_downloaded_network_restricted
+      acquisition_attempt:
+        attempted_at: "2026-07-31"
+        host: pri_sun
+        result: failed_without_download
+        failure: >-
+          curl error 7: connection to zenodo.org port 443 was refused; no
+          partial file remains and no access-control bypass was attempted.
+        landing_page: https://zenodo.org/records/19810174
+        attempted_file: playbooks.zip
+        attempted_url: >-
+          https://zenodo.org/records/19810174/files/playbooks.zip?download=1
       expected_archives:
         - name: playbooks.zip
           size: 7.0_kB
           md5: 6a1dd5cf1a89d85915065124ab8ee08a
+          purpose: scenario playbooks and CVE/step linkage
         - name: attackbed.zip
           size: 10.0_kB
           md5: 9d10fe2fcb07a764e0115ceb119628aa
+        - name: privilege_escalation_attackmate.zip
+          size: 66.7_MB
+          md5: f6c3d5b04f8855d2bd90be9d0143bf14
+          purpose: AttackMate execution log and host/network telemetry
+        - name: privilege_escalation_atomic.zip
+          size: 93.8_MB
+          md5: fdb102503ceb032375c5ebbfbe140e0f
+          purpose: independent Atomic Red Team execution log for comparison
+      manual_delivery:
+        target_directory: >-
+          data/stage2_sources/attackmate/downloads/zenodo_v4_20260731
+        preserve_filenames: true
+        required_first: [playbooks.zip, privilege_escalation_attackmate.zip]
     repository_summary:
       yaml_examples: 13
       attack_annotated_steps: 35
@@ -50,10 +75,17 @@ sources:
         example: examples/http-put_example.yml
         cve_link_type: inferred_from_named_metasploit_module_and_verified_with_nvd
         metasploit_module: exploit/linux/local/glibc_ld_audit_dso_load_priv_esc
+        attackmate_playbook_sha256: 7d5a27eed6c931bdb57449b6b8b2e964d1d232bbfab9c62599ad5f5c4907b267
         attackmate_techniques: [T1068]
         data_result_techniques: [T1068, T1548, T1574]
         relation_after_parent_normalization: partial_overlap
         stage1_rrf_60_status: missing
+        evaluation_role: diagnostic_required_case
+        primary_metric_eligible: false
+        exclusion_reason: >-
+          The public trace author supplies T1068, but the CVE is absent from
+          the frozen CTID KEV mapping; a trace-independent curated ATT&CK
+          label has not been found.
       - cve_id: CVE-2010-2075
         example: examples/upgrade_to_meterpreter.yml
         cve_link_type: inferred_from_named_metasploit_module_and_verified_with_nvd
@@ -80,6 +112,98 @@ sources:
         - final_external_benchmark
         - vulnerability_driven_lateral_movement_evaluation
         - direct_mulval_regression_without_conversion
+
+  metasploit:
+    status: available_pinned
+    upstream_repository:
+      url: https://github.com/rapid7/metasploit-framework
+      commit: 1816d9023b353800046567984f15b42d24bd334a
+      license: BSD-3-Clause_with_documented_third_party_exceptions
+      license_file: COPYING
+      license_file_sha256: 38f848ebdf03a4f7ce5a703b72e8be6bd724de17d7869d71f3df78734cb4e507
+      local_path: metasploit/repository
+      acquisition: shallow_sparse_clone_over_github_ssh
+    selected_case_files:
+      - cve_id: CVE-2010-3856
+        module: modules/exploits/linux/local/glibc_ld_audit_dso_load_priv_esc.rb
+        module_sha256: f7126f6eb6ee87edd98de53d4f265b41d4386b11d11455ecfee918c28171fa40
+        execution_record: documentation/modules/exploit/linux/local/glibc_ld_audit_dso_load_priv_esc.md
+        execution_record_sha256: 0c72acdaa16bec8cb8934c3d0fa209859420f4c47bcba81e7b68f74d3faf2231
+        privilege_evidence: existing_session_to_uid_0_gid_0_new_session
+      - cve_id: CVE-2020-0787
+        module: modules/exploits/windows/local/cve_2020_0787_bits_arbitrary_file_move.rb
+        module_sha256: afe494a1be326f819e0a514868664278c62de242c3f1a5bdb00786eb7373afd9
+        execution_record: documentation/modules/exploit/windows/local/cve_2020_0787_bits_arbitrary_file_move.md
+        execution_record_sha256: 42ad0e058290155ee39eb82fdd905206f8a2480d4a2b8d743e326735d2f1d911
+        privilege_evidence: normal_user_to_NT_AUTHORITY_SYSTEM_new_session
+      - cve_id: CVE-2021-4034
+        module: modules/exploits/linux/local/cve_2021_4034_pwnkit_lpe_pkexec.rb
+        module_sha256: 7c238f16f477213d7f84c6d508bb08ce9a3df5ffcc49250c0b9065abbd5f410e
+        execution_record: documentation/modules/exploit/linux/local/cve_2021_4034_pwnkit_lpe_pkexec.md
+        execution_record_sha256: 99ca8d99d1c45a0c968458241fbba446ab4e28cc172a8f0c251530dcaaab028e
+        privilege_evidence: msfuser_to_root_new_session
+      - cve_id: CVE-2021-40449
+        module: modules/exploits/windows/local/cve_2021_40449.rb
+        module_sha256: af7b23bbae6179c4c7ed3768ea3293170a2f653701e0e99edf9c26187dfccad9
+        execution_record: documentation/modules/exploit/windows/local/cve_2021_40449.md
+        execution_record_sha256: c1d8b617acbbe4cd72bb35cc5d65b10efb69e3488d122de9d9f9e25aa8a94067
+        privilege_evidence: normal_user_to_NT_AUTHORITY_SYSTEM_new_session
+      - cve_id: CVE-2022-21999
+        module: modules/exploits/windows/local/cve_2022_21999_spoolfool_privesc.rb
+        module_sha256: bd86f2ac8cbcf4c3033bdf620b1e5b01a984e9aacc426ce00f590fc10d1e667f
+        execution_record: documentation/modules/exploit/windows/local/cve_2022_21999_spoolfool_privesc.md
+        execution_record_sha256: b879679af021105cfe1554d6dc56d88acb177ba492d76688840690355e67d427
+        privilege_evidence: named_local_user_to_NT_AUTHORITY_SYSTEM_new_session
+      - cve_id: CVE-2022-26904
+        module: modules/exploits/windows/local/cve_2022_26904_superprofile.rb
+        module_sha256: fee4f463b59e53cd7ef58a16f3d9180fd3df852f1cf224cb999e6115cb8a96d2
+        execution_record: documentation/modules/exploit/windows/local/cve_2022_26904_superprofile.md
+        execution_record_sha256: 353a80cc8bfdd231122939486e0505417da5ec9725cf40feb4b068ab1c6776ad
+        privilege_evidence: normal_non_admin_to_NT_AUTHORITY_SYSTEM_new_session
+    suitability:
+      usable_for:
+        - public_exploitation_steps
+        - console_execution_records
+        - explicit_low_to_high_privilege_transition
+        - label_blind_attack_graph_normalization
+      not_sufficient_for:
+        - independent_attack_label_for_cve_2010_3856
+        - population_level_accuracy_claims
+
+  ctid_kev_attack_mappings:
+    status: available_frozen
+    landing_page: https://zenodo.org/records/16747173
+    doi: 10.5281/zenodo.16747173
+    version: 02.13.2025
+    attack_version: "15.1"
+    upstream_repository: https://github.com/center-for-threat-informed-defense/mappings-explorer
+    upstream_repository_license: Apache-2.0
+    zenodo_license_display: unspecified_on_record_page
+    raw_file: kev-02.13.2025_attack-15.1-enterprise.csv
+    raw_file_local_path: >-
+      /home/ghdemi/Code/cve2attack/data/raw/kev/kev-02.13.2025_attack-15.1-enterprise.csv
+    raw_file_md5: 21338a56761278482dc5f169638414ca
+    raw_file_sha256: 8f15aab468f17f9a1d655ef2db814b0323792cfa066373a02a0a1d7f4a8f6676
+    role: trace_independent_external_attack_labels
+    selected_labels:
+      - cve_id: CVE-2020-0787
+        mapping_type: exploitation_technique
+        parent_techniques: [T1068]
+      - cve_id: CVE-2021-4034
+        mapping_type: exploitation_technique
+        parent_techniques: [T1068]
+      - cve_id: CVE-2021-40449
+        mapping_type: primary_impact
+        parent_techniques: [T1068]
+      - cve_id: CVE-2022-21999
+        mapping_type: primary_impact
+        parent_techniques: [T1068]
+      - cve_id: CVE-2022-26904
+        mapping_type: primary_impact
+        parent_techniques: [T1068]
+    explicit_absence:
+      - cve_id: CVE-2010-3856
+        consequence: diagnostic_only_until_independent_label_is_available
 
   mantis:
     status: downloaded_and_verified
@@ -142,8 +266,12 @@ overall_assessment:
   first_conversion_complete: mantis_zerologon_cve_2020_1472
   enough_for_final_external_evaluation: false
   blocking_next_input: null
+  optional_missing_input: attackmate_zenodo_v4_execution_archives
   next_actions:
-    - run_and_verify_the_zerologon_closed_loop
-    - generate_stage1_candidates_for_cve_2021_3156
-    - convert_the_sudo_trace_without_using_its_evaluation_label
-    - complete_three_scenario_thesis_report
+    - generate_one_label_blind_frozen_v5c_top20_run_for_the_six_cve_cohort
+    - normalize_new_graphs_from_registered_execution_records_without_labels
+    - review_and_freeze_graph_hashes_before_any_formal_stage2_evaluation
+  formal_stage2_evaluation_gate: >-
+    Do not run a new formal Stage 2 evaluation until the extended source
+    inventory, label roles, cohort, graph construction rules, and scoring
+    rules are frozen. CVE-2010-3856 remains diagnostic-only.
