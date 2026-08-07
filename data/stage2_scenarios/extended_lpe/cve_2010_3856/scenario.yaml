@@ -1,0 +1,58 @@
+schema_version: "1.0"
+scenario_id: extended_lpe_cve_2010_3856
+scenario_kind: trace_derived_local_privilege
+cve_id: CVE-2010-3856
+
+source:
+  provider: Rapid7
+  dataset_id: metasploit_framework_1816d90_glibc_ld_audit_dso_load_priv_esc
+  repository_url: https://github.com/rapid7/metasploit-framework
+  repository_commit: 1816d9023b353800046567984f15b42d24bd334a
+  module: data/stage2_sources/metasploit/repository/modules/exploits/linux/local/glibc_ld_audit_dso_load_priv_esc.rb
+  module_sha256: f7126f6eb6ee87edd98de53d4f265b41d4386b11d11455ecfee918c28171fa40
+  documentation: data/stage2_sources/metasploit/repository/documentation/modules/exploit/linux/local/glibc_ld_audit_dso_load_priv_esc.md
+  documentation_sha256: 0c72acdaa16bec8cb8934c3d0fa209859420f4c47bcba81e7b68f74d3faf2231
+  attackmate_repository_url: https://github.com/ait-testbed/attackmate
+  attackmate_repository_commit: d2edd8bfbb4d18bf4788f222022fe8c73d8fb58f
+  attackmate_playbook: data/stage2_sources/attackmate/repository/examples/http-put_example.yml
+  attackmate_playbook_sha256: 7d5a27eed6c931bdb57449b6b8b2e964d1d232bbfab9c62599ad5f5c4907b267
+  attack_step: 'documentation lines 50,60 (run; meterpreter session 2 opened)'
+  predecessor_step: 'documentation line 48 (set session 1, the existing unprivileged session consumed by the module)'
+  confirmation_steps:
+    - 'documentation lines 62-63 (getuid reports uid=0, gid=0, euid=0, egid=0)'
+    - 'AttackMate examples/http-put_example.yml lines 103-113 (msf-module glibc_ld_audit_dso_load_priv_esc consumes session shell and creates session root)'
+    - 'AttackMate examples/http-put_example.yml lines 116-118 (getuid on the created root session)'
+  cve_resolution:
+    method: explicit_cve_in_metasploit_module_references
+    note: >-
+      The Rapid7 module glibc_ld_audit_dso_load_priv_esc references both CVE-2010-3847 and CVE-2010-3856; this scenario is registered for CVE-2010-3856, which the frozen extended LPE cohort selects. The AttackMate playbook invokes the same module from an existing session and records a created root session.
+
+context:
+  # The local exploit consumes the existing non-privileged session on the target.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  vulnerability:
+    host: TARGET
+    service: glibc_ld_audit
+    exploit_type: localExploit
+    expected_impact: privilegeEscalation
+
+  consequences:
+    - execCode(TARGET,root)
+
+  exploit_rule: RULE 1 (trace-derived glibc LD_AUDIT arbitrary DSO load local privilege escalation)
+  normalization_notes:
+    - The predecessor step is an existing unprivileged session on the target consumed by the module.
+    - The exploit step creates a separate root session on the same host; the trace reports uid=0.
+    - This Linux case reaches the root identity natively, so no privilege-token normalization is applied.
+    - Generic TARGET/user names avoid importing target-specific semantics.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1068
+  label_source: AttackMate author annotation (trace-coupled, diagnostic only)
+  evaluation_only: true
+  note: >-
+      This case has no independent CTID KEV ATT&CK mapping: CVE-2010-3856 is absent from kev-02.13.2025_attack-15.1-enterprise.csv. The only available T1068 annotation is authored inside the same AttackMate trace (examples/http-put_example.yml line 113) and is therefore not an independent gold label. This scenario is registered as a diagnostic case and must not enter the four-case main aggregate.

@@ -7,19 +7,19 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-08-08 00:35:43 +08:00 |
-| 最后只读核查时间 | 2026-08-08 00:35:43 +08:00 |
+| 最后内容更新时间 | 2026-08-08 00:59:02 +08:00 |
+| 最后只读核查时间 | 2026-08-08 00:59:02 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `4d8e40b04374a2d2137091c8bd914ba1beb15c30` |
+| 最后核查时的 HEAD | `7a2f1b2c11ea9aecf7ddc5b288af6c4f54ff3e03` |
 | Stage 2 功能代码状态（最后核查时） | topology-only v2、消融、PwnKit、扩展 LPE 来源/预注册和冻结 Stage 1 候选均已提交并推送至 origin；AttackMate Zenodo v4 档案已人工交付并登记 SHA256；扩展图和正式评价尚未开始 |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
 | 最后核查时的上游实际 SHA | `4d8e40b04374a2d2137091c8bd914ba1beb15c30` |
 | 最后核查时的 ahead / behind | ahead 0 / behind 0（连续性文档自身提交前；本次 SHA256 登记提交将产生 1 个新的未推送提交） |
 | 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
-| 当前目标 | 在固定 v2 和冻结候选上，label-blind 构建、审阅并冻结扩展 LPE 攻击图，不按标签调规则 |
-| 建议下一步 | 从已登记 Rapid7 记录构建四个主案例和 CVE-2010-3856 诊断图，冻结来源行号与图 SHA256；闸门通过后才运行正式 Stage 2 评价 |
-| 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签；扩展图尚未冻结，因此禁止正式 Stage 2 评价（AttackMate Zenodo v4 档案已于 2026-08-08 人工交付并校验，不再阻塞） |
+| 当前目标 | 扩展 LPE 五图已 label-blind 冻结；下一步是在冻结图与冻结候选上运行不可覆盖的正式 Stage 2 评价 |
+| 建议下一步 | 图闸门已通过（见 §23）；用冻结六例 Stage 1 run 逐图创建全新正式 Stage 2 run，四个 Windows 主案例单独聚合，桥接例与诊断例分开报告 |
+| 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签，只能作诊断例；Zenodo v4 档案不含本轮六个 CVE，未提供新证据（见 §23.3）|
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
 提交前 v2 run 的 manifest 仍记录基础 HEAD `3f3f762...`，但其精确代码/测试补丁已进入
@@ -606,7 +606,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 截至 4d8e40b 的本地提交已于 2026-08-08 推送；三个早期 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
 - 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
-- 扩展 LPE 目前只有来源、预注册和 Stage 1 候选，尚未构建或冻结图，也没有 Stage 2 结果。
+- 扩展 LPE 五图已于 2026-08-08 label-blind 构建、测试并冻结（见 §23）；正式 Stage 2 结果仍不存在。
 - CVE-2010-3856 的 AttackMate T1068 标注与同一攻击轨迹耦合，不能充当独立金标。
 - AttackMate v4 档案已于 2026-08-08 人工交付到 ignored 目录（页面 MD5 一致、本地 SHA256 已登记，见 §22.2）；远程主机直连 Zenodo `:443` 仍被拒，只能人工下载。
 
@@ -832,3 +832,59 @@ Top-20。manifest SHA256 为 `228d4318a35e7a2a967c12b8959f633185a1fb5c689a520a4d
 
 下一闸门是 label-blind 构建、审阅并冻结新图的来源行号、转换规则和 SHA256。在该闸门完成前，
 不得检查正确标签的候选排名，不得运行新的正式 Stage 2 评价，不得为这些标签修改 v2 规则。
+
+## 23. 扩展 LPE label-blind 图构建与冻结（2026-08-08）
+
+### 23.1 已冻结的五张图
+
+新增场景目录 `data/stage2_scenarios/extended_lpe/<cve>/`，各含 `scenario.yaml` 与
+确定性生成的 `AttackGraph.xml`（均由 Git 跟踪）。构建过程只读取已登记的 Rapid7 模块文档中的
+身份变化证据，未查看候选排名，未修改 `topology-rule-priority-v2`。
+
+| CVE | 角色 | 组件 | 图 SHA256 |
+| --- | --- | --- | --- |
+| CVE-2020-0787 | 主 | `bits` | `a713a989dbea94741f9bf6d6e9fd86dd66b8606048b0d40c4cbf6733e6eb78b9` |
+| CVE-2021-40449 | 主 | `win32k` | `dfe4eae077c177529d77488505aba8da5d399ed9b9b5fe013a288565120f7b36` |
+| CVE-2022-21999 | 主 | `spooler` | `21742c98e2da07075b89fb1dc462caa1fcce6dad0fbd97071ffc64ef437e0237` |
+| CVE-2022-26904 | 主 | `profsvc` | `691554323a8e6644605698ec5c07d5b489245ea78ba6fd953214131c0a89fbdf` |
+| CVE-2010-3856 | 诊断 | `glibc_ld_audit` | `a30f11a363c8070a49cfb878bcc5a60922d3a62cf185bbf82073cfbbcdf356aa` |
+
+场景 YAML 的 SHA256 与逐图来源行号见 `docs/stage2_extended_lpe_evaluation_protocol.md` §4.1。
+
+### 23.2 权限令牌归一（研究决策）
+
+四个 Windows 案例执行记录中的提权后身份为 `NT AUTHORITY\SYSTEM`。图中统一归一为通用最高本地
+权限令牌 `root`，与既有 PwnKit 场景词汇一致。原因：`reranker.local_privilege_transition` 只识别
+`root`（`reranker.py` 中后果 `execCode(*,root)` 与前置 `execCode(*,≠root)`），而预注册禁止为本批
+案例修改 v2 规则。该归一在查看任何候选排名之前、对全部扩展 LPE 图统一作出，只编码“同主机
+非特权执行变为最高特权执行”，不引入 OS 特定语义；代价是丢失 SYSTEM 与 root 的 OS 差别，已写入
+每个场景的 `normalization_notes`。CVE-2010-3856 原生到达 `root`，未做归一。
+
+### 23.3 Zenodo v4 档案的实际价值（解决第 14 节问题 4）
+
+三个档案已交付并校验（§22.2）。实际内容核查结果：`playbooks.zip` 的提权场景是基于 cronjob
+配置错误的提权，声明 `T1053`/`T1190`/`T1059`/`T1087`，不含任何 CVE，也不含 `T1068`；
+`privilege_escalation_attackmate.zip` 是该同一场景的主机遥测/配置转储。两者都不含本轮六个 CVE。
+因此 Zenodo v4 未为扩展 LPE 六例提供新证据；PwnKit 与 CVE-2010-3856 的证据仍分别来自 AttackMate
+git 仓库 `d2edd8b` 的 `playbook.yml` 与 `examples/http-put_example.yml`。解压内容位于被忽略的
+`data/stage2_sources/attackmate/extracted/zenodo_v4_20260731/`。
+
+### 23.4 闸门核验与测试
+
+- 五图均可从对应 `scenario.yaml` 逐字节确定性重建；
+- 改写 `evaluation.expected_techniques` 不改变生成 XML（标签隔离成立）；
+- 每图恰好解析出 1 个 CVE，`local_context.target_host=TARGET`、`exploit_type=localExploit`、
+  `expected_impact=privilegeEscalation`；
+- 每图只触发 `local_privilege_transition`，`match_scope=tactic`、
+  `match_values=['privilege-escalation']`、`fallback_technique_ids=['T1068']`；
+- 五图均不含 `attackerLocated`、`hacl`、`netAccess`、`networkServiceInfo`；
+- 新增回归测试位于 `tests/test_stage2_scenario_graph.py::ExtendedLocalPrivilegeGraphTests`，
+  并将五图纳入既有可重建性与标签隔离循环；
+- 定向测试 `14 passed, 38 subtests passed in 0.38s`；完整测试
+  `53 passed, 38 subtests passed in 5.19s`（此前基线 49 passed）。
+
+### 23.5 仍未做的事
+
+尚未运行任何扩展 LPE 正式 Stage 2 评价，也未查看 `T1068` 在六例候选中的排名。下一步须用冻结
+Stage 1 run `stage2_extended_lpe_v5c_attack15_1_top20_20260731T011812` 与本节冻结图创建全新、
+不可覆盖的 run；新增主聚合只含四个 Windows 主案例，CVE-2010-3856 与 PwnKit 分开报告。

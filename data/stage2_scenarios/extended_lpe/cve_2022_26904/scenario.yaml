@@ -1,0 +1,58 @@
+schema_version: "1.0"
+scenario_id: extended_lpe_cve_2022_26904
+scenario_kind: trace_derived_local_privilege
+cve_id: CVE-2022-26904
+
+source:
+  provider: Rapid7
+  dataset_id: metasploit_framework_1816d90_cve_2022_26904_superprofile
+  repository_url: https://github.com/rapid7/metasploit-framework
+  repository_commit: 1816d9023b353800046567984f15b42d24bd334a
+  module: data/stage2_sources/metasploit/repository/modules/exploits/windows/local/cve_2022_26904_superprofile.rb
+  module_sha256: fee4f463b59e53cd7ef58a16f3d9180fd3df852f1cf224cb999e6115cb8a96d2
+  documentation: data/stage2_sources/metasploit/repository/documentation/modules/exploit/windows/local/cve_2022_26904_superprofile.md
+  documentation_sha256: 353a80cc8bfdd231122939486e0505417da5ec9725cf40feb4b068ab1c6776ad
+  attack_step: 'documentation lines 142,182,202 (set SESSION 1; exploit; meterpreter session 2 opened)'
+  predecessor_step: 'documentation lines 84,86-87 (meterpreter session 1 opened; getuid reports WIN11-TEST\normal)'
+  confirmation_steps:
+    - 'documentation lines 204-205 (getuid reports NT AUTHORITY\SYSTEM)'
+  cve_resolution:
+    method: explicit_cve_in_metasploit_module_filename_and_references
+    note: >-
+      The Rapid7 module filename and References block name CVE-2022-26904 explicitly; the frozen console transcript records the privilege transition used to build this graph.
+
+context:
+  # The local exploit consumes the existing non-privileged session on the target.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  vulnerability:
+    host: TARGET
+    service: profsvc
+    exploit_type: localExploit
+    expected_impact: privilegeEscalation
+
+  consequences:
+    - execCode(TARGET,root)
+
+  exploit_rule: RULE 1 (trace-derived User Profile Service arbitrary junction creation local privilege escalation)
+  normalization_notes:
+    - The predecessor step opens a meterpreter session owned by a normal, non-administrative
+      account on the target; the module consumes that existing session.
+    - The exploit step creates a separate session whose observed identity is NT AUTHORITY\SYSTEM
+      on the same host.
+    - The observed Windows SYSTEM identity is normalized to the generic highest-local-privilege
+      token 'root', matching the existing PwnKit scenario vocabulary. The normalization is a
+      topology-vocabulary choice made uniformly for all extended LPE graphs before any candidate
+      ranking was inspected; it encodes only 'non-privileged local execution became
+      highest-privilege local execution on the same host'.
+    - Generic TARGET/user names avoid importing target-specific semantics.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1068
+  label_source: CTID KEV 02.13.2025 primary_impact
+  evaluation_only: true
+  note: >-
+      CTID KEV row 629 maps CVE-2022-26904 primary impact to T1068 independently of this execution trace. The label is applied only after reranking and is never converted into a graph fact.

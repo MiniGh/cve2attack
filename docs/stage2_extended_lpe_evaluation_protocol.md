@@ -1,7 +1,8 @@
 # Stage 2 扩展本地提权评测预注册
 
 冻结时间：2026-07-31（Asia/Shanghai）
-状态：来源、清单、标签、规则和 Stage 1 候选已冻结；新图尚未构建，禁止运行正式 Stage 2 评价。
+状态：来源、清单、标签、规则和 Stage 1 候选已冻结；五张新图已于 2026-08-08 label-blind 构建、
+测试并冻结（见 4.1 节）。正式 Stage 2 评价尚未运行。
 
 ## 1. 目的与闸门
 
@@ -133,6 +134,47 @@ Technique 和 action 数。候选生成程序不得读取本文件第 2、3.3 �
 | `CVE-2020.jsonl` | `c8933f18cb852b701e5c0d8bb1360c3a88986c32f2b1cdf777ee7efe7636465b` |
 | `CVE-2021.jsonl` | `33068234ec16c2f1070da7db07dde542fb6e08fcbba8b3f432dbbe5d1576fc6a` |
 | `CVE-2022.jsonl` | `27ef57ab537c24199aeeaaf92c873f5288be880b3ef91daf16a63855916a0110` |
+
+## 4.1 Label-blind 图构建与冻结（2026-08-08）
+
+五张新图已按第 1 节闸门 label-blind 构建、测试并冻结。构建只读取已登记的 Rapid7 执行记录中的
+身份变化证据；未查看任何候选排名，未修改 `topology-rule-priority-v2`。
+
+统一转换：每图 4 顶点 / 3 边，`execCode(TARGET,user)` 与
+`vulExists(TARGET,'<CVE>',<组件>,localExploit,privilegeEscalation)` 经一条 trace-derived 规则
+产生 `execCode(TARGET,root)`。图中不含 `attackerLocated`、`hacl`、`netAccess`、
+`networkServiceInfo`，因此只可能触发本地提权规则。
+
+权限令牌归一：四个 Windows 案例的实际身份为 `NT AUTHORITY\SYSTEM`，统一归一为通用最高本地
+权限令牌 `root`，与既有 PwnKit 场景词汇一致。该决定在查看任何候选排名之前、对全部扩展 LPE 图
+统一作出，只编码“同主机非特权执行变为最高特权执行”，不引入 OS 特定语义，也不修改重排规则
+（`reranker.local_privilege_transition` 只识别 `root`）。CVE-2010-3856 原生到达 `root`，不需归一。
+
+| CVE | 组件 | 场景 YAML SHA256 | 图 SHA256 |
+| --- | --- | --- | --- |
+| CVE-2020-0787 | `bits` | `4b3236d37f35942120fbb524e45808dba1777d48c8e79ba7a6c610c6e8f0c7c3` | `a713a989dbea94741f9bf6d6e9fd86dd66b8606048b0d40c4cbf6733e6eb78b9` |
+| CVE-2021-40449 | `win32k` | `ecedbc59f82d4e631506fea26488a9921be43024b78c1e6173a5f774cb18e4fc` | `dfe4eae077c177529d77488505aba8da5d399ed9b9b5fe013a288565120f7b36` |
+| CVE-2022-21999 | `spooler` | `4fc4c7e4505d28427d1c7e05749daf6d4fff1a48e2ea9317d3682b328dd077f3` | `21742c98e2da07075b89fb1dc462caa1fcce6dad0fbd97071ffc64ef437e0237` |
+| CVE-2022-26904 | `profsvc` | `c7cb68b17c22fccecc8f5d1b18042a2b2bd5367a06c2c17c5f8f60de7c59506e` | `691554323a8e6644605698ec5c07d5b489245ea78ba6fd953214131c0a89fbdf` |
+| CVE-2010-3856 | `glibc_ld_audit` | `bdd48c213bf994c7b0077bd780288ac1a866fe9961a153d4f638b6daa9bdd434` | `a30f11a363c8070a49cfb878bcc5a60922d3a62cf185bbf82073cfbbcdf356aa` |
+
+每张图的精确来源行号记录在对应 `scenario.yaml` 的 `source.predecessor_step`、
+`source.attack_step` 和 `source.confirmation_steps` 中，均指向冻结提交
+`1816d9023b353800046567984f15b42d24bd334a` 的模块文档；CVE-2010-3856 另引用 AttackMate
+`examples/http-put_example.yml` 第 103-113、116-118 行。
+
+闸门核验（2026-08-08）：五图均可从 YAML 逐字节确定性重建；改写
+`evaluation.expected_techniques` 不改变生成 XML；五图各恰好解析出 1 个 CVE 且只触发
+`local_privilege_transition`（tactic 级、`privilege-escalation`、回退 `T1068`）；定向测试
+`14 passed, 38 subtests`，完整测试 `53 passed, 38 subtests`。
+
+Zenodo v4 档案的实际价值：`playbooks.zip` 与 `privilege_escalation_attackmate.zip` 的提权场景是
+基于 cronjob 配置错误的提权（声明 `T1053`/`T1190`/`T1059`/`T1087`），不含本轮六个 CVE 中的任何
+一个，也不含 `T1068`；日志包为该场景的主机遥测转储。因此这些档案未为六例提供新证据，六例证据
+仍全部来自 Rapid7 冻结提交与 AttackMate git 仓库。
+
+下一步仍受闸门约束：正式 Stage 2 评价只能在本节冻结的图与既有冻结 Stage 1 run 上运行，
+run ID 必须全新且不可覆盖，且新增主聚合只含四个 Windows 主案例。
 
 ## 5. 后续 Stage 2 正式评价规则
 

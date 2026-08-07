@@ -1,0 +1,58 @@
+schema_version: "1.0"
+scenario_id: extended_lpe_cve_2020_0787
+scenario_kind: trace_derived_local_privilege
+cve_id: CVE-2020-0787
+
+source:
+  provider: Rapid7
+  dataset_id: metasploit_framework_1816d90_cve_2020_0787_bits_arbitrary_file_move
+  repository_url: https://github.com/rapid7/metasploit-framework
+  repository_commit: 1816d9023b353800046567984f15b42d24bd334a
+  module: data/stage2_sources/metasploit/repository/modules/exploits/windows/local/cve_2020_0787_bits_arbitrary_file_move.rb
+  module_sha256: afe494a1be326f819e0a514868664278c62de242c3f1a5bdb00786eb7373afd9
+  documentation: data/stage2_sources/metasploit/repository/documentation/modules/exploit/windows/local/cve_2020_0787_bits_arbitrary_file_move.md
+  documentation_sha256: 42ad0e058290155ee39eb82fdd905206f8a2480d4a2b8d743e326735d2f1d911
+  attack_step: 'documentation lines 168,172,181 (set SESSIOn 2; exploit; meterpreter session 3 opened)'
+  predecessor_step: 'documentation lines 61,63-64 (meterpreter session 2 opened; getuid reports DESKTOP-NRCNIDN\normal)'
+  confirmation_steps:
+    - 'documentation lines 183-184 (getuid reports NT AUTHORITY\SYSTEM)'
+  cve_resolution:
+    method: explicit_cve_in_metasploit_module_filename_and_references
+    note: >-
+      The Rapid7 module filename and References block name CVE-2020-0787 explicitly; the frozen console transcript records the privilege transition used to build this graph.
+
+context:
+  # The local exploit consumes the existing non-privileged session on the target.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  vulnerability:
+    host: TARGET
+    service: bits
+    exploit_type: localExploit
+    expected_impact: privilegeEscalation
+
+  consequences:
+    - execCode(TARGET,root)
+
+  exploit_rule: RULE 1 (trace-derived BITS arbitrary file move local privilege escalation)
+  normalization_notes:
+    - The predecessor step opens a meterpreter session owned by a normal, non-administrative
+      account on the target; the module consumes that existing session.
+    - The exploit step creates a separate session whose observed identity is NT AUTHORITY\SYSTEM
+      on the same host.
+    - The observed Windows SYSTEM identity is normalized to the generic highest-local-privilege
+      token 'root', matching the existing PwnKit scenario vocabulary. The normalization is a
+      topology-vocabulary choice made uniformly for all extended LPE graphs before any candidate
+      ranking was inspected; it encodes only 'non-privileged local execution became
+      highest-privilege local execution on the same host'.
+    - Generic TARGET/user names avoid importing target-specific semantics.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1068
+  label_source: CTID KEV 02.13.2025 exploitation_technique
+  evaluation_only: true
+  note: >-
+      CTID KEV row 83 maps CVE-2020-0787 exploitation to T1068 independently of this execution trace (row 82 maps primary_impact T1059 and is not used here). The label is applied only after reranking and is never converted into a graph fact.

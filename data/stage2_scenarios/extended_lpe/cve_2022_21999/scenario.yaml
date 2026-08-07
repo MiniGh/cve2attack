@@ -1,0 +1,58 @@
+schema_version: "1.0"
+scenario_id: extended_lpe_cve_2022_21999
+scenario_kind: trace_derived_local_privilege
+cve_id: CVE-2022-21999
+
+source:
+  provider: Rapid7
+  dataset_id: metasploit_framework_1816d90_cve_2022_21999_spoolfool
+  repository_url: https://github.com/rapid7/metasploit-framework
+  repository_commit: 1816d9023b353800046567984f15b42d24bd334a
+  module: data/stage2_sources/metasploit/repository/modules/exploits/windows/local/cve_2022_21999_spoolfool_privesc.rb
+  module_sha256: bd86f2ac8cbcf4c3033bdf620b1e5b01a984e9aacc426ce00f590fc10d1e667f
+  documentation: data/stage2_sources/metasploit/repository/documentation/modules/exploit/windows/local/cve_2022_21999_spoolfool_privesc.md
+  documentation_sha256: b879679af021105cfe1554d6dc56d88acb177ba492d76688840690355e67d427
+  attack_step: 'documentation lines 66,68,85 (set session 1; run; meterpreter session 2 opened)'
+  predecessor_step: 'documentation lines 48,50-51 (meterpreter session 1 opened; getuid reports DESKTOP-49N0D8H\shelbypace)'
+  confirmation_steps:
+    - 'documentation lines 87-88 (getuid reports NT AUTHORITY\SYSTEM)'
+  cve_resolution:
+    method: explicit_cve_in_metasploit_module_filename_and_references
+    note: >-
+      The Rapid7 module filename and References block name CVE-2022-21999 explicitly; the frozen console transcript records the privilege transition used to build this graph.
+
+context:
+  # The local exploit consumes the existing non-privileged session on the target.
+  initial_facts:
+    - execCode(TARGET,user)
+
+  vulnerability:
+    host: TARGET
+    service: spooler
+    exploit_type: localExploit
+    expected_impact: privilegeEscalation
+
+  consequences:
+    - execCode(TARGET,root)
+
+  exploit_rule: RULE 1 (trace-derived Print Spooler SpoolFool local privilege escalation)
+  normalization_notes:
+    - The predecessor step opens a meterpreter session owned by a normal, non-administrative
+      account on the target; the module consumes that existing session.
+    - The exploit step creates a separate session whose observed identity is NT AUTHORITY\SYSTEM
+      on the same host.
+    - The observed Windows SYSTEM identity is normalized to the generic highest-local-privilege
+      token 'root', matching the existing PwnKit scenario vocabulary. The normalization is a
+      topology-vocabulary choice made uniformly for all extended LPE graphs before any candidate
+      ranking was inspected; it encodes only 'non-privileged local execution became
+      highest-privilege local execution on the same host'.
+    - Generic TARGET/user names avoid importing target-specific semantics.
+    - ATT&CK labels below are excluded from graph generation.
+
+evaluation:
+  expected_techniques:
+    - T1068
+  label_source: CTID KEV 02.13.2025 primary_impact
+  evaluation_only: true
+  note: >-
+      CTID KEV row 636 maps CVE-2022-21999 primary impact to T1068 independently of this execution trace. The label is applied only after reranking and is never converted into a graph fact.
