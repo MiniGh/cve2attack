@@ -7,18 +7,18 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-08-08 00:59:02 +08:00 |
-| 最后只读核查时间 | 2026-08-08 00:59:02 +08:00 |
+| 最后内容更新时间 | 2026-08-08 01:28:18 +08:00 |
+| 最后只读核查时间 | 2026-08-08 01:28:18 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `7a2f1b2c11ea9aecf7ddc5b288af6c4f54ff3e03` |
+| 最后核查时的 HEAD | `80383b02fe511a4d1b63e260169e80b514a2de89` |
 | Stage 2 功能代码状态（最后核查时） | topology-only v2、消融、PwnKit、扩展 LPE 来源/预注册和冻结 Stage 1 候选均已提交并推送至 origin；AttackMate Zenodo v4 档案已人工交付并登记 SHA256；扩展图和正式评价尚未开始 |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
 | 最后核查时的上游实际 SHA | `4d8e40b04374a2d2137091c8bd914ba1beb15c30` |
 | 最后核查时的 ahead / behind | ahead 0 / behind 0（连续性文档自身提交前；本次 SHA256 登记提交将产生 1 个新的未推送提交） |
 | 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
-| 当前目标 | 扩展 LPE 五图已 label-blind 冻结；下一步是在冻结图与冻结候选上运行不可覆盖的正式 Stage 2 评价 |
-| 建议下一步 | 图闸门已通过（见 §23）；用冻结六例 Stage 1 run 逐图创建全新正式 Stage 2 run，四个 Windows 主案例单独聚合，桥接例与诊断例分开报告 |
+| 当前目标 | 扩展 LPE 正式评价已完成（0 退化、0 提升）；下一步是决定是否就同 tactic 竞争失败模式提出新假设，或先收口毕设报告 |
+| 建议下一步 | 汇总毕设闭环报告，同时展示保持、退化、不可恢复和本轮同 tactic 竞争失败模式；任何规则改动必须先做独立预注册并使用新案例 |
 | 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签，只能作诊断例；Zenodo v4 档案不含本轮六个 CVE，未提供新证据（见 §23.3）|
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
@@ -606,7 +606,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 截至 4d8e40b 的本地提交已于 2026-08-08 推送；三个早期 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
 - 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
-- 扩展 LPE 五图已于 2026-08-08 label-blind 构建、测试并冻结（见 §23）；正式 Stage 2 结果仍不存在。
+- 扩展 LPE 五图已冻结，正式评价已完成（见 §23、§24）：四例主聚合 0 提升、4 保持、0 退化。
 - CVE-2010-3856 的 AttackMate T1068 标注与同一攻击轨迹耦合，不能充当独立金标。
 - AttackMate v4 档案已于 2026-08-08 人工交付到 ignored 目录（页面 MD5 一致、本地 SHA256 已登记，见 §22.2）；远程主机直连 Zenodo `:443` 仍被拒，只能人工下载。
 
@@ -888,3 +888,63 @@ git 仓库 `d2edd8b` 的 `playbook.yml` 与 `examples/http-put_example.yml`。�
 尚未运行任何扩展 LPE 正式 Stage 2 评价，也未查看 `T1068` 在六例候选中的排名。下一步须用冻结
 Stage 1 run `stage2_extended_lpe_v5c_attack15_1_top20_20260731T011812` 与本节冻结图创建全新、
 不可覆盖的 run；新增主聚合只含四个 Windows 主案例，CVE-2010-3856 与 PwnKit 分开报告。
+
+## 24. 扩展 LPE 正式 Stage 2 评价结果（2026-08-08）
+
+### 24.1 运行与完整性
+
+18 个不可覆盖 run，前缀 `stage2_runs/extlpe_80383b0_20260808T0110_`，为 6 个案例 ×
+`no_context / local_context / full_graph_context`，深度均为预注册的 1。Stage 1 输入为冻结 run
+`stage2_extended_lpe_v5c_attack15_1_top20_20260731T011812`（Stage 1 commit `9688a5b...`）。
+全部 run：`status=complete`、`git_commit=80383b0...`、`reranker=topology-rule-priority-v2`、
+`uses_target_semantics=false`、`matched=1`、`missing_candidates=[]`、
+`unresolved_context_ids=[]`、候选数 20、`candidate_sets_preserved=true`。每个 run 的
+`candidate_records=6`，其余 5 例列入 `candidates_without_context`，是单图逐例运行的预期统计。
+
+### 24.2 专用评价 benchmark
+
+新增 `data/benchmarks/stage2_extended_lpe/`（Git 跟踪），每例真值严格为预注册的单一 `T1068`，
+并登记 CTID mapping type 与 CSV 行号（2020-0787 行 83 exploitation_technique；40449 行 666、
+21999 行 636、26904 行 629 均为 primary_impact；4034 行 442 exploitation_technique；
+2010-3856 无独立标签，仅 AttackMate 作者标注）。不使用混池 `ctid_kev_2025_02_13_*`：那里
+CVE-2021-40449 有 8 个真值（含 T1566、T1071、T1082），会让无关 technique 命中也算成功，且各例
+真值数量不一致、跨例不可比。
+
+### 24.3 结果
+
+| 案例 | 角色 | `no_context` | `local_context` | `full_graph` d1 |
+| --- | --- | --- | --- | --- |
+| CVE-2020-0787 | 主 | 1 → 1 | 1 → 1 | 1 → 1 |
+| CVE-2021-40449 | 主 | 1 → 1 | 1 → 1 | 1 → 1 |
+| CVE-2022-21999 | 主 | 1 → 1 | 1 → 1 | 1 → 1 |
+| CVE-2022-26904 | 主 | 2 → 2 | 2 → 2 | 2 → 2 |
+| CVE-2021-4034 | 桥接 | 1 → 1 | 1 → 1 | 1 → 1 |
+| CVE-2010-3856 | 诊断 | 7 → 7 | 7 → 5 | 7 → 5 |
+
+四例主聚合（三种模式完全相同）：Top-1 `3/4 → 3/4`、Top-3 `4/4 → 4/4`、MRR `0.875 → 0.875`；
+0 提升、4 保持、0 退化、0 不可恢复。
+
+### 24.4 主聚合不变的机制解释（已逐候选核实）
+
+规则确实触发且确实重排：CVE-2022-26904 中 `local_privilege_transition` 将全部
+`privilege-escalation` 候选提到非匹配候选之前，T1078 6→5、T1574 7→6、T1098 8→7、T1546 10→8。
+主聚合不变的原因是：
+
+1. 四例中三例的 T1068 原本已是第 1，Stage 2 只能保持；
+2. 唯一有空间的 CVE-2022-26904，其 Stage 1 第 1 名 T1548 的 metadata tactics 含
+   `privilege-escalation`，与 T1068 同组，v2 在组内保持 Stage 1 原序，故 T1068 仍为第 2。
+
+### 24.5 可主张与不可主张
+
+可主张：四个独立 Windows 案例上 0 退化，独立避免伤害案例从 1 例扩大到 5 例；消融诚实
+（`no_context` 精确复现 Stage 1）；`local_context` 在这些最小图上已足够。
+
+不可主张：本轮**没有**准确率提升（Top-1/Top-3/MRR 全部持平，0 提升）；唯一名次上升的
+CVE-2010-3856 是诊断例、标签与轨迹耦合、Top-1 仍为 T1574，不能作为效果证据；样本量 4+1+1，
+不能作总体结论；四例图证据同源于 Rapid7 文档控制台记录这一种模态。
+
+### 24.6 新发现的失败模式（属待验证问题）
+
+当 Stage 1 的 Top-1 与正确答案属于同一 tactic 时（本轮 CVE-2022-26904 的 T1548 对 T1068），
+当前 tactic 级 guard 结构上无法改善名次。要在这类情形取得提升需要能区分机制的额外证据，而不是
+继续调 v2 权重；该方向必须先独立预注册并在另一批案例上验证，不得在本四例上调参后宣称独立效果。
