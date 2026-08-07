@@ -67,7 +67,8 @@
 
 Zenodo v4（DOI `10.5281/zenodo.19810174`）为 CC-BY-4.0。2026-07-31 从 `pri_sun`
 访问文件下载端点时，`zenodo.org:443` 立即拒绝连接；没有绕过，也没有留下部分文件。
-需要人工保持原名下载并放入：
+2026-08-08 改为人工在 Windows 侧下载、经 Windows OpenSSH `scp.exe` 交付到下列 ignored 目录，
+并完成校验（页面 MD5 全部一致，本地 SHA256 见表末登记）：
 
 `data/stage2_sources/attackmate/downloads/zenodo_v4_20260731/`
 
@@ -76,6 +77,8 @@ Zenodo v4（DOI `10.5281/zenodo.19810174`）为 CC-BY-4.0。2026-07-31 从 `pri_
 | `playbooks.zip` | `6a1dd5cf1a89d85915065124ab8ee08a` | 固定数据集实际 playbook 与场景关联 | 必需 |
 | `privilege_escalation_attackmate.zip` | `f6c3d5b04f8855d2bd90be9d0143bf14` | AttackMate 执行日志和主机/网络遥测 | 必需 |
 | `privilege_escalation_atomic.zip` | `fdb102503ceb032375c5ebbfbe140e0f` | Atomic Red Team 对照执行日志 | 可选增强 |
+
+交付登记（2026-08-08，本地 SHA256）：`playbooks.zip` = `1e28d9ed0939009631e8c37b3c77213f4a89bac1feb3ffd4c64ba6ef4282abd7`；`privilege_escalation_attackmate.zip` = `f595e38fc9e52c3f523f0245f674a94a3a0028fda27838d99225378984eb580a`；`privilege_escalation_atomic.zip` = `7bd2193ce2901dfed033aa6347b471fbea138d3697f8e9c730be0ca42aebb8e5`。原始压缩包保持 ignored；交付到位不改变标签隔离与建图闸门。
 
 ### 3.3 CTID KEV→ATT&CK
 

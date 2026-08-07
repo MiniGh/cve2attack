@@ -7,19 +7,19 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-08-07 23:41:41 +08:00 |
-| 最后只读核查时间 | 2026-08-07 23:41:41 +08:00 |
+| 最后内容更新时间 | 2026-08-08 00:35:43 +08:00 |
+| 最后只读核查时间 | 2026-08-08 00:35:43 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `79bac34b5b8834cf7e58782708717b9f6e832d78` |
-| Stage 2 功能代码状态（最后核查时） | topology-only v2、消融、PwnKit、扩展 LPE 来源/预注册和冻结 Stage 1 候选均已提交；扩展图和正式评价尚未开始，全部尚未推送 |
+| 最后核查时的 HEAD | `4d8e40b04374a2d2137091c8bd914ba1beb15c30` |
+| Stage 2 功能代码状态（最后核查时） | topology-only v2、消融、PwnKit、扩展 LPE 来源/预注册和冻结 Stage 1 候选均已提交并推送至 origin；AttackMate Zenodo v4 档案已人工交付并登记 SHA256；扩展图和正式评价尚未开始 |
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
-| 最后核查时的上游实际 SHA | `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` |
-| 最后核查时的 ahead / behind | ahead 8 / behind 0（连续性文档自身提交前） |
+| 最后核查时的上游实际 SHA | `4d8e40b04374a2d2137091c8bd914ba1beb15c30` |
+| 最后核查时的 ahead / behind | ahead 0 / behind 0（连续性文档自身提交前；本次 SHA256 登记提交将产生 1 个新的未推送提交） |
 | 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
 | 当前目标 | 在固定 v2 和冻结候选上，label-blind 构建、审阅并冻结扩展 LPE 攻击图，不按标签调规则 |
 | 建议下一步 | 从已登记 Rapid7 记录构建四个主案例和 CVE-2010-3856 诊断图，冻结来源行号与图 SHA256；闸门通过后才运行正式 Stage 2 评价 |
-| 当前阻塞/限制 | AttackMate Zenodo v4 档案在远程主机连接被拒；CVE-2010-3856 缺少独立 ATT&CK 标签；扩展图尚未冻结，因此禁止正式 Stage 2 评价 |
+| 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签；扩展图尚未冻结，因此禁止正式 Stage 2 评价（AttackMate Zenodo v4 档案已于 2026-08-08 人工交付并校验，不再阻塞） |
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
 提交前 v2 run 的 manifest 仍记录基础 HEAD `3f3f762...`，但其精确代码/测试补丁已进入
@@ -78,7 +78,7 @@ Stage 2，不得代为清理。
 | `e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda` | 新增持续维护的 Stage 2 连续性文档 |
 | `3f3f762ae77ea4c7bc42b249e51a8c44053905c8` | 记录统一正式 V5c 端到端 v1 基线 |
 
-本地另有以下已评审、尚未推送的提交：
+以下提交此前为本地领先，已于 2026-08-08 经授权一并快进推送至 origin：
 
 | 提交 | 作用 |
 | --- | --- |
@@ -90,8 +90,9 @@ Stage 2，不得代为清理。
 | `a89d6724218c5b69be8687477f40e7e369718861` | 冻结扩展 LPE 公开来源、CVE 角色、标签来源和评价规则 |
 | `30d8882972a7bb570ed9a8cbebe76fe0b9a90356` | 登记冻结的六例 Stage 1 V5c Top-20 输入及哈希 |
 | `79bac34b5b8834cf7e58782708717b9f6e832d78` | 在连续性文档记录扩展 LPE 来源与候选冻结 |
+| `4d8e40b04374a2d2137091c8bd914ba1beb15c30` | 刷新连续性文档顶部状态块至 HEAD 79bac34 |
 
-最后核查时上游跟踪引用和 `git ls-remote` 仍为 `3f3f762`；后续仍不得自动 push。
+2026-08-08 经授权将上述提交快进推送，`git ls-remote` 现确认 origin/feat/full-pipeline-stage2 为 `4d8e40b`；本次 SHA256 登记提交为新的本地领先提交，未经授权不再 push。
 
 ## 4. Stage 2 在完整流程中的职责
 
@@ -186,7 +187,7 @@ Stage 1 已召回的候选更符合当前攻击过程。
 ## 7. 当前重排方法：topology-rule-priority-v2
 
 当前规则集版本为 `topology-rule-priority-v2`，规则实现提交为 `729d45c...`，消融接口提交为
-`e8ca4ea...`；二者均未推送。v1 正式基线及其 run 保持不变。v2 不读取 benchmark 标签，也不读取
+`e8ca4ea...`；二者已于 2026-08-08 随分支推送。v1 正式基线及其 run 保持不变。v2 不读取 benchmark 标签，也不读取
 `remoteExploit`、`localExploit` 或 `expected_impact` 等目标语义字段。
 
 | 规则 | 触发证据 | 匹配分辨率 | 优先候选 |
@@ -602,12 +603,12 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 - 当前规则仍是“匹配组优先”，没有校准置信度；v2 只降低了本地规则的证据分辨率。
 - 深度消融只覆盖三张简单图；尚无需要深度 2 以上或包含多条 producer path 的独立场景。
 - 已有模式级消融，但还没有逐一关闭 hacl、入口位置、前置执行和后果等单个事实的细粒度开关。
-- 本地提交均未推送；三个早期 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
+- 截至 4d8e40b 的本地提交已于 2026-08-08 推送；三个早期 v2 run 的 manifest 仍只记录运行时基础 HEAD `3f3f762...`。
 - 历史 V3a 三案例冻结输入口径不完全一致；统一正式 V5c 输入已按同一配置生成并验证。
 - 个别现有文档与 inventory 尾部仍包含过期状态，见第 17 节。
 - 扩展 LPE 目前只有来源、预注册和 Stage 1 候选，尚未构建或冻结图，也没有 Stage 2 结果。
 - CVE-2010-3856 的 AttackMate T1068 标注与同一攻击轨迹耦合，不能充当独立金标。
-- 远程主机访问 Zenodo `:443` 被拒；AttackMate v4 playbook/执行日志档案尚待人工下载。
+- AttackMate v4 档案已于 2026-08-08 人工交付到 ignored 目录（页面 MD5 一致、本地 SHA256 已登记，见 §22.2）；远程主机直连 Zenodo `:443` 仍被拒，只能人工下载。
 
 ## 14. 待验证问题
 
@@ -649,10 +650,10 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src \
 3. 为每张新图登记精确来源行号、转换假设和 SHA256，完成代码/数据审阅后冻结。
 4. 图冻结闸门通过后，才用已冻结的六例 Stage 1 run 创建不可覆盖的正式 Stage 2 run；桥接例和
    诊断例不得混入四例主聚合指标。
-5. 人工取得 AttackMate Zenodo v4 档案后校验页面 MD5 和本地 SHA256；原始档案保持 ignored。
+5. AttackMate Zenodo v4 档案已于 2026-08-08 人工交付、校验并登记 SHA256（见 §22.2）；原始档案保持 ignored，仅按需解压到 ignored 目录读取。
 6. 后续再寻找真正多跳或多 producer path 的独立图，验证深度 1 与深度 2 以上的差异。
 7. 将 Tatsu 的 T1190 缺失继续反馈给 Stage 1；Stage 2 不插入正确答案。
-8. 所有本地提交尚未推送；只有获得用户授权后才 push。
+8. 截至 4d8e40b 的提交已于 2026-08-08 经授权推送；此后的新提交（含本次 SHA256 登记）仍需获授权才 push。
 
 “重新迁移/复制/整理 Stage 2 代码”不是下一步，也永远不应从本文派生为任务。
 
@@ -786,15 +787,21 @@ ATT&CK 15.1。本地冻结 CSV 位于
 ### 22.2 AttackMate Zenodo 人工下载缺口
 
 AttackMate Zenodo v4 页面为 `https://zenodo.org/records/19810174`，DOI
-`10.5281/zenodo.19810174`，许可 CC-BY-4.0。远程主机连接 `zenodo.org:443` 被拒，`curl`
-返回 error 7；没有部分文件，也未绕过网络限制。人工下载后应放入 ignored 目录
-`data/stage2_sources/attackmate/downloads/zenodo_v4_20260731/`：
+`10.5281/zenodo.19810174`，许可 CC-BY-4.0。2026-07-31 远程主机直连 `zenodo.org:443` 被拒
+（`curl` error 7）；2026-08-08 改为人工在 Windows 侧下载、经 Windows OpenSSH `scp.exe`
+交付到 ignored 目录 `data/stage2_sources/attackmate/downloads/zenodo_v4_20260731/` 并完成校验：
+三个文件页面 MD5 全部一致，本地 SHA256 已登记，`git check-ignore` 确认原始压缩包被忽略、
+未进入 Git。
 
-- `playbooks.zip`，页面 MD5 `6a1dd5cf1a89d85915065124ab8ee08a`，用于冻结编排与声明；
-- `privilege_escalation_attackmate.zip`，页面 MD5 `f6c3d5b04f8855d2bd90be9d0143bf14`，用于完整执行日志；
-- 可选 `privilege_escalation_atomic.zip`，页面 MD5 `fdb102503ceb032375c5ebbfbe140e0f`，用于 Atomic 对照。
+| 文件 | 大小(字节) | 页面 MD5 | 本地 SHA256 |
+| --- | ---: | --- | --- |
+| `playbooks.zip` | 6988 | `6a1dd5cf1a89d85915065124ab8ee08a` | `1e28d9ed0939009631e8c37b3c77213f4a89bac1feb3ffd4c64ba6ef4282abd7` |
+| `privilege_escalation_attackmate.zip` | 66746187 | `f6c3d5b04f8855d2bd90be9d0143bf14` | `f595e38fc9e52c3f523f0245f674a94a3a0028fda27838d99225378984eb580a` |
+| `privilege_escalation_atomic.zip` | 93843241 | `fdb102503ceb032375c5ebbfbe140e0f` | `7bd2193ce2901dfed033aa6347b471fbea138d3697f8e9c730be0ca42aebb8e5` |
 
-人工交付后必须先核对页面 MD5，再计算并登记本地 SHA256；原始压缩包不得进入 Git。
+用途：`playbooks.zip` 冻结案例编排与 Technique 声明；`privilege_escalation_attackmate.zip`
+提供完整提权执行日志；可选 `privilege_escalation_atomic.zip` 为 Atomic Red Team 对照。
+交付到位不改变标签隔离与建图闸门：图仍只能从已登记执行步骤 label-blind 构建。
 
 ### 22.3 冻结案例角色和 Stage 1 候选
 
