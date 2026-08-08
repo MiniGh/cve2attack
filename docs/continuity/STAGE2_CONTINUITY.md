@@ -7,18 +7,18 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-08-08 12:10:01 +08:00 |
-| 最后只读核查时间 | 2026-08-08 12:10:01 +08:00 |
-| 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
+| 最后内容更新时间 | 2026-08-08 13:41:43 +08:00 |
+| 最后只读核查时间 | 2026-08-08 13:41:43 +08:00 |
+| 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2`（现为完整流程整合分支，含已冻结的 Stage 1）|
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `c62d54bcd152004b11825aa2c6f85e8b27aa9f8e` |
+| 最后核查时的 HEAD | `9a94187228d75fce9de020fc1d6dd18009b435e4`（Stage 1 整合合并提交）|
 | Stage 2 功能代码状态（最后核查时） | 四个必做工作包全部完成：v2、消融、PwnKit、扩展 LPE 冻结图与正式评价、统一收口报告均已提交并推送至 origin（`c62d54b`）|
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
-| 最后核查时的上游实际 SHA | `c62d54bcd152004b11825aa2c6f85e8b27aa9f8e` |
+| 最后核查时的上游实际 SHA | `9a94187228d75fce9de020fc1d6dd18009b435e4` |
 | 最后核查时的 ahead / behind | ahead 0 / behind 0（本节提交前；分支已与 origin 同步）|
 | 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
-| 当前目标 | Stage 2 研究工作已收口；当前议题是把 Stage 1 与 Stage 2 整合并合并进 `main`，合并方案见 §26 |
-| 建议下一步 | 按 §26 分两步合并：先在 Stage 2 分支合并 `refactor/new-method-stage1` 并跑全部测试，再处理 `main` 的目录重命名冲突；合并需用户逐步确认 |
+| 当前目标 | Stage 1 整合已完成（§27）；剩余议题是按方案 B 把整合分支合并进 `main` |
+| 建议下一步 | 合并 `main`：保留旧分层方法代码，剔除可重新下载的大数据（方案 B），处理 12 个目录重命名位置冲突 |
 | 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签，只能作诊断例；Zenodo v4 档案不含本轮六个 CVE，未提供新证据（见 §23.3）|
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
@@ -1028,3 +1028,33 @@ Stage 2 已重命名的目录。
 - Stage 2 worktree 干净，已与 `origin/feat/full-pipeline-stage2` 同步于 `c62d54b`；
 - Stage 1 worktree 无未提交源码修改，但**领先 origin 1 个提交**（`9688a5b`，扩展 LPE 冻结队列），
   合并前应先推送或明确确认；其两个未跟踪的 rewrite cache 属于 Stage 1，不得代为清理。
+
+## 27. Stage 1 整合完成（2026-08-08）
+
+Stage 1 已并入本整合分支，合并提交 `9a94187228d75fce9de020fc1d6dd18009b435e4`，父提交为
+`9ec1764`（本分支）与 `9688a5b`（Stage 1）。合并方向由两份计划书共同规定，且 Stage 1 已于
+2026-07-28 冻结，不应被反向合并。冻结点已打 tag 并推送：`stage1-frozen-v5c` → `5912587`，
+`stage1-final` → `9688a5b`。
+
+合并解决的实质问题：此前本分支虽名为 full-pipeline，却无法复现 Stage 1 候选——
+`experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml` 与
+`retrieval/action_kb.py`、`action_generator.py` 只存在于 Stage 1 分支。合并后本分支可自洽
+复现完整链路。
+
+冲突两处，均取并集：
+
+- `AGENTS.md`：两侧都占用小节编号 11.12–11.14。六个命令全部保留，重编号为 11.12–11.17
+  （11.12–11.14 为 Stage 1 的 `audit-action-overlap`、`sample-benchmark`、
+  `diagnose-action-final`；11.15–11.17 为 Stage 2 的 `build-stage2-graph`、
+  `extract-graph-context`、`run-stage2`）；第 4 节同步重排，Stage 2 小节变为 4.13。
+- `data/benchmarks/stage2_mantis_scenarios/README.md`：两侧记录同一交接契约的两端，合并为
+  “Stage 1 生成义务”与“Stage 2 评价义务”两节，并保留 Stage 1 独有的 `dataset.yaml`。
+
+`src/cve2attack/cli.py` 自动合并；合并后实际加载 argparse 核对，17 个子命令全部注册、无重复
+无丢失。全部测试由 53 passed 增加到 `68 passed, 38 subtests`。Stage 1 工作树未被改动，其两个
+未跟踪的 rewrite cache 保持原样。
+
+文档组织保持按阶段分离：`STAGE1_PLAN.md` 与 `STAGE2_PLAN.md`、
+`docs/continuity/STAGE1_CONTINUITY.md` 与 `STAGE2_CONTINUITY.md`、以及 `docs/stage2_*.md`
+均为独立文件，合并没有把任一阶段文档并入另一份。仅 `AGENTS.md`、`README.md` 和上述 benchmark
+README 这三个全仓库共享文件的内容被合并，这是它们本身的职责范围。

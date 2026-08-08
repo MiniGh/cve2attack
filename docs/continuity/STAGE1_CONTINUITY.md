@@ -6,18 +6,18 @@
 
 | 项目 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | `2026-07-30T00:12:30+08:00` |
-| 最后事实核查时间 | `2026-07-30T00:12:30+08:00` |
+| 最后内容更新时间 | `2026-08-08T13:41:43+08:00` |
+| 最后事实核查时间 | `2026-08-08T13:41:43+08:00` |
 | SSH 别名 | `pri_sun`（历史文档曾使用 `sun_demi`） |
 | Stage 1 工作区 | `/home/ghdemi/Code/cve2attack` |
 | Stage 1 冻结代码基线 | `5912587e1376825457239316faa8d42c6f11e07a` (`Freeze-Stage-1-action-retrieval`) |
 | 连续性文档提交 | `259ce570b15518c7f56568ad78aa21bd61b74cef` (`docs(stage1): add living continuity guide`) |
-| 最后核查时的分支 / HEAD | `refactor/new-method-stage1` / `259ce570b15518c7f56568ad78aa21bd61b74cef` |
-| 最后核查时的上游状态 | `origin/refactor/new-method-stage1`；ahead `0` / behind `0` |
-| 最后核查时的工作区状态 | 本文件有未暂存修改；新增三场景 benchmark 的 4 个文件未跟踪；两份原有 rewrite cache 仍未跟踪；无暂存；新 run 被 Git 忽略，详见第 9.6、14 节 |
-| Stage 1 状态 | 已冻结；正式方法是严格 LOO 的 V5c、固定 Top-20、label-free 候选生成 |
-| 当前目标 | 将三项 M&NTIS 场景统一切换到正式 V5c/ATT&CK 15.1/strict LOO/父 Technique Top-20 输入，并保持冻结方法不变 |
-| 下一步 | Stage 2 直接消费新正式 Top-20 run，记录上下文重排；用户另行决定是否提交本轮 benchmark 与文档修改 |
+| 最后核查时的分支 / HEAD | `refactor/new-method-stage1` / `9688a5b340dee0de3af4dd3ceaa48bf0267fc9d4`（已并入整合分支 `feat/full-pipeline-stage2`）|
+| 最后核查时的上游状态 | `origin/refactor/new-method-stage1`；ahead `0` / behind `0`；已推送 |
+| 最后核查时的工作区状态 | Git 工作区干净；仅两份原有 rewrite cache 未跟踪，属 Stage 1 资产，不得清理；新 run 被 Git 忽略，详见第 9.6、14 节 |
+| Stage 1 状态 | 已冻结并已整合；正式方法是严格 LOO 的 V5c、固定 Top-20、label-free 候选生成；冻结点 tag 为 `stage1-frozen-v5c` 与 `stage1-final` |
+| 当前目标 | 无进行中的 Stage 1 目标。冻结方法与冻结 run 保持不变，仅作为整合分支与论文的既定基线 |
+| 下一步 | Stage 2 已消费冻结 Top-20 并完成收口（见 `docs/stage2_closing_report.md`）。Stage 1 侧无待办；后续仅在整合分支合并进 `main` 时被动参与 |
 | 硬阻塞 | 无 |
 | 当前风险 | 根 V5c 配置未显式固定 ATT&CK 15.1；正式 TRIAGE run manifest 记录的是冻结前提交；三场景中的 Tatsu 真值 T1190 未进入 V5c Top-20；两套历史数据集引文仍缺失；无持久化测试日志 |
 
@@ -883,3 +883,32 @@ git add docs/continuity/STAGE1_CONTINUITY.md
 | V3 rewrite 参数 | V3 YAML、`rewrite/ollama.py`、`rewrite/pipeline.py`、CLI、Modelfile、73 `/api/tags` |
 | 测试数量 | `tests/` 静态 37 个 `test_*`；冻结前执行观察，无持久日志 |
 | 受保护 cache | `git status`、`stat`、`sha256sum`、`.gitignore` |
+
+
+## 整合记录（2026-08-08）
+
+Stage 1 已并入完整流程整合分支 `feat/full-pipeline-stage2`，合并提交
+`9a94187228d75fce9de020fc1d6dd18009b435e4`，父提交为整合分支的 `9ec1764` 与 Stage 1 的
+`9688a5b`。合并方向由 `STAGE1_PLAN.md` 第 9 节与 `STAGE2_PLAN.md` 第 8 节共同规定：
+Stage 1 的提交由整合任务合入整合分支，而不是反向合并到已冻结的 Stage 1 分支。
+
+冻结点已打 tag 并推送：
+
+- `stage1-frozen-v5c` → `5912587`，冻结代码基线（strict-LOO V5c、ATT&CK 15.1、Top-20）；
+- `stage1-final` → `9688a5b`，并入前的分支末端（冻结代码加两个交接数据队列）。
+
+合并影响：整合分支此前无法复现 Stage 1 候选，因为 `experiments/validation/
+v5c_raw_action_rank_rrf_attack15_1.yaml` 与 `retrieval/action_kb.py`、
+`action_generator.py` 只存在于 Stage 1 分支。合并后该分支可自洽复现完整链路，全部测试
+从 53 passed 增加到 68 passed / 38 subtests。
+
+冲突解决（两处均为取并集，不是二选一）：
+
+- `AGENTS.md`：两侧都占用了小节编号 11.12–11.14。六个命令全部保留并重编号为
+  11.12–11.17，Stage 1 的三个在前；第 4 节同步重排，Stage 2 小节变为 4.13。查阅命令编号时
+  请以合并后的编号为准。
+- `data/benchmarks/stage2_mantis_scenarios/README.md`：两侧分别记录同一交接契约的两端，
+  合并为“Stage 1 生成义务”和“Stage 2 评价义务”两节，并保留 Stage 1 独有的 `dataset.yaml`。
+
+`src/cve2attack/cli.py` 自动合并，合并后实际加载 argparse 核对，17 个子命令全部注册、
+无重复无丢失。Stage 1 工作树未被改动。

@@ -300,25 +300,27 @@
 
 ## 8. Git 和 worktree 规则
 
-当前两个工作目录属于同一个 Git 仓库：
+两个工作目录属于同一个 Git 仓库：
 
 | 工作目录 | 分支 | 用途 |
 | --- | --- | --- |
-| `~/Code/cve2attack` | `refactor/new-method-stage1` | 第一阶段继续实验 |
-| `~/Code/cve2attack-stage2` | `feat/full-pipeline-stage2` | 第二阶段和完整流程整合 |
+| `~/Code/cve2attack` | `refactor/new-method-stage1` | 第一阶段，已冻结 |
+| `~/Code/cve2attack-stage2` | `feat/full-pipeline-stage2` | 完整流程整合分支 |
 
-执行第二阶段任务时只修改 `~/Code/cve2attack-stage2`。不要切换第一阶段工作树的
-分支，不要移动或清理它的 rewrite cache。
+**第一阶段整合已于 2026-08-08 完成**（合并提交 `9a94187`）。第一阶段代码在
+`5912587` 冻结，其后仅有文档和交给第二阶段使用的数据队列；两个冻结点分别打了
+tag `stage1-frozen-v5c`（冻结代码基线）和 `stage1-final`（并入前的分支末端）。
+合并后整合分支自身即可复现完整链路：CVE 文本 → 第一阶段候选 → 攻击图上下文重排
+→ 前后对照评价，全部测试为 68 passed / 38 subtests。
 
-如果第一阶段分支产生新提交：
+因此本节原先的“第一阶段产生新提交后如何同步”流程已不再是常规操作。第一阶段保持
+冻结；确需再次同步时仍按同一方向执行：在整合分支合并 `refactor/new-method-stage1`，
+重点检查 `schemas.py`、`cli.py`、`pyproject.toml` 和文档，并在全部测试通过后再继续。
+仍然不要切换第一阶段工作树的分支，也不要移动或清理它的 rewrite cache。
 
-1. 先确认两个 worktree 都没有未提交源码修改。
-2. 在第二阶段分支合并 `refactor/new-method-stage1`。
-3. 解决公共文件冲突，重点检查 `schemas.py`、`cli.py`、`pyproject.toml` 和文档。
-4. 运行全部测试后再继续第二阶段开发。
-
-最终合并到 `main` 前，先在完整整合分支保留并验证 `main` 中的旧分层第一阶段方法，
-不能用新方法直接覆盖它。
+尚未完成的是合并到 `main`。合并前必须在整合分支保留并验证 `main` 中的旧分层第一阶段
+方法，不能用新方法直接覆盖它；`main` 与整合分支的文件集几乎不相交，只读试合并显示没有
+内容冲突，仅有目录重命名造成的位置冲突。
 
 旧仓库 `/home/ghdemi/Code/ldh_attackgraph/mapInGraph` 暂时只作为历史参考。新代码验证
 完成前不删除；后续只添加“已迁移”说明，不在两个仓库同时维护实现。
