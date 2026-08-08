@@ -7,18 +7,18 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-08-08 13:41:43 +08:00 |
-| 最后只读核查时间 | 2026-08-08 13:41:43 +08:00 |
+| 最后内容更新时间 | 2026-08-08 15:49:16 +08:00 |
+| 最后只读核查时间 | 2026-08-08 15:49:16 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2`（现为完整流程整合分支，含已冻结的 Stage 1）|
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `9a94187228d75fce9de020fc1d6dd18009b435e4`（Stage 1 整合合并提交）|
+| 最后核查时的 HEAD | `f639ee3debbb772eddac5a8b3bb3f69696424137`（`main` 与整合分支同点）|
 | Stage 2 功能代码状态（最后核查时） | 四个必做工作包全部完成：v2、消融、PwnKit、扩展 LPE 冻结图与正式评价、统一收口报告均已提交并推送至 origin（`c62d54b`）|
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
-| 最后核查时的上游实际 SHA | `9a94187228d75fce9de020fc1d6dd18009b435e4` |
+| 最后核查时的上游实际 SHA | `f639ee3debbb772eddac5a8b3bb3f69696424137` |
 | 最后核查时的 ahead / behind | ahead 0 / behind 0（本节提交前；分支已与 origin 同步）|
 | 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
-| 当前目标 | Stage 1 整合已完成（§27）；剩余议题是按方案 B 把整合分支合并进 `main` |
-| 建议下一步 | 合并 `main`：保留旧分层方法代码，剔除可重新下载的大数据（方案 B），处理 12 个目录重命名位置冲突 |
+| 当前目标 | 仓库整合已全部完成；当前议题是评估并规划扩大到真实 MulVAL 大图的路线（§28）|
+| 建议下一步 | 按 §28 的三项前置条件推进：固化上游仓库状态、就多规则裁决预注册、明确证据读取范围；均须在查看新标签排名前完成 |
 | 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签，只能作诊断例；Zenodo v4 档案不含本轮六个 CVE，未提供新证据（见 §23.3）|
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
@@ -1058,3 +1058,50 @@ Stage 1 已并入本整合分支，合并提交 `9a94187228d75fce9de020fc1d6dd18
 `docs/continuity/STAGE1_CONTINUITY.md` 与 `STAGE2_CONTINUITY.md`、以及 `docs/stage2_*.md`
 均为独立文件，合并没有把任一阶段文档并入另一份。仅 `AGENTS.md`、`README.md` 和上述 benchmark
 README 这三个全仓库共享文件的内容被合并，这是它们本身的职责范围。
+
+## 28. 仓库整合完成与上游图生成管线评估（2026-08-08）
+
+### 28.1 整合完成
+
+`main` 已快进到 `f639ee3`，与整合分支同点，两者均已推送。合并谱系为
+`9a94187`（并入冻结的 Stage 1）→ `5008b47`（文档收口）→ `f639ee3`（并入 `main` 的旧分层方法）。
+`main` 与整合分支的文件集几乎不相交，没有内容冲突，12 个冲突全部是目录重命名造成的位置冲突。
+
+按修正后的方案 B 处理：保留旧分层方法全部代码与 LLM 结果
+（`stage2_cve_tactics/` 29 文件、`stage3_cve_techniques/` 12 文件，
+`cve_to_attack_domain/` 早已归档于 `archive/pre_refactor/`）；`Validate_data` 脚本与评估结果
+随重命名进入 `archive/legacy_tfidf/`，`ics-attack.json` 与 `mobile-attack.json` 进入 `data/raw/`。
+剔除 17 个 `.pyc`、`tmp/` 临时结果，以及可由自身脚本再生的 22.6 MB 中间产物
+`cve2technique_full_with_tactics.jsonl`。净新增 49 文件 / 29.3 MB。
+
+体积更正：此前记录的"合并后约 1.4 GB"不成立。`data/raw/cve/`（326 MB）与
+`archive/legacy_tfidf/Existing_map`（182 MB）在合并前就已存在于整合分支，只是重构时改了路径。
+
+### 28.2 上游攻击图生成管线评估
+
+详见 `docs/stage2_upstream_graph_generator_assessment.md`。该仓库是 Stage 2 的前序工作，
+二者通过 `AttackGraph.xml` 解耦。评估全程只读，未修改该仓库。
+
+已确认：MulVAL 与 XSB 均已安装且该管线曾完整跑通；其真实产物可被 Stage 2 现有解析器零改动消费；
+`tests/fixtures/mulval/AttackGraph.xml` 与 `ldh_attackgraph/mulvalOutput/AttackGraph.xml` 的
+SHA256 一致，确认 fixture 即本管线产物；MulVAL 输入为结构化谓词，可程序化批量生成。
+
+### 28.3 两个新发现（属待验证问题，不得直接改规则）
+
+**自定义 MulVAL 规则会改变进入推导链的事实。** 在该管线 7 节点产物上
+`public_facing_service` 未触发：其自定义规则 `RULE 25 (Log4j2 JNDI remote code execution)`
+的推导链不含 `networkServiceInfo`，而该事实虽存在于 `mulval_facts.P` 却不在证据子图内。
+同一规则在 44 节点标准 fixture 上正常触发。因此 Stage 2 规则触发率依赖上游使用的交互规则集，
+扩大实验前必须固定上游规则集并把该因素记为显式变量。
+
+**真实图会让多条规则同时命中。** 44 节点 fixture 上 `CVE-2002-0392` 同时触发
+`public_facing_service`（T1190）与 `lateral_remote_service`（T1210）。三个 M&NTIS 场景与
+AttackMate 场景每例只触发一条，此情形此前从未评估。当前实现的实际行为是"并集提升、组内保持
+Stage 1 原序"，确定性且不报错，但没有预注册的裁决规则。真实图上这将是常态，必须先形成独立
+假设与预注册。
+
+### 28.4 上游仓库状态风险
+
+核查时该仓库位于 `main`、HEAD `8bfc07d`，但工作区有 114 项改动（46 删除、29 修改、39 未跟踪），
+磁盘代码与最后提交显著脱节，`outputs/` 中 2026-04-21 产物由哪一版代码生成无法确定。
+正式使用前必须由用户决定如何固化；本仓库任务仍不得对其执行清理、reset、checkout 覆盖或批量删除。
