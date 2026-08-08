@@ -7,18 +7,18 @@
 
 | 字段 | 当前值 |
 | --- | --- |
-| 最后内容更新时间 | 2026-08-08 01:45:00 +08:00 |
-| 最后只读核查时间 | 2026-08-08 01:28:18 +08:00 |
+| 最后内容更新时间 | 2026-08-08 12:10:01 +08:00 |
+| 最后只读核查时间 | 2026-08-08 12:10:01 +08:00 |
 | 当前唯一真实开发工作区 | `/home/ghdemi/Code/cve2attack-stage2` |
 | 最后核查时的分支 | `feat/full-pipeline-stage2` |
-| 最后核查时的 HEAD | `80383b02fe511a4d1b63e260169e80b514a2de89` |
-| Stage 2 功能代码状态（最后核查时） | topology-only v2、消融、PwnKit、扩展 LPE 来源/预注册和冻结 Stage 1 候选均已提交并推送至 origin；AttackMate Zenodo v4 档案已人工交付并登记 SHA256；扩展图和正式评价尚未开始 |
+| 最后核查时的 HEAD | `c62d54bcd152004b11825aa2c6f85e8b27aa9f8e` |
+| Stage 2 功能代码状态（最后核查时） | 四个必做工作包全部完成：v2、消融、PwnKit、扩展 LPE 冻结图与正式评价、统一收口报告均已提交并推送至 origin（`c62d54b`）|
 | 最后核查时的上游分支 | `origin/feat/full-pipeline-stage2` |
-| 最后核查时的上游实际 SHA | `4d8e40b04374a2d2137091c8bd914ba1beb15c30` |
-| 最后核查时的 ahead / behind | ahead 0 / behind 0（连续性文档自身提交前；本次 SHA256 登记提交将产生 1 个新的未推送提交） |
+| 最后核查时的上游实际 SHA | `c62d54bcd152004b11825aa2c6f85e8b27aa9f8e` |
+| 最后核查时的 ahead / behind | ahead 0 / behind 0（本节提交前；分支已与 origin 同步）|
 | 文档生成/最后核查时的工作区状态 | 更新本文前 Git 工作区干净；更新后仅本文有 Git 可见修改；被忽略的正式/消融/PwnKit run、扩展 Stage 1 run、外部数据和缓存均保留 |
-| 当前目标 | 毕设闭环报告已收口（`docs/stage2_closing_report.md`）；四个必做工作包全部完成 |
-| 建议下一步 | 由用户决定：推送提交、按收口报告撰写论文，或就同 tactic 竞争失败模式起草新的独立预注册 |
+| 当前目标 | Stage 2 研究工作已收口；当前议题是把 Stage 1 与 Stage 2 整合并合并进 `main`，合并方案见 §26 |
+| 建议下一步 | 按 §26 分两步合并：先在 Stage 2 分支合并 `refactor/new-method-stage1` 并跑全部测试，再处理 `main` 的目录重命名冲突；合并需用户逐步确认 |
 | 当前阻塞/限制 | CVE-2010-3856 缺少独立 ATT&CK 标签，只能作诊断例；Zenodo v4 档案不含本轮六个 CVE，未提供新证据（见 §23.3）|
 
 上述分支、上游 SHA、ahead/behind 和工作区状态都是本次连续性文档提交前的状态快照。既有三个
@@ -973,3 +973,58 @@ T1574 等多种机制，topology-only 证据在原理上无法区分，因此本
 至此 `STAGE2_PLAN.md` 的四个必做工作包全部完成。工作包 2 中此前未勾选的"支持关闭单个上下文特征
 做消融"已由 `no_context / local_context / full_graph_context` 三模式接口实现；工作包 4 的复现、
 测试、失败诊断与 Git 边界要求均已满足。
+
+## 26. 合并进 main 的现状分析（2026-08-08，只读试合并）
+
+本节记录一次性丢弃式试合并的结论。试合并在临时游离 HEAD worktree 中进行，随后已 `merge --abort`
+并 `worktree remove`；两个真实 worktree 与全部分支均未被改动，核查后状态与试合并前一致。
+
+### 26.1 分支拓扑
+
+共同祖先为 `efc71f7`。自该点起：`main` 领先 5 个提交，`refactor/new-method-stage1` 领先 25 个，
+`feat/full-pipeline-stage2` 领先 40 个。Stage 2 **不是** Stage 1 的后代：Stage 1 另有 6 个提交不在
+Stage 2 中（`4227472`、`e0bb8a6`、`5912587`、`259ce57`、`0c74f25`、`9688a5b`），其中 `9688a5b`
+正是扩展 LPE 使用的冻结候选队列。两者的共同祖先为 `aa0379a`。
+
+`main` 是与新流水线**几乎完全不相交**的旧代码库：`stage2_cve_tactics/`、`stage3_cve_techniques/`、
+`cve_to_attack_domain/`、`og_data/`、`Validate_data/`，自共同祖先起新增约 160 万行，并提交了
+23 个 `.pyc`。
+
+### 26.2 试合并结果一：Stage 1 → Stage 2
+
+仅两个文件需要人工解决，且都是文档：
+
+- `AGENTS.md`：内容冲突（两侧分别新增约 211 行和 169 行）；
+- `data/benchmarks/stage2_mantis_scenarios/README.md`：add/add 冲突。
+
+`src/cve2attack/cli.py` 与 `README.md` **自动合并成功**。两侧的
+`stage2_mantis_scenarios/CVE-2020.jsonl` 与 `CVE-2021.jsonl` 内容逐字节相同，无数据分歧；
+Stage 1 另有该目录下的 `dataset.yaml`，Stage 2 没有，合并时直接并入。
+
+注意：`cli.py` 自动合并成功不等于语义正确，两侧都改过命令注册，合并后必须人工复核并跑全部测试。
+Stage 1 还会带入 `retrieval/action_kb.py`、`retrieval/action_generator.py`、`evaluation/action_*.py`
+及其测试，合并后测试总数应显著增加。
+
+### 26.3 试合并结果二：Stage 2 → main
+
+**没有任何内容冲突。** 12 个冲突全部是目录重命名导致的 file location 冲突：`main` 把新文件加进了
+Stage 2 已重命名的目录。
+
+- `Validate_data/*`（含 3 个 `.pyc`）→ Git 建议移到 `archive/legacy_tfidf/`；
+- `og_data/ics-attack.json`、`og_data/mobile-attack.json` → Git 建议移到 `data/raw/`。
+
+自共同祖先起，没有任何文件被 `main` 与 Stage 2 同时修改；Stage 2 只删除了 6 个 `.pyc`，`main`
+未触碰其中任何一个。
+
+### 26.4 体积影响
+
+`main` 的树约 694.5 MB，Stage 2 的树约 721.8 MB，两者文件集几乎不相交，合并后仓库会显著增大。
+`main` 独有的大文件包括 `og_data/enterprise-attack.json`（48.4 MB）、`og_data/cve/CVE-2025.json`
+（34.5 MB）等，仅 `og_data/cve/` 一项即数百 MB。是否将这些原始数据一并并入，属于需要用户决定的
+问题；`STAGE2_PLAN.md` §8 要求保留的是 `main` 中的旧分层**方法**，并未要求保留其原始数据副本。
+
+### 26.5 合并前置条件
+
+- Stage 2 worktree 干净，已与 `origin/feat/full-pipeline-stage2` 同步于 `c62d54b`；
+- Stage 1 worktree 无未提交源码修改，但**领先 origin 1 个提交**（`9688a5b`，扩展 LPE 冻结队列），
+  合并前应先推送或明确确认；其两个未跟踪的 rewrite cache 属于 Stage 1，不得代为清理。
