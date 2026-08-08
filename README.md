@@ -10,10 +10,13 @@ Start with `STAGE2_PLAN.md` for the thesis-scope roadmap, work-package acceptanc
 criteria, leakage safeguards and Git/worktree rules. The lower-level graph JSON
 contract is documented separately in `docs/stage2_graph_context.md`.
 
-The selected method is **V3a**: use the corrected Llama 3-templated Ollama tag `sec-i1-cve-rewrite:v1` to rewrite a CVE description into attacker-action language, then retrieve top-level ATT&CK techniques with `basel/ATTACK-BERT` using technique name + description.
+V3a was the method selected during the initial refactor, but the frozen TRIAGE comparison showed V1 as the strongest pre-V5 single-source Top-20 baseline. V3a remains an important query-view ablation rather than a preselected final method. The current research roadmap and acceptance gates are maintained in `STAGE1_PLAN.md`.
+
+The frozen label-free Stage-1 method is V5c: it embeds individual ATT&CK descriptions, sub-technique descriptions and procedure actions, then rolls the Top-3 action ranks back to parent Techniques. Its strict leave-one-CVE-out evaluation reaches Micro Recall@20 60.14% on the public 60-CVE TRIAGE test view (V1 37.76%, SMET 52.45%, supervised TRIAGE 76.92%). The same frozen method improves over V1 on `cve2attack_result`, all three KEV views and a label-independent 2,000-CVE `data_result` sample. Corpus ablations show that procedures provide nearly all of the gain; procedure-count exposure bias is documented as a limitation. Stage 1 is frozen and complete for handoff to the graph-context Stage 2.
 
 ## Layout
 
+- `STAGE1_PLAN.md`: current Stage-1 roadmap, evidence, work packages and acceptance criteria.
 - `experiments/`: versioned method definitions; no generated results.
 - `models/ollama/`: versioned Ollama templates and runtime parameters; no model weights.
 - `data/benchmarks/`: paper datasets with ground-truth CVE → technique mappings.
@@ -52,12 +55,43 @@ OLLAMA_HOST=http://172.23.216.73:11434 \
 .venv/bin/python -m cve2attack run experiments/v3a_llm_rewrite.yaml --max-cves 20
 ```
 
+Run the strict action-level Top-20 method (the first action embedding-cache build is expensive; later runs reuse it):
+
+```bash
+.venv/bin/python -m cve2attack inspect experiments/v5c_raw_action_rank_rrf.yaml
+.venv/bin/python -m cve2attack run experiments/v5c_raw_action_rank_rrf.yaml
+```
+
+`exclude_query_cve_actions: true` is mandatory in formal V5 runs: a procedure that originally names the query CVE is excluded even though CVE/CAN identifiers are also masked in the indexed text. Direct corpus/benchmark overlap can be audited separately:
+
+```bash
+.venv/bin/python -m cve2attack audit-action-overlap \
+  --benchmark triage_2025_test_all \
+  --comparison-id triage_action_procedure_overlap_audit
+```
+
 Run the same method on either independent paper benchmark without copying the experiment definition:
 
 ```bash
 .venv/bin/python -m cve2attack run experiments/v1_raw_attackbert.yaml --benchmark data_result
 .venv/bin/python -m cve2attack run experiments/v1_raw_attackbert.yaml --benchmark cve2attack_result
 ```
+
+Cross-benchmark validation uses the same frozen ATT&CK 15.1 corpus for V1 and V5c:
+
+```bash
+.venv/bin/python -m cve2attack run \
+  experiments/validation/v5c_raw_action_rank_rrf_attack15_1.yaml \
+  --benchmark ctid_kev_2025_02_13_nonoverlap
+```
+
+The committed `data_result_hash_sample_2000` cohort was selected from the 286,461-record
+`data_result` benchmark using only a seeded SHA-256 ordering of CVE IDs. It is a reproducibility
+and scale check, not a replacement for an independently curated authoritative benchmark.
+
+The final frozen-method audit is reproducible with `diagnose-action-final`. Its ignored runtime
+artifacts live under `comparisons/triage_stage1_v5c_final_audit/`; the permanent result summary and
+method decision are recorded in `STAGE1_PLAN.md` and `docs/experiment_history.md`.
 
 Rewrite caches use the selected benchmark name and prompt-template version. For example, `--benchmark data_result` with V3a reads or generates `data/derived/rewrite_cache/data_result_sec_i1_llama3_chat_v1.json`. Legacy `*_sec_i1.json` caches were generated with an invalid raw-prompt template and must not be mixed with the v1 cache.
 
@@ -134,6 +168,9 @@ Run the trace-derived Zerologon case from committed inputs:
 ```
 
 Every method is evaluated on the benchmark's complete fixed cohort. Missing predictions count as misses and coverage is reported separately.
+When exactly two runs are compared, the report additionally includes their paired per-CVE
+Recall@10/@20 deltas, 10,000-sample bootstrap 95% confidence intervals, and counts of improved,
+unchanged and worse CVEs.
 
 Import and compare on the exact 60-CVE public TRIAGE test split:
 

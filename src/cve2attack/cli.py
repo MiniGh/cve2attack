@@ -11,12 +11,16 @@ from typing import Sequence
 from cve2attack.config import PROJECT_ROOT, load_experiment, project_path
 from cve2attack.data.kev import import_kev_benchmarks
 from cve2attack.data.loaders import CVERepository, benchmark_truth, candidate_records
+from cve2attack.data.sampling import sample_benchmark
 from cve2attack.data.triage import import_triage_benchmarks
 from cve2attack.domain.classifier import classify_directory
 from cve2attack.evaluation.metrics import evaluate
+from cve2attack.evaluation.action_final import write_action_final_audit
+from cve2attack.evaluation.paired import paired_recall_comparison
 from cve2attack.evaluation.report import write_comparison_report
 from cve2attack.evaluation.diagnostics import diagnose_triage_candidates
 from cve2attack.evaluation.triage import compare_with_triage
+from cve2attack.evaluation.action_overlap import write_action_overlap_audit
 from cve2attack.fusion.rrf import run_rrf_fusion
 from cve2attack.pipeline import (
     build_queries,
@@ -24,6 +28,7 @@ from cve2attack.pipeline import (
     run_experiment,
     select_input_ids,
 )
+from cve2attack.retrieval.action_kb import action_corpus_stats, load_action_documents
 from cve2attack.retrieval.technique_kb import load_technique_documents
 from cve2attack.rewrite.ollama import OllamaClient
 from cve2attack.rewrite.pipeline import generate_rewrite_cache
@@ -79,6 +84,15 @@ def _parser() -> argparse.ArgumentParser:
         help="Directory in which the two generated TRIAGE test views are created",
     )
 
+    sample = subparsers.add_parser(
+        "sample-benchmark",
+        help="Create a frozen label-independent hash sample of a large benchmark",
+    )
+    sample.add_argument("--source", required=True, help="Source benchmark name")
+    sample.add_argument("--output", required=True, help="New benchmark name")
+    sample.add_argument("--size", required=True, type=int, help="Number of CVEs to retain")
+    sample.add_argument("--seed", required=True, help="Versioned deterministic sampling seed")
+
     subparsers.add_parser("classify-domain", help="Rebuild yearly ATT&CK domain mappings")
 
     run = subparsers.add_parser("run", help="Run one experiment")
@@ -121,12 +135,36 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         help="Full-ranking V1/V2/V3 run directories to diagnose",
     )
+
     triage_diagnose.add_argument("--comparison-id")
     triage_diagnose.add_argument(
         "--source-dir",
         default="data/raw/triage/triage_2025",
         help="Directory containing the frozen split, labels and reference predictions",
     )
+
+    action_audit = subparsers.add_parser(
+        "audit-action-overlap",
+        help="Audit exact benchmark CVEs referenced by ATT&CK procedure examples",
+    )
+    action_audit.add_argument("--benchmark", required=True)
+    action_audit.add_argument("--comparison-id")
+
+    action_final = subparsers.add_parser(
+        "diagnose-action-final",
+        help="Finalize V5c with corpus ablations, procedure-bias and case diagnostics",
+    )
+    action_final.add_argument("--benchmark", default="triage_2025_test_all")
+    action_final.add_argument(
+        "--attack-bundle", default="data/knowledge/enterprise-attack-15.1.json"
+    )
+    action_final.add_argument("--v1-run", required=True, type=Path)
+    action_final.add_argument("--parent-run", required=True, type=Path)
+    action_final.add_argument("--subtechnique-run", required=True, type=Path)
+    action_final.add_argument("--descriptions-run", required=True, type=Path)
+    action_final.add_argument("--procedure-run", required=True, type=Path)
+    action_final.add_argument("--full-run", required=True, type=Path)
+    action_final.add_argument("--comparison-id", required=True)
 
     rrf = subparsers.add_parser(
         "fuse-rrf",
@@ -283,20 +321,39 @@ def compare_runs(
         raise RuntimeError(f"Benchmark has no records: {benchmark_name}")
 
     rows = {}
+    records_by_run = {}
     for raw_path in run_dirs:
         run_dir = raw_path if raw_path.is_absolute() else project_root / raw_path
-        rows[_run_name(run_dir)] = evaluate(candidate_records(run_dir), truth)
+        name = _run_name(run_dir)
+        records = candidate_records(run_dir)
+        rows[name] = evaluate(records, truth)
+        records_by_run[name] = records
 
-    identifier = comparison_id or f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{benchmark_name}"
-    output_dir = project_root / "comparisons" / identifier
-    if output_dir.exists():
-        raise FileExistsError(f"Comparison directory already exists: {output_dir}")
-    output_dir.mkdir(parents=True)
     payload = {
         "benchmark": benchmark_name,
         "cohort_size": len(truth),
         "runs": {name: metrics.to_dict() for name, metrics in rows.items()},
     }
+    paired = None
+    if len(records_by_run) == 2:
+        left_name, right_name = records_by_run
+        paired = paired_recall_comparison(
+            records_by_run[left_name],
+            records_by_run[right_name],
+            truth,
+            left_name=left_name,
+            right_name=right_name,
+        )
+        payload["paired_recall_delta"] = paired
+
+    # Perform all potentially expensive bootstrap work before creating the
+    # immutable output directory. An interrupted SSH session then cannot leave
+    # behind an empty comparison that blocks a safe retry.
+    identifier = comparison_id or f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{benchmark_name}"
+    output_dir = project_root / "comparisons" / identifier
+    if output_dir.exists():
+        raise FileExistsError(f"Comparison directory already exists: {output_dir}")
+    output_dir.mkdir(parents=True)
     (output_dir / "metrics.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -306,6 +363,24 @@ def compare_runs(
     write_comparison_report(
         output_dir / "report.md", benchmark_name=benchmark_name, rows=rows
     )
+    if paired is not None:
+        with (output_dir / "report.md").open("a", encoding="utf-8") as handle:
+            handle.write(
+                "\n## Paired CVE-level recall delta\n\n"
+                f"Positive values mean `{paired['right']}` outperforms `{paired['left']}`. "
+                f"Intervals use {paired['bootstrap_iterations']:,} paired bootstrap samples "
+                f"with seed {paired['seed']}.\n\n"
+                "| Cutoff | Delta | 95% CI | Improved CVEs | Same | Worse |\n"
+                "|---:|---:|---:|---:|---:|---:|\n"
+            )
+            for cutoff in (10, 20):
+                point = paired["cutoffs"][str(cutoff)]
+                handle.write(
+                    f"| {cutoff} | {point['delta']:.2%} | "
+                    f"[{point['ci95_low']:.2%}, {point['ci95_high']:.2%}] | "
+                    f"{point['improved_cves']} | {point['same_cves']} | "
+                    f"{point['worse_cves']} |\n"
+                )
     return output_dir
 
 
@@ -330,13 +405,30 @@ def main(argv: Sequence[str] | None = None) -> None:
             repository=CVERepository(PROJECT_ROOT / "data" / "raw" / "cve"),
             project_root=PROJECT_ROOT,
         )
-        document_config = config["technique_document"]
-        techniques = load_technique_documents(
-            resolve_attack_bundle(config, PROJECT_ROOT),
-            include_procedures=bool(document_config["include_procedures"]),
-            procedure_char_limit=int(document_config["procedure_char_limit"]),
-        )
-        print(json.dumps({**coverage, "technique_count": len(techniques)}, indent=2))
+        attack_bundle = resolve_attack_bundle(config, PROJECT_ROOT)
+        if config["retrieval"]["corpus"] == "action":
+            action_config = config["action_document"]
+            actions = load_action_documents(
+                attack_bundle,
+                include_descriptions=bool(action_config["include_descriptions"]),
+                include_procedures=bool(action_config["include_procedures"]),
+                source_types=action_config.get("source_types"),
+                min_chars=int(action_config["min_chars"]),
+                max_chars=int(action_config["max_chars"]),
+            )
+            corpus_details = {"retrieval_corpus": "action", **action_corpus_stats(actions)}
+        else:
+            document_config = config["technique_document"]
+            techniques = load_technique_documents(
+                attack_bundle,
+                include_procedures=bool(document_config["include_procedures"]),
+                procedure_char_limit=int(document_config["procedure_char_limit"]),
+            )
+            corpus_details = {
+                "retrieval_corpus": "technique",
+                "technique_count": len(techniques),
+            }
+        print(json.dumps({**coverage, **corpus_details}, indent=2))
         return
 
     if args.command == "import-kev":
@@ -348,10 +440,65 @@ def main(argv: Sequence[str] | None = None) -> None:
         print(json.dumps(stats, ensure_ascii=False, indent=2))
         return
 
+    if args.command == "audit-action-overlap":
+        benchmark_dir = PROJECT_ROOT / "data" / "benchmarks" / args.benchmark
+        if not benchmark_dir.is_dir():
+            raise SystemExit(f"Benchmark does not exist: {benchmark_dir}")
+        identifier = args.comparison_id or (
+            f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{args.benchmark}_action_overlap"
+        )
+        path = write_action_overlap_audit(
+            attack_bundle=resolve_attack_bundle(
+                {
+                    "input": {"mode": "benchmark", "benchmark": args.benchmark},
+                    "technique_document": {},
+                },
+                PROJECT_ROOT,
+            ),
+            benchmark_dir=benchmark_dir,
+            output_dir=PROJECT_ROOT / "comparisons" / identifier,
+        )
+        print(path)
+        return
+
+    if args.command == "diagnose-action-final":
+        def run_path(value: Path) -> Path:
+            """Resolve named run arguments without changing absolute paths."""
+            return value if value.is_absolute() else PROJECT_ROOT / value
+
+        print("[action-final] starting frozen V5c final audit", flush=True)
+        path = write_action_final_audit(
+            attack_bundle=project_path(args.attack_bundle),
+            benchmark_dir=PROJECT_ROOT / "data" / "benchmarks" / args.benchmark,
+            run_dirs={
+                "v1": run_path(args.v1_run),
+                "parent": run_path(args.parent_run),
+                "subtechnique": run_path(args.subtechnique_run),
+                "descriptions": run_path(args.descriptions_run),
+                "procedure": run_path(args.procedure_run),
+                "full": run_path(args.full_run),
+            },
+            output_dir=PROJECT_ROOT / "comparisons" / args.comparison_id,
+            progress=lambda message: print(f"[action-final] {message}", flush=True),
+        )
+        print(path)
+        return
+
     if args.command == "import-triage":
         stats = import_triage_benchmarks(
             source_dir=project_path(args.source_dir),
             benchmark_root=project_path(args.benchmark_root),
+        )
+        print(json.dumps(stats, ensure_ascii=False, indent=2))
+        return
+
+    if args.command == "sample-benchmark":
+        benchmark_root = PROJECT_ROOT / "data" / "benchmarks"
+        stats = sample_benchmark(
+            source_dir=benchmark_root / args.source,
+            output_dir=benchmark_root / args.output,
+            sample_size=args.size,
+            seed=args.seed,
         )
         print(json.dumps(stats, ensure_ascii=False, indent=2))
         return

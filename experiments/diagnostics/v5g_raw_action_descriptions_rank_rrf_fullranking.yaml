@@ -1,0 +1,24 @@
+name: v5g_raw_action_descriptions_rank_rrf_fullranking
+description: Leakage-control full ranking using description actions and fixed rank-RRF aggregation with raw queries.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: raw_description
+action_document:
+  include_descriptions: true
+  include_procedures: false
+  min_chars: 20
+  max_chars: 1200
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: rank_rrf
+  aggregation_top_m: 3
+  rank_constant: 60
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

@@ -1,0 +1,32 @@
+name: v5d_rewrite_action_rank_rrf_fullranking
+description: Diagnostic full ranking for sec-i1 rewrites with fixed rank-RRF action aggregation.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: rewrite_cache
+  # Reuse the completed 296-CVE cache; this experiment never calls Ollama.
+  cache: data/derived/rewrite_cache/ctid_kev_2025_02_13_all_sec_i1_llama3_chat_v1.json
+  llm:
+    base_url: http://172.23.216.73:11434/api/generate
+    model: sec-i1-cve-rewrite:v1
+    timeout_seconds: 300
+    max_retries: 3
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  min_chars: 20
+  max_chars: 1200
+  exclude_query_cve_actions: false
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: rank_rrf
+  aggregation_top_m: 3
+  rank_constant: 60
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

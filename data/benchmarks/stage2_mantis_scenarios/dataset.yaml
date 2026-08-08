@@ -1,0 +1,36 @@
+name: stage2_mantis_scenarios
+kind: case_study_benchmark
+task: cve_to_attack_technique_candidate_coverage
+purpose: Unified formal V5c Top-20 handoff baseline for three Stage 2 M&NTIS scenarios.
+source:
+  provider: M&NTIS
+  label_source: manifest.scenario.mitre_data
+  stage2_worktree: /home/ghdemi/Code/cve2attack-stage2
+  stage2_head: e3d095d1eb2573eb5bcd68a55cf6249bd2f69bda
+  benchmark_path: data/benchmarks/stage2_mantis_scenarios
+  dataset_ids:
+    - 625f449f-e7f0-49a1-b0ce-030204be7545
+    - 099967fe-c11a-4bee-b4cc-916d96af5f3b
+    - d188aad5-a524-4255-82d3-5adab98715e1
+annotated_cves: 3
+cve_ids:
+  - CVE-2020-1472
+  - CVE-2021-25094
+  - CVE-2021-3156
+attack_version: '15.1'
+technique_corpus:
+  path: data/knowledge/enterprise-attack-15.1.json
+  version: '15.1'
+  sha256: a57988bffe402bb3e19d92dbe80a12143e1970b814e013e080f9df2fa5a3f6bc
+input_text_policy: Use only the original descriptions in data/raw/cve; labels are evaluation-only.
+label_policy:
+  evaluation_field: techniques
+  normalization: ATT&CK sub-techniques are rolled up to parent techniques.
+  source: Frozen M&NTIS case-study labels from the Stage 2 worktree.
+record_schema:
+  cve_id: string
+  techniques: list[object]
+notes:
+  - This is a fixed three-case handoff cohort, not a population-level benchmark.
+  - Candidate generation must use the explicit ATT&CK 15.1 validation config.
+  - Truth ranks must be inspected only after candidate generation completes.

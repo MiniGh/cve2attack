@@ -1,0 +1,19 @@
+name: v1_raw_attackbert_attack15_1
+description: Frozen ATT&CK 15.1 V1 baseline for cross-benchmark validation.
+input:
+  mode: benchmark
+  benchmark: cve2attack_result
+query:
+  strategy: raw_description
+technique_document:
+  attack_bundle: data/knowledge/enterprise-attack-15.1.json
+  include_procedures: false
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: technique
+  top_k: 20
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

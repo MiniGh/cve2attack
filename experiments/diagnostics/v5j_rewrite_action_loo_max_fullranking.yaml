@@ -1,0 +1,29 @@
+name: v5j_rewrite_action_loo_max_fullranking
+description: Full action ranking with rewrite queries and leave-one-CVE-out procedure filtering, aggregated by max.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: rewrite_cache
+  cache: data/derived/rewrite_cache/ctid_kev_2025_02_13_all_sec_i1_llama3_chat_v1.json
+  llm:
+    base_url: http://172.23.216.73:11434/api/generate
+    model: sec-i1-cve-rewrite:v1
+    timeout_seconds: 300
+    max_retries: 3
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  min_chars: 20
+  max_chars: 1200
+  exclude_query_cve_actions: true
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: max
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]

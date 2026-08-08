@@ -1,0 +1,28 @@
+name: v5c_procedure_ablation_fullranking
+description: Frozen V5c parameters with only ATT&CK procedures and strict leave-one-CVE-out.
+input:
+  mode: benchmark
+  benchmark: triage_2025_test_all
+query:
+  strategy: raw_description
+technique_document:
+  attack_bundle: data/knowledge/enterprise-attack-15.1.json
+action_document:
+  include_descriptions: true
+  include_procedures: true
+  source_types: [procedure]
+  min_chars: 20
+  max_chars: 1200
+  exclude_query_cve_actions: true
+retrieval:
+  model: basel/ATTACK-BERT
+  corpus: action
+  aggregation: rank_rrf
+  aggregation_top_m: 3
+  rank_constant: 60
+  top_k: 202
+  batch_size: 32
+fusion:
+  strategy: none
+evaluation:
+  benchmarks: [input]
