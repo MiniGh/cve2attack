@@ -1,0 +1,72 @@
+[
+  {
+    "id": "TA0027",
+    "name": "Initial Access",
+    "description": "The adversary is trying to get into your device.\n\nThe initial access tactic represents the vectors adversaries use to gain an initial foothold onto a mobile device."
+  },
+  {
+    "id": "TA0028",
+    "name": "Persistence",
+    "description": " The adversary is trying to maintain their foothold.\n\nPersistence is any access, action, or configuration change to a mobile device that gives an attacker a persistent presence on the device. Attackers often will need to maintain access to mobile devices through interruptions such as device reboots and potentially even factory data resets."
+  },
+  {
+    "id": "TA0029",
+    "name": "Privilege Escalation",
+    "description": " The adversary is trying to gain higher-level permissions.\n\nPrivilege escalation includes techniques that allow an attacker to obtain a higher level of permissions on the mobile device. Attackers may enter the mobile device with very limited privileges and may be required to take advantage of a device weakness to obtain higher privileges necessary to successfully carry out their mission objectives."
+  },
+  {
+    "id": "TA0030",
+    "name": "Defense Evasion",
+    "description": " The adversary is trying to avoid being detected.\n\nDefense evasion consists of techniques an adversary may use to evade detection or avoid other defenses. Sometimes these actions are the same as or variations of techniques in other categories that have the added benefit of subverting a particular defense or mitigation. Defense evasion may be considered a set of attributes the adversary applies to all other phases of the operation."
+  },
+  {
+    "id": "TA0031",
+    "name": "Credential Access",
+    "description": "The adversary is trying to steal account names, passwords, or other secrets that enable access to resources.\n\nCredential access represents techniques that can be used by adversaries to obtain access to or control over passwords, tokens, cryptographic keys, or other values that could be used by an adversary to gain unauthorized access to resources. Credential access allows the adversary to assume the identity of an account, with all of that account's permissions on the system and network, and makes it harder for defenders to detect the adversary. With sufficient access within a network, an adversary can create accounts for later use within the environment."
+  },
+  {
+    "id": "TA0032",
+    "name": "Discovery",
+    "description": "The adversary is trying to figure out your environment.\n\nDiscovery consists of techniques that allow the adversary to gain knowledge about the characteristics of the mobile device and potentially other networked systems. When adversaries gain access to a new system, they must orient themselves to what they now have control of and what benefits operating from that system give to their current objective or overall goals during the intrusion. The operating system may provide capabilities that aid in this post-compromise information-gathering phase."
+  },
+  {
+    "id": "TA0033",
+    "name": "Lateral Movement",
+    "description": "The adversary is trying to move through your environment.\n\nLateral movement consists of techniques that enable an adversary to access and control remote systems on a network and could, but does not necessarily, include execution of tools on remote systems. The lateral movement techniques could allow an adversary to gather information from a system without needing additional tools, such as a remote access tool."
+  },
+  {
+    "id": "TA0034",
+    "name": "Impact",
+    "description": "The adversary is trying to manipulate, interrupt, or destroy your devices and data.\n\nThe impact tactic consists of techniques used by the adversary to execute his or her mission objectives but that do not cleanly fit into another category such as Collection. Mission objectives vary based on each adversary's goals, but examples include toll fraud, destruction of device data, or locking the user out of his or her device until a ransom is paid."
+  },
+  {
+    "id": "TA0035",
+    "name": "Collection",
+    "description": "The adversary is trying to gather data of interest to their goal.\n\nCollection consists of techniques used to identify and gather information, such as sensitive files, from a target network prior to exfiltration. This category also covers locations on a system or network where the adversary may look for information to exfiltrate."
+  },
+  {
+    "id": "TA0036",
+    "name": "Exfiltration",
+    "description": "The adversary is trying to steal data.\n\nExfiltration refers to techniques and attributes that result or aid in the adversary removing files and information from the targeted mobile device.\n\nIn the mobile environment, mobile devices are frequently connected to networks outside enterprise control such as cellular networks or public Wi-Fi networks. Adversaries could attempt to evade detection by communicating on these networks, and potentially even by using non-Internet Protocol mechanisms such as Short Message Service (SMS). However, cellular networks often have data caps and/or extra data charges that could increase the potential for adversarial communication to be detected."
+  },
+  {
+    "id": "TA0037",
+    "name": "Command and Control",
+    "description": "The adversary is trying to communicate with compromised devices to control them.\n\nThe command and control tactic represents how adversaries communicate with systems under their control within a target network. There are many ways an adversary can establish command and control with various levels of covertness, depending on system configuration and network topology. Due to the wide degree of variation available to the adversary at the network level, only the most common factors were used to describe the differences in command and control. There are still a great many specific techniques within the documented methods, largely due to how easy it is to define new protocols and use existing, legitimate protocols and network services for communication. \n\nThe resulting breakdown should help convey the concept that detecting intrusion through command and control protocols without prior knowledge is a difficult proposition over the long term. Adversaries' main constraints in network-level defense avoidance are testing and deployment of tools to rapidly change their protocols, awareness of existing defensive technologies, and access to legitimate Web services that, when used appropriately, make their tools difficult to distinguish from benign traffic.\n\nAdditionally, in the mobile environment, mobile devices are frequently connected to networks outside enterprise control such as cellular networks or public Wi-Fi networks. Adversaries could attempt to evade detection by communicating on these networks, and potentially even by using non-Internet Protocol mechanisms such as Short Message Service (SMS). However, cellular networks often have data caps and/or extra data charges that could increase the potential for adversarial communication to be detected."
+  },
+  {
+    "id": "TA0038",
+    "name": "Network Effects",
+    "description": "The adversary is trying to intercept or manipulate network traffic to or from a device.\n\nThis category refers to network-based techniques that an adversary may be able to use to fulfill his or her objectives without access to the mobile device itself. These include techniques to intercept or manipulate network traffic to and from the mobile device."
+  },
+  {
+    "id": "TA0039",
+    "name": "Remote Service Effects",
+    "description": "The adversary is trying to control or monitor the device using remote services.\n\nThis category refers to techniques involving remote services, such as vendor-provided cloud services (e.g. Google Drive, Google Find My Device, or Apple iCloud), or enterprise mobility management (EMM)/mobile device management (MDM) services that an adversary may be able to use to fulfill his or her objectives without access to the mobile device itself."
+  },
+  {
+    "id": "TA0041",
+    "name": "Execution",
+    "description": "The adversary is trying to run malicious code.\n\nExecution consists of techniques that result in adversary-controlled code running on a mobile device. Techniques that run malicious code are often paired with techniques from all other tactics to achieve broader goals, like exploring a network or stealing data."
+  }
+]
